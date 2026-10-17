@@ -132,7 +132,7 @@ export class ExceptionMapper {
   }
 
   // --- Mapeo de Errores Desconocidos ---
-  private static mapUnknownException(error: unknown): HttpException {
+  private static mapUnknownException(_error: unknown): HttpException {
     return new HttpException(
       {
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,

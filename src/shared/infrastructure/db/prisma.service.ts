@@ -68,7 +68,6 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
     async $transaction<T>(
         ...args: Parameters<PrismaClient['$transaction']>
     ): Promise<T> {
-        // @ts-expect-error Prisma types are hard to map generically for proxy methods
-        return this.prisma.$transaction(...args);
+        return this.prisma.$transaction(...args) as unknown as Promise<T>;
     }
 }

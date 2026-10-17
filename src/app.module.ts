@@ -15,6 +15,8 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { RequestIdMiddleware } from './shared/infrastructure/http/middleware/request-id.middleware';
 
+import { EventsModule } from '@/shared/infrastructure/events/events.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -25,6 +27,7 @@ import { RequestIdMiddleware } from './shared/infrastructure/http/middleware/req
       ],
     }),
     PrismaModule,
+    EventsModule,
     ThrottlerModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({

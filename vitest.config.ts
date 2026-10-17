@@ -1,9 +1,13 @@
+import path from 'node:path';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-  // Resolves the path aliases declared in tsconfig.json, including the ones
-  // added by `nest g library`. Requires Vite 8, which ships this option.
-  resolve: { tsconfigPaths: true },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+      'generated': path.resolve(__dirname, './generated'),
+    },
+  },
   test: {
     globals: true,
     root: './',

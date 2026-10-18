@@ -431,6 +431,7 @@ async function bootstrap() {
   }
 }
 bootstrap().catch((err) => {
+  console.error('We have a problem')
   console.error('Error during application bootstrap:', err);
   process.exit(1);
 });

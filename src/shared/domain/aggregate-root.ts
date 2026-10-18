@@ -1,6 +1,9 @@
 import { DomainEvent } from './events/domain-event';
+export { DomainEvent };
 
-export abstract class AggregateRoot<E extends DomainEvent = DomainEvent> {
+export type DomainEventLike = DomainEvent | object;
+
+export abstract class AggregateRoot<E extends DomainEventLike = DomainEventLike> {
   #events: E[] = [];
 
   protected record(event: E): void {

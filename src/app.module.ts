@@ -16,6 +16,23 @@ import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { RequestIdMiddleware } from './shared/infrastructure/http/middleware/request-id.middleware';
 
 import { EventsModule } from '@/shared/infrastructure/events/events.module';
+import {
+  appConfig,
+  databaseConfig,
+  emailConfig,
+  jwtConfig,
+  redisConfig,
+  throttlerConfig,
+} from '@/shared/infrastructure/config/configs';
+import { RedisCacheModule } from '@/shared/infrastructure/cache/cache.module';
+import { QueuesModule } from '@/shared/infrastructure/queues/queues.module';
+import { HealthModule } from '@/shared/infrastructure/health/health.module';
+import { CatalogsModule } from '@/modules/catalogs/catalogs.module';
+import { StorageModule } from '@/modules/storage/storage.module';
+import { AuditModule } from '@/modules/audit/audit.module';
+import { IamModule } from '@/modules/iam/iam.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -24,10 +41,23 @@ import { EventsModule } from '@/shared/infrastructure/events/events.module';
       envFilePath: '.env',
       validate: validate,
       load: [
+        appConfig,
+        databaseConfig,
+        emailConfig,
+        jwtConfig,
+        redisConfig,
+        throttlerConfig,
       ],
     }),
     PrismaModule,
     EventsModule,
+    RedisCacheModule,
+    QueuesModule,
+    HealthModule,
+    CatalogsModule,
+    StorageModule,
+    AuditModule,
+    IamModule,
     ThrottlerModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
@@ -94,7 +124,9 @@ import { EventsModule } from '@/shared/infrastructure/events/events.module';
       }),
     }),
   ],
+  controllers: [AppController],
   providers: [
+    AppService,
     {
       provide: APP_INTERCEPTOR,
       useClass: TransactionInterceptor,

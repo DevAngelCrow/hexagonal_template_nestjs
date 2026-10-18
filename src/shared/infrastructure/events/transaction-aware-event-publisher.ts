@@ -35,11 +35,14 @@ export class TransactionAwareEventPublisher implements EventPublisherPort {
   private async dispatchToBus(events: DomainEvent[]): Promise<void> {
     for (const event of events) {
       try {
-        this.logger.debug(`Publicando evento de dominio: ${event.eventName} [${event.eventId}]`);
+        const eventName = event.eventName || event.constructor?.name || 'DomainEvent';
+        const eventId = event.eventId || 'legacy';
+        this.logger.debug(`Publicando evento de dominio: ${eventName} [${eventId}]`);
         await this.eventBus.publish(event);
       } catch (error) {
+        const eventName = event.eventName || event.constructor?.name || 'DomainEvent';
         this.logger.error(
-          `Error despachando evento de dominio ${event.eventName}: ${error instanceof Error ? error.message : String(error)}`,
+          `Error despachando evento de dominio ${eventName}: ${error instanceof Error ? error.message : String(error)}`,
           error instanceof Error ? error.stack : undefined,
         );
       }

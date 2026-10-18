@@ -1,124 +1,170 @@
+# Hexagonal Template NestJS
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+> **Plantilla backend empresarial con NestJS 12, TypeScript 6, Arquitectura Hexagonal Estricta, Servicios de Aplicación Pragmáticos, Vitest, oxlint y Eventos de Dominio Transaccionales.**
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## 🏛️ Arquitectura y Principios de Diseño
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Esta plantilla implementa una **Arquitectura Hexagonal (Puertos y Adaptadores)** estricta y desacoplada, respaldada por pruebas automatizadas de fronteras de capas (`test/architecture.spec.ts`):
 
-## Project setup
-
-```bash
-$ npm install
+```
+                        ┌────────────────────────────────────────────────────────┐
+                        │                   INFRASTRUCTURE                       │
+                        │  Controllers, Prisma Repositories, Adapters, Guards,   │
+                        │  Redis, BullMQ Workers, Bull Board, Pino Logger        │
+                        └──────────────────────────┬─────────────────────────────┘
+                                                   │ implements / calls
+                                                   ▼
+                        ┌────────────────────────────────────────────────────────┐
+                        │                    APPLICATION                         │
+                        │  Application Services, Commands, Queries, DTOs, Ports  │
+                        └──────────────────────────┬─────────────────────────────┘
+                                                   │ orchestrates / calls
+                                                   ▼
+                        ┌────────────────────────────────────────────────────────┐
+                        │                       DOMAIN                           │
+                        │  Entities, AggregateRoot, Domain Events, Enums, VOs    │
+                        │  (Zero framework imports: no @nestjs, no prisma, no db)│
+                        └────────────────────────────────────────────────────────┘
 ```
 
-## Compile and run the project
+### 1. Reglas de Dependencia
+- **Dominio (`domain`)**: Puro TypeScript. Nunca importa `@nestjs/*`, `@prisma/*`, frameworks o librerías de infraestructura.
+- **Aplicación (`application`)**: Orquesta casos de uso mediante Application Services (o Command/Query handlers donde convenga). Define puertos puros (`*Port`, `*Repository`) sin acoplarse a tecnologías de persistencia ni HTTP.
+- **Infraestructura (`infrastructure`)**: Implementa puertos con tecnologías concretas (Prisma, PostgreSQL, Redis, BullMQ, Resend, JWT, etc.).
 
-```bash
-# development
-$ npm run start
+---
 
-# watch mode
-$ npm run start:dev
+## 🚀 Módulos del Sistema
 
-# production mode
-$ npm run start:prod
+1. **`iam` (Identity & Access Management - Unificado)**:
+   - Consolida Autenticación, Gestión de Usuarios, Perfiles de Persona y Control de Acceso (Roles, Permisos, Menús, Rutas) en un único bounded context sin llamadas cross-module acopladas.
+   - Emite eventos de dominio para efectos secundarios desacoplados.
+2. **`catalogs`**:
+   - Catálogos generales (Países, Divisiones Geográficas, Estados de Categoría, Género, Estados Civiles).
+   - Cache distribuido en Redis con fallback transparente a base de datos.
+3. **`storage`**:
+   - Abstracción de almacenamiento de archivos con backend dual: `LOCAL` (sistema de archivos) y `S3` (AWS S3, MinIO, Cloudflare R2).
+4. **`audit`**:
+   - Registro de auditoría independiente de operaciones críticas y autenticación (`AuditLogService` con suscriptor asíncrono para desacoplar transacciones de negocio).
+5. **`shared`**:
+   - Fundaciones transversales: `TransactionContextService` (AsyncLocalStorage), `TransactionAwareEventPublisher`, adaptadores de fecha (`DayjsDateAdapter`), métricas (`PrometheusMetricsAdapter`), y middleware de idempotencia / correlación (`x-request-id`).
+
+---
+
+## ⚡ Eventos de Dominio y Publicación Transaccional
+
+Los eventos de dominio heredan de `DomainEvent`, se acumulan en entidades que extienden `AggregateRoot`:
+
+```typescript
+// 1. La entidad acumula el evento
+user.record(new UserRegisteredDomainEvent(user.id, user.email, user.userName));
+
+// 2. El handler extrae y publica los eventos acumulados
+const events = user.pullDomainEvents();
+await this.eventPublisher.publish(events);
 ```
 
-## Run tests
+- **`TransactionAwareEventPublisher`**: Detecta automáticamente si existe una transacción activa en el contexto (`AsyncLocalStorage`). Si hay transacción, retiene los eventos y los despacha mediante **`afterCommitHooks`** únicamente tras el commit exitoso de la base de datos.
+- **Suscriptores Reales (`@EventsHandler`)**:
+  - `SendEmailVerificationSubscriber`: Encola jobs en BullMQ tras registro de usuario.
+  - `SendPasswordResetSubscriber`: Encola jobs para reseteo de credenciales.
+  - `InvalidateRoleCacheSubscriber`: Invalida claves de permisos de roles en Redis.
+  - `AuditIamSubscriber`: Enlaza eventos de negocio con auditoría sin acoplamiento sincrónico.
 
+---
+
+## 🛠️ Stack Tecnológico
+
+| Herramienta | Versión / Detalle |
+|---|---|
+| **Framework** | [NestJS 12](https://nestjs.com/) |
+| **Lenguaje** | [TypeScript 6](https://www.typescriptlang.org/) |
+| **ORM** | [Prisma 7](https://www.prisma.io/) con `@prisma/adapter-pg` y pool pg |
+| **Test Runner** | [Vitest 4](https://vitest.dev/) (Unit, Architecture & E2E) |
+| **Linter** | [oxlint](https://oxc.rs/) (Type-aware ultra-rápido) |
+| **Colas de Tareas** | [BullMQ](https://docs.bullmq.io/) + Bull Board Dashboard en `/queues` |
+| **Cache Distribuido** | [Redis](https://redis.io/) con [Keyv](https://keyv.org/) |
+| **Logging** | [Pino](https://getpino.io/) con redacción de credenciales en producción |
+| **Métricas** | Prometheus en `/metrics` + Health Checks en `/health` |
+
+---
+
+## 📦 Instalación y Configuración
+
+### 1. Clonar e Instalar Dependencias
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm install
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+### 2. Variables de Entorno
+Copia el archivo de ejemplo y ajusta las credenciales:
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+cp .env.example .env
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Observability
-
-In production applications, observability is essential for understanding how your system behaves, detecting issues early, and maintaining reliable performance.
-
-[NestJS Observe](https://observe.nestjs.com) automatically instruments your NestJS application, giving you deep visibility into your system with minimal setup:
-
-- **Distributed tracing:** Follow requests across services and understand how they flow through your system.
-- **Waterfall analysis:** Visualize request execution and identify slow operations, bottlenecks, and unexpected delays.
-- **Performance analysis:** Analyze application performance in real time and quickly pinpoint areas that need optimization.
-- **Metrics:** Track key application and infrastructure metrics to understand system health and performance trends.
-- **Logging:** Centralize and correlate logs with traces and other telemetry to make debugging easier.
-- **Error tracking:** Detect errors quickly and investigate their root causes with the surrounding context.
-- **SLA monitoring:** Track service-level objectives and identify when your application is approaching or exceeding defined thresholds.
-- **Alarms and alerts:** Set up alerts for critical errors, performance degradation, SLA violations, and other anomalies so your team can react quickly.
-
-To add it to this project:
-
+### 3. Levantar Servicios de Infraestructura (Docker)
 ```bash
-$ npm install @nestjs/observe
+docker compose up -d
 ```
 
-Then follow the [setup guide](https://docs.nestjs.com/observability/overview) - it takes a single import and an app key.
+### 4. Generar Cliente Prisma y Migraciones
+```bash
+npx prisma generate
+npx prisma migrate dev
+```
 
-The free plan needs no payment details and covers 300,000 events a month. You can also browse the [live demo](https://www.observe-demo.nestjs.com/dashboard) first - the whole dashboard over a busy service's data, with nothing to install.
+---
 
-## Resources
+## 💻 Comandos de Ejecución
 
-Check out a few resources that may come in handy when working with NestJS:
+```bash
+# Desarrollo con recarga automática (API)
+npm run start:dev
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Auto-instrument your application with [NestJS Observe](https://observe.nestjs.com). Distributed tracing, metrics, and logging made easy. Error tracking and performance monitoring for your NestJS applications.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+# Worker de segundo plano en modo watch (Procesador BullMQ)
+npm run start:worker
 
-## Support
+# Compilación de producción
+npm run build
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+# Ejecución en producción
+npm run start:prod
+npm run start:worker:prod
+```
 
-## Stay in touch
+---
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## 🧪 Pruebas y Calidad de Código
 
-## License
+```bash
+# Pruebas unitarias y de arquitectura (Vitest)
+npm test
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+# Pruebas End-to-End (E2E)
+npm run test:e2e
+
+# Cobertura de código
+npm run test:cov
+
+# Linter type-aware (oxlint)
+npm run lint
+
+# Formateo de código
+npm run format
+```
+
+---
+
+## 🛡️ Endpoints y Documentación Interactiva
+
+- **Scalar API Reference**: `http://localhost:3000/reference`
+- **Swagger UI**: `http://localhost:3000/docs`
+- **Bull Board Dashboard**: `http://localhost:3000/queues`
+- **Health Checks**: `http://localhost:3000/health`
+- **Prometheus Metrics**: `http://localhost:3000/metrics`

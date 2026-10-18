@@ -21,10 +21,16 @@
     "strictBindCallApply": true,
     "noFallthroughCasesInSwitch": true,
     "strictPropertyInitialization": false,
-    "types": ["vitest/globals", "node"],
+    "types": ["vitest/globals", "node", "multer", "passport", "passport-jwt", "bcrypt"],
     "paths": {
       "@/*": ["./src/*"],
-      "generated/*": ["./generated/*"]
+      "src/*": ["./src/*"],
+      "generated/*": ["./generated/*"],
+      "@/modules/iam/*": ["./src/modules/iam/*"],
+      "@/modules/auth/*": ["./src/modules/iam/auth/*"],
+      "@/modules/identity-access-management/*": ["./src/modules/iam/identity-access-management/*"],
+      "@/modules/profile/*": ["./src/modules/iam/profile/*"],
+      "@/modules/security/*": ["./src/modules/iam/security/*"]
     }
   },
   "exclude": [

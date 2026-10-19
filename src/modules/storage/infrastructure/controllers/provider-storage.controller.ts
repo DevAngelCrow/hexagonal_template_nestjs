@@ -29,7 +29,7 @@ import { GetProviderStoragesQuery } from '../../application/provider-storage/que
 import { GetProviderStorageQuery } from '../../application/provider-storage/queries/get-provider-storage/get-provider-storage.query';
 import { GetProviderStorageByCodeQuery } from '../../application/provider-storage/queries/get-provider-storage-by-code/get-provider-storage-by-code.query';
 import { ProviderStorageDto } from '../../application/dtos/provider-storage.dto';
-import { Permissions } from '@/modules/security/infrastructure/decorators/permissions.decorator';
+import { Permissions } from '@/shared/infrastructure/decorators/permissions.decorator';
 
 @Controller('provider-storages')
 @ApiBearerAuth('JWT-auth')

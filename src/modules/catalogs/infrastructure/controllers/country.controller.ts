@@ -28,7 +28,7 @@ import { GetCountriesQuery } from '../../application/country/queries/get-countri
 import { GetCountryQuery } from '../../application/country/queries/get-country/get-country.query';
 import { DeleteCountryCommand } from '../../application/country/commands/delete-country/delete-country.command';
 import { CountryDto } from '../../application/dtos/country.dto';
-import { Permissions } from '@/modules/security/infrastructure/decorators/permissions.decorator';
+import { Permissions } from '@/shared/infrastructure/decorators/permissions.decorator';
 
 @Controller('countries')
 @ApiBearerAuth('JWT-auth')

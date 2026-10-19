@@ -7,7 +7,8 @@ import {
   FilterStringDto,
   IdCountryFilterDto,
   IdParentFilterDto,
-} from '@/shared/application/dtos/filters';
+} from '@/shared/infrastructure/http/dtos/filters';
+
 
 export class GetGeographicDivisionsQueryDto extends IntersectionType(
   PaginationParamsDto,

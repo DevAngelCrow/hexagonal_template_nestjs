@@ -1,12 +1,12 @@
 import { describe, it, expect, vi } from 'vitest';
-import { UserRegisteredDomainEvent } from '../../domain/events/user-registered.domain-event';
-import { UserLoggedInDomainEvent } from '../../domain/events/user-logged-in.domain-event';
-import { UserPasswordResetDomainEvent } from '../../domain/events/user-password-reset.domain-event';
-import { RolePermissionsUpdatedDomainEvent } from '../../domain/events/role-permissions-updated.domain-event';
-import { SendEmailVerificationSubscriber } from './send-email-verification.subscriber';
-import { SendPasswordResetSubscriber } from './send-password-reset.subscriber';
-import { InvalidateRoleCacheSubscriber } from './invalidate-role-cache.subscriber';
-import { AuditIamSubscriber } from './audit-iam.subscriber';
+import { UserRegisteredDomainEvent } from '@/modules/iam/domain/events/user-registered.domain-event';
+import { UserLoggedInDomainEvent } from '@/modules/iam/domain/events/user-logged-in.domain-event';
+import { UserPasswordResetDomainEvent } from '@/modules/iam/domain/events/user-password-reset.domain-event';
+import { RolePermissionsUpdatedDomainEvent } from '@/modules/iam/domain/events/role-permissions-updated.domain-event';
+import { SendEmailVerificationSubscriber } from '@/modules/iam/infrastructure/subscribers/send-email-verification.subscriber';
+import { SendPasswordResetSubscriber } from '@/modules/iam/infrastructure/subscribers/send-password-reset.subscriber';
+import { InvalidateRoleCacheSubscriber } from '@/modules/iam/infrastructure/subscribers/invalidate-role-cache.subscriber';
+import { AuditIamSubscriber } from '@/modules/iam/infrastructure/subscribers/audit-iam.subscriber';
 import { AuditAction } from '@/modules/audit/domain/enums/audit-action.enum';
 
 describe('IAM Domain Events & Subscribers', () => {

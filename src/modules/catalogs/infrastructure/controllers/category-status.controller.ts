@@ -28,7 +28,7 @@ import { GetCategoriesStatusQuery } from '../../application/category-status/quer
 import { GetCategoryStatusQuery } from '../../application/category-status/queries/get-category-status/get-category-status.query';
 import { DeleteCategoryStatusCommand } from '../../application/category-status/commands/delete-category-status/delete-category-status.command';
 import { CategoryStatusDto } from '../../application/dtos/category-status.dto';
-import { Permissions } from '@/modules/security/infrastructure/decorators/permissions.decorator';
+import { Permissions } from '@/shared/infrastructure/decorators/permissions.decorator';
 
 @Controller('categories-status')
 @ApiBearerAuth('JWT-auth')

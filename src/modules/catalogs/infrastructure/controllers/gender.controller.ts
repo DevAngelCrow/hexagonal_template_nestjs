@@ -10,7 +10,7 @@ import { QueryBus } from '@nestjs/cqrs';
 import { GenderHttpDto } from '../dtos/http/gender-http-dto/gender-http.dto';
 import { GetGendersQuery } from '../../application/gender/queries/get-genders/get-genders.query';
 import { GenderDto } from '../../application/dtos/gender.dto';
-import { Permissions } from '@/modules/security/infrastructure/decorators/permissions.decorator';
+import { Permissions } from '@/shared/infrastructure/decorators/permissions.decorator';
 
 @Controller('genders')
 @ApiBearerAuth('JWT-auth')

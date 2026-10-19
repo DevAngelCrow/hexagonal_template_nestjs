@@ -1,9 +1,9 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { Injectable, Optional } from '@nestjs/common';
-import { UserRegisteredDomainEvent } from '../../domain/events/user-registered.domain-event';
-import { UserLoggedInDomainEvent } from '../../domain/events/user-logged-in.domain-event';
-import { UserPasswordResetDomainEvent } from '../../domain/events/user-password-reset.domain-event';
-import { RolePermissionsUpdatedDomainEvent } from '../../domain/events/role-permissions-updated.domain-event';
+import { UserRegisteredDomainEvent } from '@/modules/iam/domain/events/user-registered.domain-event';
+import { UserLoggedInDomainEvent } from '@/modules/iam/domain/events/user-logged-in.domain-event';
+import { UserPasswordResetDomainEvent } from '@/modules/iam/domain/events/user-password-reset.domain-event';
+import { RolePermissionsUpdatedDomainEvent } from '@/modules/iam/domain/events/role-permissions-updated.domain-event';
 import { AuditLogService } from '@/modules/audit/application/services/audit-log.service';
 import { AuditAction } from '@/modules/audit/domain/enums/audit-action.enum';
 

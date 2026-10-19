@@ -7,7 +7,6 @@ import {
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PrismaModule } from '@/shared/infrastructure/db/prisma.module';
 import { LoggerModule } from 'nestjs-pino';
-//import { RequestIdMiddleware } from '@/shared/infrastructure/http/middleware/request-id.middleware';
 import { IdempotencyMiddleware } from '@/shared/infrastructure/http/middleware/idempotency.middleware';
 import { TransactionInterceptor } from '@/shared/infrastructure/interceptors/transaction.interceptor';
 import { validate } from './shared/infrastructure/config/env.validation';
@@ -33,6 +32,8 @@ import { AuditModule } from '@/modules/audit/audit.module';
 import { IamModule } from '@/modules/iam/iam.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { DocsAuthMiddleware } from '@/shared/infrastructure/http/middleware/docs-auth.middleware';
+import { BullBoardAuthMiddleware } from '@/shared/infrastructure/http/middleware/bull-board-auth.middleware';
 
 @Module({
   imports: [
@@ -77,11 +78,6 @@ import { AppService } from './app.service';
         ],
       }),
     }),
-    // Exposes /metrics with default Node process metrics (heap, gc, event loop).
-    // Uses a custom controller (see MetricsController) so the route opts out of
-    // global URI versioning and the JWT auth guard. The endpoint is
-    // unauthenticated — network isolation lives at the reverse-proxy / network
-    // policy layer, not in this app.
     LoggerModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
@@ -91,9 +87,9 @@ import { AppService } from './app.service';
           transport:
             config.get<string>('NODE_ENV') !== 'production'
               ? {
-                target: 'pino-pretty',
-                options: { colorize: true, singleLine: true },
-              }
+                  target: 'pino-pretty',
+                  options: { colorize: true, singleLine: true },
+                }
               : undefined,
           genReqId: (req: import('http').IncomingMessage) => {
             const id = Reflect.get(req, 'id');
@@ -131,21 +127,6 @@ import { AppService } from './app.service';
       provide: APP_INTERCEPTOR,
       useClass: TransactionInterceptor,
     },
-    // {
-    //   // Reads @Auditable metadata on handlers and writes to mnt_audit_log on
-    //   // success. No-op for handlers without the decorator, so the cost on
-    //   // unaudited routes is a single reflector lookup.
-    //   provide: APP_INTERCEPTOR,
-    //   useClass: AuditableInterceptor,
-    // },
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: JwtPassportAuthGuard,
-    // },
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: PermissionsGuard,
-    // },
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
@@ -153,6 +134,8 @@ import { AppService } from './app.service';
   ],
 })
 export class AppModule implements NestModule {
+  constructor(private readonly configService: ConfigService) {}
+
   configure(consumer: MiddlewareConsumer): void {
     consumer
       .apply(RequestIdMiddleware)
@@ -162,6 +145,26 @@ export class AppModule implements NestModule {
       .forRoutes(
         { path: '*path', method: RequestMethod.POST },
         { path: '*path', method: RequestMethod.PUT },
+      );
+
+    const enableApiDocs =
+      this.configService.get<boolean>('ENABLE_API_DOCS') === true;
+
+    if (enableApiDocs) {
+      consumer
+        .apply(DocsAuthMiddleware)
+        .forRoutes(
+          { path: 'docs', method: RequestMethod.ALL },
+          { path: 'api/docs', method: RequestMethod.ALL },
+          { path: 'api/docs-json', method: RequestMethod.ALL },
+        );
+    }
+
+    consumer
+      .apply(BullBoardAuthMiddleware)
+      .forRoutes(
+        { path: 'admin/queues', method: RequestMethod.ALL },
+        { path: 'admin/queues/*path', method: RequestMethod.ALL },
       );
   }
 }

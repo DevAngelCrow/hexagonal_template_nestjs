@@ -28,7 +28,7 @@ import { UpdateGlobalStatusCommand } from '../../application/global-status/comma
 import { DeleteGlobalStatusCommand } from '../../application/global-status/commands/delete-global-status/delete-global-status.command';
 import { GetGlobalStatusesQuery } from '../../application/global-status/queries/get-global-statuses/get-global-statuses.query';
 import { GetGlobalStatusQuery } from '../../application/global-status/queries/get-global-status/get-global-status.query';
-import { Permissions } from '@/modules/security/infrastructure/decorators/permissions.decorator';
+import { Permissions } from '@/shared/infrastructure/decorators/permissions.decorator';
 @Controller('global-statuses')
 @ApiBearerAuth('JWT-auth')
 export class GlobalStatusController {

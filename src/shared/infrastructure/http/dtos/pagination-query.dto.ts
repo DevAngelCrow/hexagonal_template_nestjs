@@ -43,3 +43,6 @@ export class PaginationQueryDto {
     );
   }
 }
+
+export { PaginationQueryDto as PaginationParamsDto };
+

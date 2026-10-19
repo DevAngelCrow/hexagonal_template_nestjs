@@ -2,7 +2,7 @@ import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { Logger } from '@nestjs/common';
-import { UserRegisteredDomainEvent } from '../../domain/events/user-registered.domain-event';
+import { UserRegisteredDomainEvent } from '@/modules/iam/domain/events/user-registered.domain-event';
 import { QUEUE_NAMES } from '@/shared/infrastructure/queues/queues.constants';
 
 @EventsHandler(UserRegisteredDomainEvent)

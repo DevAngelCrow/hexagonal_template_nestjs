@@ -2,7 +2,7 @@ import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { Logger } from '@nestjs/common';
-import { UserPasswordResetDomainEvent } from '../../domain/events/user-password-reset.domain-event';
+import { UserPasswordResetDomainEvent } from '@/modules/iam/domain/events/user-password-reset.domain-event';
 import { QUEUE_NAMES } from '@/shared/infrastructure/queues/queues.constants';
 
 @EventsHandler(UserPasswordResetDomainEvent)

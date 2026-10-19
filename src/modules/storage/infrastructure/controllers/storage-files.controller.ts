@@ -13,7 +13,7 @@ import { SuccessResponseDto } from '../../../../shared/infrastructure/http/dtos/
 import { HttpPaginatedResponseDto } from '../../../../shared/infrastructure/http/dtos/http-paginated-response.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { Permissions } from '@/modules/security/infrastructure/decorators/permissions.decorator';
+import { Permissions } from '@/shared/infrastructure/decorators/permissions.decorator';
 import { ConfigService } from '@nestjs/config';
 import { Express } from 'express';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';

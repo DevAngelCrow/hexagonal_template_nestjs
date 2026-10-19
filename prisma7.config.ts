@@ -13,6 +13,7 @@ if (process.env.NODE_ENV === 'production') {
 } else {
   url = `${process.env.DB_PROVIDER}://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?schema=public&timezone=UTC`;
   seedCommand = 'tsx prisma/seeds/main.seeder.ts';
+  console.log(url, "URL")
   //`${env('DB_PROVIDER')}://${env('DB_USER')}:${env('DB_PASSWORD')}@${env('DB_HOST')}:${env('DB_PORT')}/${env('DB_NAME')}?schema=public&timezone=UTC`;
 }
 
@@ -20,6 +21,7 @@ export default defineConfig({
   schema: "prisma/schema.prisma",
   migrations: {
     path: "prisma/migrations",
+    seed: seedCommand,
   },
   datasource: {
     url: url,

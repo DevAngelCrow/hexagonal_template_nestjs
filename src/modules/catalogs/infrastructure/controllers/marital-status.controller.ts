@@ -28,7 +28,7 @@ import { UpdateMaritalStatusCommand } from '../../application/marital-status/com
 import { DeleteMaritalStatusCommand } from '../../application/marital-status/commands/delete-marital-status/delete-marital-status.command';
 import { GetMaritalStatusesQuery } from '../../application/marital-status/queries/get-marital-statuses/get-marital-statuses.query';
 import { GetMaritalStatusQuery } from '../../application/marital-status/queries/get-marital-status/get-marital-status.query';
-import { Permissions } from '@/modules/security/infrastructure/decorators/permissions.decorator';
+import { Permissions } from '@/shared/infrastructure/decorators/permissions.decorator';
 @Controller('marital-statuses')
 @ApiBearerAuth('JWT-auth')
 export class MaritalStatusController {

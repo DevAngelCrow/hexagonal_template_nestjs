@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { AppModule } from './app.module';
-import { AuthModule } from './modules/iam/auth/auth.module';
-import { EmailProcessor } from './modules/iam/auth/infrastructure/processors/email.processor';
-import { PasswordResetEmailProcessor } from './modules/iam/auth/infrastructure/processors/password-reset-email.processor';
+import { IamModule } from './modules/iam/iam.module';
+import { EmailProcessor } from './modules/iam/infrastructure/processors/email.processor';
+import { PasswordResetEmailProcessor } from './modules/iam/infrastructure/processors/password-reset-email.processor';
 
 @Module({
-  imports: [AppModule, AuthModule],
+  imports: [AppModule, IamModule],
   providers: [EmailProcessor, PasswordResetEmailProcessor],
 })
 export class WorkerModule {}

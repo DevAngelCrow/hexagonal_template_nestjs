@@ -1,6 +1,6 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { Logger, Optional } from '@nestjs/common';
-import { RolePermissionsUpdatedDomainEvent } from '../../domain/events/role-permissions-updated.domain-event';
+import { RolePermissionsUpdatedDomainEvent } from '@/modules/iam/domain/events/role-permissions-updated.domain-event';
 import { CatalogCachePort } from '@/shared/application/ports/catalog-cache.port';
 
 @EventsHandler(RolePermissionsUpdatedDomainEvent)

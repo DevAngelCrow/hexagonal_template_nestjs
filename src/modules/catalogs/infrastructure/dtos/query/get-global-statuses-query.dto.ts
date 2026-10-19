@@ -4,7 +4,8 @@ import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import {
   FilterNameDto,
   StatusBooleanFilterDto,
-} from '@/shared/application/dtos/filters';
+} from '@/shared/infrastructure/http/dtos/filters';
+
 
 export class GetGlobalStatusesQueryDto extends IntersectionType(
   PaginationParamsDto,

@@ -15,7 +15,7 @@ async function bootstrap() {
     bodyParser: false,
     bufferLogs: true,
   });
-
+  app.useLogger(app.get(Logger))
   const configService = app.get(ConfigService);
   const enableApiDocs = configService.get<boolean>('ENABLE_API_DOCS') === true;
   const port = configService.get<number>('PORT') ?? 3000;
@@ -29,14 +29,14 @@ async function bootstrap() {
   app.setGlobalPrefix('api', {
     exclude: enableApiDocs
       ? [
-          'docs',
-          'api/docs',
-          'api/docs-json',
-          'metrics',
-          'admin/queues',
-          'admin/queues/(.*)',
-        ]
-      : ['metrics', 'admin/queues', 'admin/queues/(.*)'],
+        'docs',
+        'api/docs',
+        'api/docs-json',
+        'metrics',
+        'admin/queues',
+        'admin/queues/{*path}',
+      ]
+      : ['metrics', 'admin/queues', 'admin/queues/{*path}'],
   });
 
   app.enableVersioning({

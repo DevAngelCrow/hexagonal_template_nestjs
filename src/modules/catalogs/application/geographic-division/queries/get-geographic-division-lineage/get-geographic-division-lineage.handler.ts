@@ -1,5 +1,5 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { GeographicDivisionQueriesRepository } from '../../../repositories/geographic-division-read.repository';
+import { GeographicDivisionQueriesRepository } from '@/modules/catalogs/application/repositories/geographic-division-read.repository';
 import { GetGeographicDivisionLineageQuery } from './get-geographic-division-lineage.query';
 
 @QueryHandler(GetGeographicDivisionLineageQuery)

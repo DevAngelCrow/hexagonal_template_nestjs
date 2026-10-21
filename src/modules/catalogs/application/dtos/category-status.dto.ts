@@ -1,4 +1,4 @@
-import { CategoryStatus } from '../../domain/entities/category-status';
+import { CategoryStatus } from '@/modules/catalogs/domain/entities/category-status';
 
 export class CategoryStatusDto {
   constructor(

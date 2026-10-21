@@ -1,7 +1,7 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
-import { GlobalStatusQueriesRepository } from '../../../repositories/global-status-read.repository';
-import { GlobalStatusDto } from '../../../dtos/global-status.dto';
+import { GlobalStatusQueriesRepository } from '@/modules/catalogs/application/repositories/global-status-read.repository';
+import { GlobalStatusDto } from '@/modules/catalogs/application/dtos/global-status.dto';
 import { GetGlobalStatusByCodeQuery } from './get-global-status-by-code.query';
 
 @QueryHandler(GetGlobalStatusByCodeQuery)

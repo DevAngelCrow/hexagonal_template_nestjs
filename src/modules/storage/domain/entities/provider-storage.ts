@@ -1,8 +1,8 @@
-import { ProviderStorageActive } from '../value-objects/provider-storage-value-object/provider-storage-active';
-import { ProviderStorageCode } from '../value-objects/provider-storage-value-object/provider-storage-code';
-import { ProviderStorageDescription } from '../value-objects/provider-storage-value-object/provider-storage-description';
-import { ProviderStorageId } from '../value-objects/provider-storage-value-object/provider-storage-id';
-import { ProviderStorageName } from '../value-objects/provider-storage-value-object/provider-storage-name';
+import { ProviderStorageActive } from '@/modules/storage/domain/value-objects/provider-storage-value-object/provider-storage-active';
+import { ProviderStorageCode } from '@/modules/storage/domain/value-objects/provider-storage-value-object/provider-storage-code';
+import { ProviderStorageDescription } from '@/modules/storage/domain/value-objects/provider-storage-value-object/provider-storage-description';
+import { ProviderStorageId } from '@/modules/storage/domain/value-objects/provider-storage-value-object/provider-storage-id';
+import { ProviderStorageName } from '@/modules/storage/domain/value-objects/provider-storage-value-object/provider-storage-name';
 
 export class ProviderStorage {
   constructor(

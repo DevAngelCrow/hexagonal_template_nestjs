@@ -1,6 +1,6 @@
-import { MaritalStatusDescription } from '../value-objects/marital-status-value-object/marital-status-description';
-import { MaritalStatusId } from '../value-objects/marital-status-value-object/marital-status-id';
-import { MaritalStatusName } from '../value-objects/marital-status-value-object/marital-status-name';
+import { MaritalStatusDescription } from '@/modules/catalogs/domain/value-objects/marital-status-value-object/marital-status-description';
+import { MaritalStatusId } from '@/modules/catalogs/domain/value-objects/marital-status-value-object/marital-status-id';
+import { MaritalStatusName } from '@/modules/catalogs/domain/value-objects/marital-status-value-object/marital-status-name';
 
 export class MaritalStatus {
   constructor(

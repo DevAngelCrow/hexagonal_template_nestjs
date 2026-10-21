@@ -1,6 +1,6 @@
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
-import { GlobalStatusDto } from '../dtos/global-status.dto';
+import { GlobalStatusDto } from '@/modules/catalogs/application/dtos/global-status.dto';
 
 export abstract class GlobalStatusQueriesRepository {
   abstract getAll(

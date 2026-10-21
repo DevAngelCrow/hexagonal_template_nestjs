@@ -1,8 +1,8 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
-import { GeographicDivisionTypeQueriesRepository } from '../../../repositories/geographic-division-type-read.repository';
-import { GeographicDivisionTypeDto } from '../../../dtos/geographic-division-type.dto';
+import { GeographicDivisionTypeQueriesRepository } from '@/modules/catalogs/application/repositories/geographic-division-type-read.repository';
+import { GeographicDivisionTypeDto } from '@/modules/catalogs/application/dtos/geographic-division-type.dto';
 import { GetGeographicDivisionTypesQuery } from './get-geographic-division-types.query';
 
 @QueryHandler(GetGeographicDivisionTypesQuery)

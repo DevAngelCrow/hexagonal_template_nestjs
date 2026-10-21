@@ -1,7 +1,7 @@
-import { AuditLogRepository } from '../../domain/repositories/audit-log.repository';
-import { AuditLog } from '../../domain/entities/audit-log';
-import { AuditAction } from '../../domain/enums/audit-action.enum';
-import { AuditLoggerPort } from '../../domain/ports/audit-logger.port';
+import { AuditLogRepository } from '@/modules/audit/domain/repositories/audit-log.repository';
+import { AuditLog } from '@/modules/audit/domain/entities/audit-log';
+import { AuditAction } from '@/modules/audit/domain/enums/audit-action.enum';
+import { AuditLoggerPort } from '@/modules/audit/domain/ports/audit-logger.port';
 
 export interface AuditLogEntry {
   action: AuditAction;

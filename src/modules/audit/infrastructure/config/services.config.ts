@@ -1,7 +1,7 @@
 import { registerService } from '@/shared/infrastructure/factories/register-service.factory';
-import { AuditLogService } from '../../application/services/audit-log.service';
-import { AuditLogRepository } from '../../domain/repositories/audit-log.repository';
-import { AuditLoggerPort } from '../../domain/ports/audit-logger.port';
+import { AuditLogService } from '@/modules/audit/application/services/audit-log.service';
+import { AuditLogRepository } from '@/modules/audit/domain/repositories/audit-log.repository';
+import { AuditLoggerPort } from '@/modules/audit/domain/ports/audit-logger.port';
 
 const servicesToRegister = [
   {

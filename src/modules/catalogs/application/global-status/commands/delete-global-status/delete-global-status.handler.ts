@@ -4,8 +4,8 @@ import { DeleteGlobalStatusCommand } from './delete-global-status.command';
 import { GlobalStatusId } from '@/modules/catalogs/domain/value-objects/goblal-status-value-object/global-status-id';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { BadRequestException } from '@/shared/domain/exceptions/bad-request.exception';
-import { GlobalStatusQueriesRepository } from '../../../repositories/global-status-read.repository';
-import { GlobalStatusDto } from '../../../dtos/global-status.dto';
+import { GlobalStatusQueriesRepository } from '@/modules/catalogs/application/repositories/global-status-read.repository';
+import { GlobalStatusDto } from '@/modules/catalogs/application/dtos/global-status.dto';
 
 @CommandHandler(DeleteGlobalStatusCommand)
 export class DeleteGlobalStatusHandler implements ICommandHandler<DeleteGlobalStatusCommand> {

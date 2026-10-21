@@ -1,4 +1,4 @@
-import { ProviderStorage } from '../../domain/entities/provider-storage';
+import { ProviderStorage } from '@/modules/storage/domain/entities/provider-storage';
 
 export class ProviderStorageDto {
   constructor(

@@ -4,7 +4,7 @@ import { UpdateCategoryStatusCommand } from './update-category-status.command';
 import { CategoryStatusRepository } from '@/modules/catalogs/domain/repositories/category-status-repository';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { BadRequestException } from '@/shared/domain/exceptions/bad-request.exception';
-import { CategoryStatusQueriesRepository } from '../../../repositories/category-status-read.repository';
+import { CategoryStatusQueriesRepository } from '@/modules/catalogs/application/repositories/category-status-read.repository';
 
 @CommandHandler(UpdateCategoryStatusCommand)
 export class UpdateCategoryStatusHandler implements ICommandHandler<UpdateCategoryStatusCommand> {

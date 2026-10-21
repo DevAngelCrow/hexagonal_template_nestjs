@@ -1,6 +1,6 @@
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
-import { StorageFileListDto } from '../dtos/storage-file-list.dto';
+import { StorageFileListDto } from '@/modules/storage/application/dtos/storage-file-list.dto';
 
 export abstract class StorageFilesReadRepository {
   abstract getAll(

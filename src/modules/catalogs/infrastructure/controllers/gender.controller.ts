@@ -1,15 +1,15 @@
 import { Controller, Get, HttpCode, HttpStatus, Query } from '@nestjs/common';
 
-import { SuccessResponseDto } from '../../../../shared/infrastructure/http/dtos/http-success-response.dto';
-import { HttpPaginatedResponseDto } from '../../../../shared/infrastructure/http/dtos/http-paginated-response.dto';
+import { SuccessResponseDto } from '@/shared/infrastructure/http/dtos/http-success-response.dto';
+import { HttpPaginatedResponseDto } from '@/shared/infrastructure/http/dtos/http-paginated-response.dto';
 import { Pagination } from '@/shared/domain/value-object/pagination';
-import { GetGendersQueryDto } from '../dtos/query/get-genders-query.dto';
+import { GetGendersQueryDto } from '@/modules/catalogs/infrastructure/dtos/query/get-genders-query.dto';
 
 import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { QueryBus } from '@nestjs/cqrs';
-import { GenderHttpDto } from '../dtos/http/gender-http-dto/gender-http.dto';
-import { GetGendersQuery } from '../../application/gender/queries/get-genders/get-genders.query';
-import { GenderDto } from '../../application/dtos/gender.dto';
+import { GenderHttpDto } from '@/modules/catalogs/infrastructure/dtos/http/gender-http-dto/gender-http.dto';
+import { GetGendersQuery } from '@/modules/catalogs/application/gender/queries/get-genders/get-genders.query';
+import { GenderDto } from '@/modules/catalogs/application/dtos/gender.dto';
 import { Permissions } from '@/shared/infrastructure/decorators/permissions.decorator';
 
 @Controller('genders')

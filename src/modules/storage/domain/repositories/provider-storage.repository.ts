@@ -1,8 +1,8 @@
 import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
-import { ProviderStorage } from '../entities/provider-storage';
+import { ProviderStorage } from '@/modules/storage/domain/entities/provider-storage';
 import { Pagination } from '@/shared/domain/value-object/pagination';
-import { ProviderStorageId } from '../value-objects/provider-storage-value-object/provider-storage-id';
-import { ProviderStorageCode } from '../value-objects/provider-storage-value-object/provider-storage-code';
+import { ProviderStorageId } from '@/modules/storage/domain/value-objects/provider-storage-value-object/provider-storage-id';
+import { ProviderStorageCode } from '@/modules/storage/domain/value-objects/provider-storage-value-object/provider-storage-code';
 
 export abstract class ProviderStorageRepository {
   abstract create(provider_storage: ProviderStorage): Promise<void>;

@@ -1,4 +1,4 @@
-import { StorageFiles } from '../../domain/entities/storage-files';
+import { StorageFiles } from '@/modules/storage/domain/entities/storage-files';
 
 export class StorageFilesDto<T> {
   constructor(

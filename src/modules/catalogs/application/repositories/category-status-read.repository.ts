@@ -1,6 +1,6 @@
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
-import { CategoryStatusDto } from '../dtos/category-status.dto';
+import { CategoryStatusDto } from '@/modules/catalogs/application/dtos/category-status.dto';
 
 export abstract class CategoryStatusQueriesRepository {
   abstract getAll(

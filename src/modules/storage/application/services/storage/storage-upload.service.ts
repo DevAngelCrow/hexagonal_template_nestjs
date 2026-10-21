@@ -1,6 +1,6 @@
 import { StorageFiles } from '@/modules/storage/domain/entities/storage-files';
-import { StorageFilesUploadFlowHandler } from '../../storage-files/commands/storage-files-upload-flow/storage-files-upload-flow.handler';
-import { StorageFilesUploadFlowCommand } from '../../storage-files/commands/storage-files-upload-flow/storage-files-upload-flow.command';
+import { StorageFilesUploadFlowHandler } from '@/modules/storage/application/storage-files/commands/storage-files-upload-flow/storage-files-upload-flow.handler';
+import { StorageFilesUploadFlowCommand } from '@/modules/storage/application/storage-files/commands/storage-files-upload-flow/storage-files-upload-flow.command';
 
 interface FileUpload {
   originalname: string;

@@ -11,23 +11,23 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { CreateCategoryStatusDto } from '../dtos/validators/category-status/create-category-status.dto';
-import { SuccessResponseDto } from '../../../../shared/infrastructure/http/dtos/http-success-response.dto';
-import { UpdateCategoryStatusDto } from '../dtos/validators/category-status/update-category-status.dto';
-import { HttpPaginatedResponseDto } from '../../../../shared/infrastructure/http/dtos/http-paginated-response.dto';
-import { CategoryStatusHttpDto } from '../dtos/http/category-status-http-dto/category-status-http.dto';
+import { CreateCategoryStatusDto } from '@/modules/catalogs/infrastructure/dtos/validators/category-status/create-category-status.dto';
+import { SuccessResponseDto } from '@/shared/infrastructure/http/dtos/http-success-response.dto';
+import { UpdateCategoryStatusDto } from '@/modules/catalogs/infrastructure/dtos/validators/category-status/update-category-status.dto';
+import { HttpPaginatedResponseDto } from '@/shared/infrastructure/http/dtos/http-paginated-response.dto';
+import { CategoryStatusHttpDto } from '@/modules/catalogs/infrastructure/dtos/http/category-status-http-dto/category-status-http.dto';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { Pagination } from '@/shared/domain/value-object/pagination';
-import { GetCategoryStatusesQueryDto } from '../dtos/query/get-category-statuses-query.dto';
+import { GetCategoryStatusesQueryDto } from '@/modules/catalogs/infrastructure/dtos/query/get-category-statuses-query.dto';
 
 import { ApiBearerAuth, ApiParam, ApiQuery } from '@nestjs/swagger';
-import { CreateCategoryStatusCommand } from '../../application/category-status/commands/create-category-status/create-category-status.command';
+import { CreateCategoryStatusCommand } from '@/modules/catalogs/application/category-status/commands/create-category-status/create-category-status.command';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { UpdateCategoryStatusCommand } from '../../application/category-status/commands/update-category-status/update-category-status.command';
-import { GetCategoriesStatusQuery } from '../../application/category-status/queries/get-categories-status/get-categories-status.query';
-import { GetCategoryStatusQuery } from '../../application/category-status/queries/get-category-status/get-category-status.query';
-import { DeleteCategoryStatusCommand } from '../../application/category-status/commands/delete-category-status/delete-category-status.command';
-import { CategoryStatusDto } from '../../application/dtos/category-status.dto';
+import { UpdateCategoryStatusCommand } from '@/modules/catalogs/application/category-status/commands/update-category-status/update-category-status.command';
+import { GetCategoriesStatusQuery } from '@/modules/catalogs/application/category-status/queries/get-categories-status/get-categories-status.query';
+import { GetCategoryStatusQuery } from '@/modules/catalogs/application/category-status/queries/get-category-status/get-category-status.query';
+import { DeleteCategoryStatusCommand } from '@/modules/catalogs/application/category-status/commands/delete-category-status/delete-category-status.command';
+import { CategoryStatusDto } from '@/modules/catalogs/application/dtos/category-status.dto';
 import { Permissions } from '@/shared/infrastructure/decorators/permissions.decorator';
 
 @Controller('categories-status')

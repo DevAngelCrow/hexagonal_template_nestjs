@@ -1,4 +1,4 @@
-import { MaritalStatus } from '../../domain/entities/marital-status';
+import { MaritalStatus } from '@/modules/catalogs/domain/entities/marital-status';
 
 export class MaritalStatusDto {
   constructor(

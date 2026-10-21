@@ -1,5 +1,5 @@
-import { GlobalStatusDto } from '../../dtos/global-status.dto';
-import { GetGlobalStatusByCodeHandler } from '../../global-status/queries/get-global-status-by-code/get-global-status-by-code.handler';
+import { GlobalStatusDto } from '@/modules/catalogs/application/dtos/global-status.dto';
+import { GetGlobalStatusByCodeHandler } from '@/modules/catalogs/application/global-status/queries/get-global-status-by-code/get-global-status-by-code.handler';
 
 export class GetGlobalStatusByCodeService {
   constructor(

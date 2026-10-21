@@ -1,6 +1,6 @@
 import { Gender } from '@/modules/catalogs/domain/entities/gender';
 
-//import { District } from '../../domain/entities/district';
+//import { District } from '@/modules/catalogs/infrastructure/dtos/domain/entities/district';
 export class GenderHttpDto {
   constructor(
     public readonly name: string,

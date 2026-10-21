@@ -1,7 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
 import { Request } from 'express';
-import { ALLOWED_STORAGE_MIME_TYPES } from '../../domain/value-objects/storage-files-value-object/storage-files-mime-type';
+import { ALLOWED_STORAGE_MIME_TYPES } from '@/modules/storage/domain/value-objects/storage-files-value-object/storage-files-mime-type';
 
 export const ALLOWED_MIME_TYPES: ReadonlyArray<string> = ALLOWED_STORAGE_MIME_TYPES;
 

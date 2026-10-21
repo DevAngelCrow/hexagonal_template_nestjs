@@ -6,7 +6,7 @@ import { StorageFilesRepository } from '@/modules/storage/domain/repositories/st
 import { StorageFilesContentFile } from '@/modules/storage/domain/value-objects/storage-files-value-object/storage-files-content-file';
 import { StorageFilesIdProvider } from '@/modules/storage/domain/value-objects/storage-files-value-object/storage-files-id-provider';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
-import { StorageFilesDto } from '../../../dtos/storage-files.dto';
+import { StorageFilesDto } from '@/modules/storage/application/dtos/storage-files.dto';
 import { StorageFilesUploadFlowCommand } from './storage-files-upload-flow.command';
 import { ProviderStorageCode } from '@/modules/storage/domain/value-objects/provider-storage-value-object/provider-storage-code';
 import { BadRequestException } from '@/shared/domain/exceptions/bad-request.exception';

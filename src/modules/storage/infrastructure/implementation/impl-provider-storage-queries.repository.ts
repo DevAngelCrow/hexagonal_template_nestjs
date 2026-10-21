@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { ProviderStorage } from '../../domain/entities/provider-storage';
-import { ProviderStorageQueriesRepository } from '../../application/repositories/provider-storage-read.repository';
-import { ProviderStorageId } from '../../domain/value-objects/provider-storage-value-object/provider-storage-id';
+import { ProviderStorage } from '@/modules/storage/domain/entities/provider-storage';
+import { ProviderStorageQueriesRepository } from '@/modules/storage/application/repositories/provider-storage-read.repository';
+import { ProviderStorageId } from '@/modules/storage/domain/value-objects/provider-storage-value-object/provider-storage-id';
 import { PrismaService } from 'src/shared/infrastructure/persistence/prisma/prisma.service';
 import { ctl_provider_storage, Prisma } from 'generated/prisma/client';
 import { Pagination } from '@/shared/domain/value-object/pagination';
@@ -9,7 +9,7 @@ import { PaginationParams } from '@/shared/domain/value-object/pagination-params
 import { EntityList } from '@/shared/domain/value-object/entity-list';
 import { TotalItems } from '@/shared/domain/value-object/total-items';
 import { TotalPages } from '@/shared/domain/value-object/total-page';
-import { ProviderStorageCode } from '../../domain/value-objects/provider-storage-value-object/provider-storage-code';
+import { ProviderStorageCode } from '@/modules/storage/domain/value-objects/provider-storage-value-object/provider-storage-code';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';
 
 @Injectable()

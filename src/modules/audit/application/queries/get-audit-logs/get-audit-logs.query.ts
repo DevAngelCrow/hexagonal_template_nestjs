@@ -1,5 +1,5 @@
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
-import { AuditAction } from '../../../domain/enums/audit-action.enum';
+import { AuditAction } from '@/modules/audit/domain/enums/audit-action.enum';
 
 export class GetAuditLogsQuery {
   constructor(

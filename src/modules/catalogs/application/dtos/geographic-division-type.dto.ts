@@ -1,4 +1,4 @@
-import { GeographicDivisionType } from '../../domain/entities/geographic-division-type';
+import { GeographicDivisionType } from '@/modules/catalogs/domain/entities/geographic-division-type';
 
 export class GeographicDivisionTypeDto<T = unknown> {
   constructor(

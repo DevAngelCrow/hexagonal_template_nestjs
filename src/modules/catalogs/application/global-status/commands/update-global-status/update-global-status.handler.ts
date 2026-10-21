@@ -4,7 +4,7 @@ import { UpdateGlobalStatusCommand } from './update-global-status.command';
 import { GlobalStatsusRepository } from '@/modules/catalogs/domain/repositories/global-status-repository';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { BadRequestException } from '@/shared/domain/exceptions/bad-request.exception';
-import { GlobalStatusQueriesRepository } from '../../../repositories/global-status-read.repository';
+import { GlobalStatusQueriesRepository } from '@/modules/catalogs/application/repositories/global-status-read.repository';
 
 @CommandHandler(UpdateGlobalStatusCommand)
 export class UpdateGlobalStatusHandler implements ICommandHandler<UpdateGlobalStatusCommand> {

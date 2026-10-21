@@ -1,7 +1,7 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
-import { GeographicDivisionQueriesRepository } from '../../../repositories/geographic-division-read.repository';
-import { GeographicDivisionDto } from '../../../dtos/geographic-division.dto';
+import { GeographicDivisionQueriesRepository } from '@/modules/catalogs/application/repositories/geographic-division-read.repository';
+import { GeographicDivisionDto } from '@/modules/catalogs/application/dtos/geographic-division.dto';
 import { GetGeographicDivisionQuery } from './get-geographic-division.query';
 
 @QueryHandler(GetGeographicDivisionQuery)

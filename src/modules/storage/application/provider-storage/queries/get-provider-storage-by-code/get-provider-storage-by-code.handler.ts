@@ -2,7 +2,7 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { ProviderStorage } from '@/modules/storage/domain/entities/provider-storage';
 import { GetProviderStorageByCodeQuery } from './get-provider-storage-by-code.query';
 import { ProviderStorageCode } from '@/modules/storage/domain/value-objects/provider-storage-value-object/provider-storage-code';
-import { ProviderStorageQueriesRepository } from '../../../repositories/provider-storage-read.repository';
+import { ProviderStorageQueriesRepository } from '@/modules/storage/application/repositories/provider-storage-read.repository';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 
 @QueryHandler(GetProviderStorageByCodeQuery)

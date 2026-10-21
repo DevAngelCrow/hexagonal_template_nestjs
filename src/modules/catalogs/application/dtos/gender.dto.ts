@@ -1,5 +1,5 @@
-//import { District } from '../../domain/entities/district';
-import { Gender } from '../../domain/entities/gender';
+//import { District } from '@/modules/catalogs/domain/entities/district';
+import { Gender } from '@/modules/catalogs/domain/entities/gender';
 
 export class GenderDto {
   constructor(

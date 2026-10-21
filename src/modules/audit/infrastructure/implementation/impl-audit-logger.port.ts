@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { AuditLoggerPort } from '../../domain/ports/audit-logger.port';
+import { AuditLoggerPort } from '@/modules/audit/domain/ports/audit-logger.port';
 
 @Injectable()
 export class ImplAuditLoggerPort implements AuditLoggerPort {

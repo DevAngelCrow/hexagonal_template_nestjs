@@ -9,10 +9,10 @@ import { PrismaModule } from '@/shared/infrastructure/db/prisma.module';
 import { LoggerModule } from 'nestjs-pino';
 import { IdempotencyMiddleware } from '@/shared/infrastructure/http/middleware/idempotency.middleware';
 import { TransactionInterceptor } from '@/shared/infrastructure/interceptors/transaction.interceptor';
-import { validate } from './shared/infrastructure/config/env.validation';
+import { validate } from '@/shared/infrastructure/config/env.validation';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-import { RequestIdMiddleware } from './shared/infrastructure/http/middleware/request-id.middleware';
+import { RequestIdMiddleware } from '@/shared/infrastructure/http/middleware/request-id.middleware';
 
 import { EventsModule } from '@/shared/infrastructure/events/events.module';
 import {
@@ -30,8 +30,8 @@ import { CatalogsModule } from '@/modules/catalogs/catalogs.module';
 import { StorageModule } from '@/modules/storage/storage.module';
 import { AuditModule } from '@/modules/audit/audit.module';
 import { IamModule } from '@/modules/iam/iam.module';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AppController } from '@/app.controller';
+import { AppService } from '@/app.service';
 import { DocsAuthMiddleware } from '@/shared/infrastructure/http/middleware/docs-auth.middleware';
 import { BullBoardAuthMiddleware } from '@/shared/infrastructure/http/middleware/bull-board-auth.middleware';
 import { AuditableInterceptor } from '@/modules/audit/infrastructure/interceptors/auditable.interceptor';

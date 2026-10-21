@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { CategoryStatus } from '../../../domain/entities/category-status';
-import { CategoryStatusRepository } from '../../../domain/repositories/category-status-repository';
-import { CategoryStatusId } from '../../../domain/value-objects/category-status-value-object/category-status-id';
+import { CategoryStatus } from '@/modules/catalogs/domain/entities/category-status';
+import { CategoryStatusRepository } from '@/modules/catalogs/domain/repositories/category-status-repository';
+import { CategoryStatusId } from '@/modules/catalogs/domain/value-objects/category-status-value-object/category-status-id';
 import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';
@@ -16,7 +16,7 @@ import { CategoryStatusDto } from '@/modules/catalogs/application/dtos/category-
 import { GetBooleanStatusCatalogService } from '@/shared/infrastructure/services/get-status-catalog.service';
 import { BooleanStatusData } from '@/shared/infrastructure/interfaces/boolean-status-data.interface';
 import { StatusMapperUtil } from '@/shared/infrastructure/utils/status-mapper.util';
-import { CategoryStatusHttpDto } from '../../dtos/http/category-status-http-dto/category-status-http.dto';
+import { CategoryStatusHttpDto } from '@/modules/catalogs/infrastructure/dtos/http/category-status-http-dto/category-status-http.dto';
 
 @Injectable()
 export class ImplCategoryStatusRepository

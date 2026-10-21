@@ -1,6 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { GeographicDivisionQueriesRepository } from '../../../repositories/geographic-division-read.repository';
-import { GeographicDivisionDto } from '../../../dtos/geographic-division.dto';
+import { GeographicDivisionQueriesRepository } from '@/modules/catalogs/application/repositories/geographic-division-read.repository';
+import { GeographicDivisionDto } from '@/modules/catalogs/application/dtos/geographic-division.dto';
 import { GetGeographicDivisionsCursorQuery } from './get-geographic-divisions-cursor.query';
 
 @QueryHandler(GetGeographicDivisionsCursorQuery)

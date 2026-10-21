@@ -1,12 +1,12 @@
-import { StorageFilesActive } from '../value-objects/storage-files-value-object/storage-files-active';
-import { StorageFilesContentFile } from '../value-objects/storage-files-value-object/storage-files-content-file';
-import { StorageFilesFileName } from '../value-objects/storage-files-value-object/storage-files-file-name';
-import { StorageFilesId } from '../value-objects/storage-files-value-object/storage-files-id';
-import { StorageFilesIdProvider } from '../value-objects/storage-files-value-object/storage-files-id-provider';
-import { StorageFilesIdUser } from '../value-objects/storage-files-value-object/storage-files-id-user';
-import { StorageFilesMimeType } from '../value-objects/storage-files-value-object/storage-files-mime-type';
-import { StorageFilesPath } from '../value-objects/storage-files-value-object/storage-files-path';
-import { StorageFilesSize } from '../value-objects/storage-files-value-object/storage-files-size';
+import { StorageFilesActive } from '@/modules/storage/domain/value-objects/storage-files-value-object/storage-files-active';
+import { StorageFilesContentFile } from '@/modules/storage/domain/value-objects/storage-files-value-object/storage-files-content-file';
+import { StorageFilesFileName } from '@/modules/storage/domain/value-objects/storage-files-value-object/storage-files-file-name';
+import { StorageFilesId } from '@/modules/storage/domain/value-objects/storage-files-value-object/storage-files-id';
+import { StorageFilesIdProvider } from '@/modules/storage/domain/value-objects/storage-files-value-object/storage-files-id-provider';
+import { StorageFilesIdUser } from '@/modules/storage/domain/value-objects/storage-files-value-object/storage-files-id-user';
+import { StorageFilesMimeType } from '@/modules/storage/domain/value-objects/storage-files-value-object/storage-files-mime-type';
+import { StorageFilesPath } from '@/modules/storage/domain/value-objects/storage-files-value-object/storage-files-path';
+import { StorageFilesSize } from '@/modules/storage/domain/value-objects/storage-files-value-object/storage-files-size';
 
 export class StorageFiles<T> {
   constructor(

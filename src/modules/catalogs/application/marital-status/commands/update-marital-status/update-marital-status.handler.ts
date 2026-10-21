@@ -4,7 +4,7 @@ import { UpdateMaritalStatusCommand } from './update-marital-status.command';
 import { MaritalStatusRepository } from '@/modules/catalogs/domain/repositories/marital-status-repository';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { BadRequestException } from '@/shared/domain/exceptions/bad-request.exception';
-import { MaritalStatusQueriesRepository } from '../../../repositories/marital-status-read.repository';
+import { MaritalStatusQueriesRepository } from '@/modules/catalogs/application/repositories/marital-status-read.repository';
 
 @CommandHandler(UpdateMaritalStatusCommand)
 export class UpdateMaritalStatusHandler implements ICommandHandler<UpdateMaritalStatusCommand> {

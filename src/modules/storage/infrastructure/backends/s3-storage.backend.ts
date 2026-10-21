@@ -4,7 +4,7 @@ import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { randomUUID } from 'node:crypto';
 import { Express } from 'express';
 import { StorageBackend } from './storage-backend';
-import { MIME_TO_EXTENSION } from '../config/multer-file-filter.config';
+import { MIME_TO_EXTENSION } from '@/modules/storage/infrastructure/config/multer-file-filter.config';
 
 /**
  * S3-compatible backend (AWS S3, MinIO, Cloudflare R2, Backblaze B2, etc).

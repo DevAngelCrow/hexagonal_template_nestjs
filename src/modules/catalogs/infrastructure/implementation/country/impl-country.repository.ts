@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { Country } from '../../../domain/entities/country';
-import { CountryRepository } from '../../../domain/repositories/country-repository';
-import { CountryId } from '../../../domain/value-objects/country-value-object/country-id';
+import { Country } from '@/modules/catalogs/domain/entities/country';
+import { CountryRepository } from '@/modules/catalogs/domain/repositories/country-repository';
+import { CountryId } from '@/modules/catalogs/domain/value-objects/country-value-object/country-id';
 import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
 import { ctl_country, Prisma } from 'generated/prisma/client';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
@@ -15,7 +15,7 @@ import { CountryQueriesRepository } from '@/modules/catalogs/application/reposit
 import { CountryDto } from '@/modules/catalogs/application/dtos/country.dto';
 import { BooleanStatusData } from '@/shared/infrastructure/interfaces/boolean-status-data.interface';
 import { StatusMapperUtil } from '@/shared/infrastructure/utils/status-mapper.util';
-import { CountryHttpDto } from '../../dtos/http/country-http-dto/country-http.dto';
+import { CountryHttpDto } from '@/modules/catalogs/infrastructure/dtos/http/country-http-dto/country-http.dto';
 import { GetBooleanStatusCatalogService } from '@/shared/infrastructure/services/get-status-catalog.service';
 
 @Injectable()

@@ -1,10 +1,10 @@
-import { CountryAbbreviation } from '../value-objects/country-value-object/contry-abbreviation';
-import { CountryActive } from '../value-objects/country-value-object/country-active';
-import { CountryCode } from '../value-objects/country-value-object/country-code';
-import { CountryId } from '../value-objects/country-value-object/country-id';
-import { CountryName } from '../value-objects/country-value-object/country-name';
-import { CountryIso2 } from '../value-objects/country-value-object/country-iso2';
-import { CountryPhoneCode } from '../value-objects/country-value-object/country-phone-code';
+import { CountryAbbreviation } from '@/modules/catalogs/domain/value-objects/country-value-object/contry-abbreviation';
+import { CountryActive } from '@/modules/catalogs/domain/value-objects/country-value-object/country-active';
+import { CountryCode } from '@/modules/catalogs/domain/value-objects/country-value-object/country-code';
+import { CountryId } from '@/modules/catalogs/domain/value-objects/country-value-object/country-id';
+import { CountryName } from '@/modules/catalogs/domain/value-objects/country-value-object/country-name';
+import { CountryIso2 } from '@/modules/catalogs/domain/value-objects/country-value-object/country-iso2';
+import { CountryPhoneCode } from '@/modules/catalogs/domain/value-objects/country-value-object/country-phone-code';
 
 export class Country {
   constructor(

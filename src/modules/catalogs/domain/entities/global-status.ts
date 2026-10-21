@@ -1,11 +1,11 @@
-import { GlobalStatusActive } from '../value-objects/goblal-status-value-object/global-status-active';
-import { GlobalStatusDescription } from '../value-objects/goblal-status-value-object/global-status-description';
-import { GlobalStatusId } from '../value-objects/goblal-status-value-object/global-status-id';
-import { GlobalStatusIdCategoryStatus } from '../value-objects/goblal-status-value-object/global-status-id-category-status';
-import { GlobalStatusName } from '../value-objects/goblal-status-value-object/global-status-name';
-import { GlobalStatusStateColor } from '../value-objects/goblal-status-value-object/global-status-state-color';
-import { GlobalStatusCode } from '../value-objects/goblal-status-value-object/global-status-code';
-import { GlobalStatusTextColor } from '../value-objects/goblal-status-value-object/global-status-text-color';
+import { GlobalStatusActive } from '@/modules/catalogs/domain/value-objects/goblal-status-value-object/global-status-active';
+import { GlobalStatusDescription } from '@/modules/catalogs/domain/value-objects/goblal-status-value-object/global-status-description';
+import { GlobalStatusId } from '@/modules/catalogs/domain/value-objects/goblal-status-value-object/global-status-id';
+import { GlobalStatusIdCategoryStatus } from '@/modules/catalogs/domain/value-objects/goblal-status-value-object/global-status-id-category-status';
+import { GlobalStatusName } from '@/modules/catalogs/domain/value-objects/goblal-status-value-object/global-status-name';
+import { GlobalStatusStateColor } from '@/modules/catalogs/domain/value-objects/goblal-status-value-object/global-status-state-color';
+import { GlobalStatusCode } from '@/modules/catalogs/domain/value-objects/goblal-status-value-object/global-status-code';
+import { GlobalStatusTextColor } from '@/modules/catalogs/domain/value-objects/goblal-status-value-object/global-status-text-color';
 
 export class GlobalStatus {
   constructor(

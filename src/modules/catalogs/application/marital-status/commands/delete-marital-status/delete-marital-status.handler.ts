@@ -4,7 +4,7 @@ import { DeleteMaritalStatusCommand } from './delete-marital-status.command';
 import { MaritalStatusId } from '@/modules/catalogs/domain/value-objects/marital-status-value-object/marital-status-id';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { BadRequestException } from '@/shared/domain/exceptions/bad-request.exception';
-import { MaritalStatusQueriesRepository } from '../../../repositories/marital-status-read.repository';
+import { MaritalStatusQueriesRepository } from '@/modules/catalogs/application/repositories/marital-status-read.repository';
 
 @CommandHandler(DeleteMaritalStatusCommand)
 export class DeleteMaritalStatusHandler implements ICommandHandler<DeleteMaritalStatusCommand> {

@@ -1,7 +1,7 @@
 import { Pagination } from '@/shared/domain/value-object/pagination';
-import { CountryDto } from '../../dtos/country.dto';
-import { GetCountriesHandler } from '../../country/queries/get-countries/get-countries.handler';
-import { GetCountriesQuery } from '../../country/queries/get-countries/get-countries.query';
+import { CountryDto } from '@/modules/catalogs/application/dtos/country.dto';
+import { GetCountriesHandler } from '@/modules/catalogs/application/country/queries/get-countries/get-countries.handler';
+import { GetCountriesQuery } from '@/modules/catalogs/application/country/queries/get-countries/get-countries.query';
 
 export class GetCountriesService {
   constructor(private readonly getCountriesHandler: GetCountriesHandler) {}

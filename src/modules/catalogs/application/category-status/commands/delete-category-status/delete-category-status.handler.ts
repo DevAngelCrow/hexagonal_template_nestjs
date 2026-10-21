@@ -3,9 +3,9 @@ import { CategoryStatusRepository } from '@/modules/catalogs/domain/repositories
 import { DeleteCategoryStatusCommand } from './delete-category-status.command';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { BadRequestException } from '@/shared/domain/exceptions/bad-request.exception';
-import { CategoryStatusQueriesRepository } from '../../../repositories/category-status-read.repository';
+import { CategoryStatusQueriesRepository } from '@/modules/catalogs/application/repositories/category-status-read.repository';
 import { CategoryStatusId } from '@/modules/catalogs/domain/value-objects/category-status-value-object/category-status-id';
-import { CategoryStatusDto } from '../../../dtos/category-status.dto';
+import { CategoryStatusDto } from '@/modules/catalogs/application/dtos/category-status.dto';
 
 @CommandHandler(DeleteCategoryStatusCommand)
 export class DeleteCategoryStatusHandler implements ICommandHandler<DeleteCategoryStatusCommand> {

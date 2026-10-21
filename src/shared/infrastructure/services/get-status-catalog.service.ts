@@ -1,10 +1,10 @@
 import {
   CategoryStatus,
   BooleanStatus,
-} from '../../domain/enums/boolean-status';
-import { BooleanStatusData } from '../interfaces/boolean-status-data.interface';
+} from '@/shared/domain/enums/boolean-status';
+import { BooleanStatusData } from '@/shared/infrastructure/interfaces/boolean-status-data.interface';
 import { TransactionClient } from 'generated/prisma/internal/prismaNamespace';
-import { PrismaService } from '../db/prisma.service';
+import { PrismaService } from '@/shared/infrastructure/db/prisma.service';
 
 export class GetBooleanStatusCatalogService {
   static async getStatus(tx: TransactionClient | PrismaService) {

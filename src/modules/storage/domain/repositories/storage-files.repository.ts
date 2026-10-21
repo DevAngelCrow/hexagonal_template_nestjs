@@ -1,6 +1,6 @@
-import { StorageFiles } from '../entities/storage-files';
-import { StorageFilesContentFile } from '../value-objects/storage-files-value-object/storage-files-content-file';
-import { StorageFilesPath } from '../value-objects/storage-files-value-object/storage-files-path';
+import { StorageFiles } from '@/modules/storage/domain/entities/storage-files';
+import { StorageFilesContentFile } from '@/modules/storage/domain/value-objects/storage-files-value-object/storage-files-content-file';
+import { StorageFilesPath } from '@/modules/storage/domain/value-objects/storage-files-value-object/storage-files-path';
 
 export abstract class StorageFilesRepository {
   abstract upload<T>(

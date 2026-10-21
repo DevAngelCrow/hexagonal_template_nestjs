@@ -1,6 +1,6 @@
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
-import { CountryDto } from '../dtos/country.dto';
+import { CountryDto } from '@/modules/catalogs/application/dtos/country.dto';
 
 export abstract class CountryQueriesRepository {
   abstract getAll(

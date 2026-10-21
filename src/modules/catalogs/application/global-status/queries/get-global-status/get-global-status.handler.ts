@@ -2,8 +2,8 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { GetGlobalStatusQuery } from './get-global-status.query';
 import { GlobalStatusId } from '@/modules/catalogs/domain/value-objects/goblal-status-value-object/global-status-id';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
-import { GlobalStatusQueriesRepository } from '../../../repositories/global-status-read.repository';
-import { GlobalStatusDto } from '../../../dtos/global-status.dto';
+import { GlobalStatusQueriesRepository } from '@/modules/catalogs/application/repositories/global-status-read.repository';
+import { GlobalStatusDto } from '@/modules/catalogs/application/dtos/global-status.dto';
 
 @QueryHandler(GetGlobalStatusQuery)
 export class GetGlobalStatusHandler implements IQueryHandler<GetGlobalStatusQuery> {

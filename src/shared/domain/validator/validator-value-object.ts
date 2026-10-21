@@ -1,1 +1,1 @@
-export * from '../validators/validator-value-object';
+export * from '@/shared/domain/validators/validator-value-object';

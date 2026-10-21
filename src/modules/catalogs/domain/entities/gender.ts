@@ -1,5 +1,5 @@
-import { GenderId } from '../value-objects/gender-value-object/gender-id';
-import { GenderName } from '../value-objects/gender-value-object/gender-name';
+import { GenderId } from '@/modules/catalogs/domain/value-objects/gender-value-object/gender-id';
+import { GenderName } from '@/modules/catalogs/domain/value-objects/gender-value-object/gender-name';
 
 export class Gender {
   constructor(

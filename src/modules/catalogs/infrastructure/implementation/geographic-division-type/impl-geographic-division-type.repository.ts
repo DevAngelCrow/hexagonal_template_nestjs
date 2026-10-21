@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { GeographicDivisionTypeRepository } from '../../../domain/repositories/geographic-division-type-repository';
-import { GeographicDivisionType } from '../../../domain/entities/geographic-division-type';
-import { GeographicDivisionTypeId } from '../../../domain/value-objects/geographic-division-type-value-object/geographic-division-type-id';
+import { GeographicDivisionTypeRepository } from '@/modules/catalogs/domain/repositories/geographic-division-type-repository';
+import { GeographicDivisionType } from '@/modules/catalogs/domain/entities/geographic-division-type';
+import { GeographicDivisionTypeId } from '@/modules/catalogs/domain/value-objects/geographic-division-type-value-object/geographic-division-type-id';
 import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
@@ -16,7 +16,7 @@ import { GeographicDivisionTypeDto } from '@/modules/catalogs/application/dtos/g
 import { ctl_geographic_division_typeGetPayload } from 'generated/prisma/models/ctl_geographic_division_type';
 import { CountryDto } from '@/modules/catalogs/application/dtos/country.dto';
 import { BooleanStatusData } from '@/shared/infrastructure/interfaces/boolean-status-data.interface';
-import { GeographicDivisionTypeHttpDto } from '../../dtos/http/geographic-division-type-http-dto/geographic-division-type-http.dto';
+import { GeographicDivisionTypeHttpDto } from '@/modules/catalogs/infrastructure/dtos/http/geographic-division-type-http-dto/geographic-division-type-http.dto';
 import { StatusMapperUtil } from '@/shared/infrastructure/utils/status-mapper.util';
 import { GetBooleanStatusCatalogService } from '@/shared/infrastructure/services/get-status-catalog.service';
 

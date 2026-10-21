@@ -4,9 +4,9 @@ import { UpdateCountryCommand } from './update-country.command';
 import { CountryRepository } from '@/modules/catalogs/domain/repositories/country-repository';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { BadRequestException } from '@/shared/domain/exceptions/bad-request.exception';
-import { CountryQueriesRepository } from '../../../repositories/country-read.repository';
+import { CountryQueriesRepository } from '@/modules/catalogs/application/repositories/country-read.repository';
 import { CatalogCachePort } from '@/shared/application/ports/catalog-cache.port';
-import { COUNTRIES_CACHE_KEYS } from '../../queries/get-countries/get-countries.handler';
+import { COUNTRIES_CACHE_KEYS } from '@/modules/catalogs/application/country/queries/get-countries/get-countries.handler';
 
 @CommandHandler(UpdateCountryCommand)
 export class UpdateCountryHandler implements ICommandHandler<UpdateCountryCommand> {

@@ -1,10 +1,10 @@
-import { GeographicDivisionActive } from '../value-objects/geographic-division-value-object/geographic-division-active';
-import { GeographicDivisionDescription } from '../value-objects/geographic-division-value-object/geographic-division-description';
-import { GeographicDivisionId } from '../value-objects/geographic-division-value-object/geographic-division-id';
-import { GeographicDivisionIdCountry } from '../value-objects/geographic-division-value-object/geographic-division-id-country';
-import { GeographicDivisionIdParent } from '../value-objects/geographic-division-value-object/geographic-division-id-parent';
-import { GeographicDivisionIdType } from '../value-objects/geographic-division-value-object/geographic-division-id-type';
-import { GeographicDivisionName } from '../value-objects/geographic-division-value-object/geographic-division-name';
+import { GeographicDivisionActive } from '@/modules/catalogs/domain/value-objects/geographic-division-value-object/geographic-division-active';
+import { GeographicDivisionDescription } from '@/modules/catalogs/domain/value-objects/geographic-division-value-object/geographic-division-description';
+import { GeographicDivisionId } from '@/modules/catalogs/domain/value-objects/geographic-division-value-object/geographic-division-id';
+import { GeographicDivisionIdCountry } from '@/modules/catalogs/domain/value-objects/geographic-division-value-object/geographic-division-id-country';
+import { GeographicDivisionIdParent } from '@/modules/catalogs/domain/value-objects/geographic-division-value-object/geographic-division-id-parent';
+import { GeographicDivisionIdType } from '@/modules/catalogs/domain/value-objects/geographic-division-value-object/geographic-division-id-type';
+import { GeographicDivisionName } from '@/modules/catalogs/domain/value-objects/geographic-division-value-object/geographic-division-name';
 
 export class GeographicDivision {
   constructor(

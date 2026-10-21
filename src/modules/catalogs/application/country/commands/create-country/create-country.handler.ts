@@ -3,7 +3,7 @@ import { CountryRepository } from '@/modules/catalogs/domain/repositories/countr
 import { CreateCountryCommand } from './create-country.command';
 import { Country } from '@/modules/catalogs/domain/entities/country';
 import { CatalogCachePort } from '@/shared/application/ports/catalog-cache.port';
-import { COUNTRIES_CACHE_KEYS } from '../../queries/get-countries/get-countries.handler';
+import { COUNTRIES_CACHE_KEYS } from '@/modules/catalogs/application/country/queries/get-countries/get-countries.handler';
 
 @CommandHandler(CreateCountryCommand)
 export class CreateCountryHandler implements ICommandHandler<CreateCountryCommand> {

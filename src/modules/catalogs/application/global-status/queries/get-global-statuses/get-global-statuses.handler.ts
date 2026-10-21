@@ -2,8 +2,8 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { GetGlobalStatusesQuery } from './get-global-statuses.query';
 import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
-import { GlobalStatusQueriesRepository } from '../../../repositories/global-status-read.repository';
-import { GlobalStatusDto } from '../../../dtos/global-status.dto';
+import { GlobalStatusQueriesRepository } from '@/modules/catalogs/application/repositories/global-status-read.repository';
+import { GlobalStatusDto } from '@/modules/catalogs/application/dtos/global-status.dto';
 
 @QueryHandler(GetGlobalStatusesQuery)
 export class GetGlobalStatusesHandler implements IQueryHandler<GetGlobalStatusesQuery> {

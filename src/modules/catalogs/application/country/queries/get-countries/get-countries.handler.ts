@@ -2,8 +2,8 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { GetCountriesQuery } from './get-countries.query';
 import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
-import { CountryQueriesRepository } from '../../../repositories/country-read.repository';
-import { CountryDto } from '../../../dtos/country.dto';
+import { CountryQueriesRepository } from '@/modules/catalogs/application/repositories/country-read.repository';
+import { CountryDto } from '@/modules/catalogs/application/dtos/country.dto';
 import { CatalogCachePort } from '@/shared/application/ports/catalog-cache.port';
 
 // Catalog data (countries) changes rarely — 1h TTL is a good default. Any

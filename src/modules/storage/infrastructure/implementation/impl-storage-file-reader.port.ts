@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { extname } from 'node:path';
 import { readFile } from 'node:fs/promises';
-import { StorageFileReaderPort } from '../../domain/ports/storage-file-reader.port';
-import { MIME_TO_EXTENSION } from '../config/multer-file-filter.config';
+import { StorageFileReaderPort } from '@/modules/storage/domain/ports/storage-file-reader.port';
+import { MIME_TO_EXTENSION } from '@/modules/storage/infrastructure/config/multer-file-filter.config';
 
 const EXTENSION_TO_MIME: Readonly<Record<string, string>> = Object.fromEntries(
   Object.entries(MIME_TO_EXTENSION).map(([mime, ext]) => [ext, mime]),

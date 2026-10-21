@@ -1,7 +1,7 @@
 import { Abstract, Type } from '@nestjs/common';
-import { StorageUploadService } from '../../application/services/storage/storage-upload.service';
+import { StorageUploadService } from '@/modules/storage/application/services/storage/storage-upload.service';
 import { registerService } from '@/shared/infrastructure/factories/register-service.factory';
-import { StorageFilesUploadFlowHandler } from '../../application/storage-files/commands/storage-files-upload-flow/storage-files-upload-flow.handler';
+import { StorageFilesUploadFlowHandler } from '@/modules/storage/application/storage-files/commands/storage-files-upload-flow/storage-files-upload-flow.handler';
 
 export const services: Array<{
   service: Type<unknown>;

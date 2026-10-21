@@ -1,8 +1,8 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { GetCategoryStatusQuery } from './get-category-status.query';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
-import { CategoryStatusQueriesRepository } from '../../../repositories/category-status-read.repository';
-import { CategoryStatusDto } from '../../../dtos/category-status.dto';
+import { CategoryStatusQueriesRepository } from '@/modules/catalogs/application/repositories/category-status-read.repository';
+import { CategoryStatusDto } from '@/modules/catalogs/application/dtos/category-status.dto';
 
 @QueryHandler(GetCategoryStatusQuery)
 export class GetCategoryStatusHandler implements IQueryHandler<GetCategoryStatusQuery> {

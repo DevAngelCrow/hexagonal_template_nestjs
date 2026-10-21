@@ -7,11 +7,11 @@ import {
 import { Reflector } from '@nestjs/core';
 import { Observable, tap } from 'rxjs';
 import { Request } from 'express';
-import { AuditLogService } from '../../application/services/audit-log.service';
+import { AuditLogService } from '@/modules/audit/application/services/audit-log.service';
 import {
   AUDITABLE_KEY,
   AuditableOptions,
-} from '../decorators/auditable.decorator';
+} from '@/modules/audit/infrastructure/decorators/auditable.decorator';
 
 type AuthUserLike = { id?: string; user_name?: string } | undefined;
 

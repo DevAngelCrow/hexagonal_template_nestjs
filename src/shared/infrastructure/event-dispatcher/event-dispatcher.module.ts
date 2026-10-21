@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { EventDispatcherPort } from '@/shared/domain/ports/event-dispatcher.port';
-import { EventsModule } from '../events/events.module';
+import { EventsModule } from '@/shared/infrastructure/events/events.module';
 import { NestEventDispatcherAdapter } from './nest-event-dispatcher.adapter';
 
 @Module({

@@ -2,8 +2,8 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { GetMaritalStatusQuery } from './get-marital-status.query';
 import { MaritalStatusId } from '@/modules/catalogs/domain/value-objects/marital-status-value-object/marital-status-id';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
-import { MaritalStatusQueriesRepository } from '../../../repositories/marital-status-read.repository';
-import { MaritalStatusDto } from '../../../dtos/marital-status.dto';
+import { MaritalStatusQueriesRepository } from '@/modules/catalogs/application/repositories/marital-status-read.repository';
+import { MaritalStatusDto } from '@/modules/catalogs/application/dtos/marital-status.dto';
 
 @QueryHandler(GetMaritalStatusQuery)
 export class GetMaritalStatusHandler implements IQueryHandler<GetMaritalStatusQuery> {

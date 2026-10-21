@@ -1,4 +1,4 @@
-import { Country } from '../../domain/entities/country';
+import { Country } from '@/modules/catalogs/domain/entities/country';
 
 export class CountryDto {
   constructor(

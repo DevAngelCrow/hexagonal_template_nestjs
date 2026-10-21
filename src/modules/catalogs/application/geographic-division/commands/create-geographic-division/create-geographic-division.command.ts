@@ -1,4 +1,4 @@
-import { GeographicDivisionDto } from '../../../dtos/geographic-division.dto';
+import { GeographicDivisionDto } from '@/modules/catalogs/application/dtos/geographic-division.dto';
 
 export class CreateGeographicDivisionCommand {
   constructor(public readonly dto: GeographicDivisionDto) {}

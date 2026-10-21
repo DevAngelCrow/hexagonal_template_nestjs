@@ -3,7 +3,7 @@ import { Pagination } from '@/shared/domain/value-object/pagination';
 import { ProviderStorage } from '@/modules/storage/domain/entities/provider-storage';
 import { GetProviderStoragesQuery } from './get-provider-storages.query';
 import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
-import { ProviderStorageQueriesRepository } from '../../../repositories/provider-storage-read.repository';
+import { ProviderStorageQueriesRepository } from '@/modules/storage/application/repositories/provider-storage-read.repository';
 
 @QueryHandler(GetProviderStoragesQuery)
 export class GetProviderStoragesHandler implements IQueryHandler<GetProviderStoragesQuery> {

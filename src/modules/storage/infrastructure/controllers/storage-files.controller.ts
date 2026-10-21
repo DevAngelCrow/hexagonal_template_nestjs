@@ -9,24 +9,24 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { SuccessResponseDto } from '../../../../shared/infrastructure/http/dtos/http-success-response.dto';
-import { HttpPaginatedResponseDto } from '../../../../shared/infrastructure/http/dtos/http-paginated-response.dto';
+import { SuccessResponseDto } from '@/shared/infrastructure/http/dtos/http-success-response.dto';
+import { HttpPaginatedResponseDto } from '@/shared/infrastructure/http/dtos/http-paginated-response.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { Permissions } from '@/shared/infrastructure/decorators/permissions.decorator';
 import { ConfigService } from '@nestjs/config';
 import { Express } from 'express';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { StorageFilesUploadFlowCommand } from '../../application/storage-files/commands/storage-files-upload-flow/storage-files-upload-flow.command';
+import { StorageFilesUploadFlowCommand } from '@/modules/storage/application/storage-files/commands/storage-files-upload-flow/storage-files-upload-flow.command';
 import {
   multerImageOptions,
   validateFileMagicBytes,
-} from '../config/multer-file-filter.config';
-import { GetStorageFilesQueryDto } from '../dtos/query/get-storage-files-query.dto';
-import { GetStorageFilesQuery } from '../../application/storage-files/queries/get-storage-files/get-storage-files.query';
-import { StorageFilesHttpDto } from '../dtos/http/storage-files-http-dto/storage-files-http.dto';
+} from '@/modules/storage/infrastructure/config/multer-file-filter.config';
+import { GetStorageFilesQueryDto } from '@/modules/storage/infrastructure/dtos/query/get-storage-files-query.dto';
+import { GetStorageFilesQuery } from '@/modules/storage/application/storage-files/queries/get-storage-files/get-storage-files.query';
+import { StorageFilesHttpDto } from '@/modules/storage/infrastructure/dtos/http/storage-files-http-dto/storage-files-http.dto';
 import { Pagination } from '@/shared/domain/value-object/pagination';
-import { StorageFileListDto } from '../../application/dtos/storage-file-list.dto';
+import { StorageFileListDto } from '@/modules/storage/application/dtos/storage-file-list.dto';
 
 type FileType = Express.Multer.File;
 @Controller('storage-files')

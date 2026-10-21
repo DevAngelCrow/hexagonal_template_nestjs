@@ -1,8 +1,8 @@
-import { CategoryStatusActive } from '../value-objects/category-status-value-object/category-status-active';
-import { CategoryStatusCode } from '../value-objects/category-status-value-object/category-status-code';
-import { CategoryStatusDescription } from '../value-objects/category-status-value-object/category-status-descritpion';
-import { CategoryStatusId } from '../value-objects/category-status-value-object/category-status-id';
-import { CategoryStatusName } from '../value-objects/category-status-value-object/category-status-name';
+import { CategoryStatusActive } from '@/modules/catalogs/domain/value-objects/category-status-value-object/category-status-active';
+import { CategoryStatusCode } from '@/modules/catalogs/domain/value-objects/category-status-value-object/category-status-code';
+import { CategoryStatusDescription } from '@/modules/catalogs/domain/value-objects/category-status-value-object/category-status-descritpion';
+import { CategoryStatusId } from '@/modules/catalogs/domain/value-objects/category-status-value-object/category-status-id';
+import { CategoryStatusName } from '@/modules/catalogs/domain/value-objects/category-status-value-object/category-status-name';
 
 export class CategoryStatus {
   constructor(

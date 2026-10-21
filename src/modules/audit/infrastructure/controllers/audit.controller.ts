@@ -5,10 +5,10 @@ import { Permissions } from '@/shared/infrastructure/decorators/permissions.deco
 import { SuccessResponseDto } from '@/shared/infrastructure/http/dtos/http-success-response.dto';
 import { HttpPaginatedResponseDto } from '@/shared/infrastructure/http/dtos/http-paginated-response.dto';
 import { Pagination } from '@/shared/domain/value-object/pagination';
-import { GetAuditLogsQuery } from '../../application/queries/get-audit-logs/get-audit-logs.query';
-import { AuditLogDto } from '../../application/dtos/audit-log.dto';
-import { AuditLogHttpDto } from '../dtos/audit-log-http.dto';
-import { AuditLogsQueryDto } from '../dtos/audit-logs-query.dto';
+import { GetAuditLogsQuery } from '@/modules/audit/application/queries/get-audit-logs/get-audit-logs.query';
+import { AuditLogDto } from '@/modules/audit/application/dtos/audit-log.dto';
+import { AuditLogHttpDto } from '@/modules/audit/infrastructure/dtos/audit-log-http.dto';
+import { AuditLogsQueryDto } from '@/modules/audit/infrastructure/dtos/audit-logs-query.dto';
 
 @Controller('audit')
 @ApiBearerAuth('JWT-auth')

@@ -3,8 +3,8 @@ import { ProviderStorageRepository } from '@/modules/storage/domain/repositories
 import { DeleteProviderStorageCommand } from './delete-provider-storage.command';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { ProviderStorageId } from '@/modules/storage/domain/value-objects/provider-storage-value-object/provider-storage-id';
-import { ProviderStorageQueriesRepository } from '../../../repositories/provider-storage-read.repository';
-import { ProviderStorageDto } from '../../../dtos/provider-storage.dto';
+import { ProviderStorageQueriesRepository } from '@/modules/storage/application/repositories/provider-storage-read.repository';
+import { ProviderStorageDto } from '@/modules/storage/application/dtos/provider-storage.dto';
 
 @CommandHandler(DeleteProviderStorageCommand)
 export class DeleteProviderStorageHandler implements ICommandHandler<DeleteProviderStorageCommand> {

@@ -3,7 +3,7 @@ import { GeographicDivisionType } from '@/modules/catalogs/domain/entities/geogr
 import { GeographicDivisionTypeRepository } from '@/modules/catalogs/domain/repositories/geographic-division-type-repository';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { BadRequestException } from '@/shared/domain/exceptions/bad-request.exception';
-import { GeographicDivisionTypeQueriesRepository } from '../../../repositories/geographic-division-type-read.repository';
+import { GeographicDivisionTypeQueriesRepository } from '@/modules/catalogs/application/repositories/geographic-division-type-read.repository';
 import { UpdateGeographicDivisionTypeCommand } from './update-geographic-division-type.command';
 
 @CommandHandler(UpdateGeographicDivisionTypeCommand)

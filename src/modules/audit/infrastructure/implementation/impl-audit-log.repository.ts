@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { AuditLogRepository } from '../../domain/repositories/audit-log.repository';
+import { AuditLogRepository } from '@/modules/audit/domain/repositories/audit-log.repository';
 import {
   AuditLogFilters,
   AuditLogReadRepository,
-} from '../../application/repositories/audit-log-read.repository';
-import { AuditLog } from '../../domain/entities/audit-log';
+} from '@/modules/audit/application/repositories/audit-log-read.repository';
+import { AuditLog } from '@/modules/audit/domain/entities/audit-log';
 import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
-import { Prisma } from '../../../../../generated/prisma/client';
+import { Prisma } from 'generated/prisma/client';
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
-import { AuditLogDto } from '../../application/dtos/audit-log.dto';
+import { AuditLogDto } from '@/modules/audit/application/dtos/audit-log.dto';
 import { EntityList } from '@/shared/domain/value-object/entity-list';
 import { TotalItems } from '@/shared/domain/value-object/total-items';
 import { TotalPages } from '@/shared/domain/value-object/total-page';
-import { AuditAction } from '../../domain/enums/audit-action.enum';
+import { AuditAction } from '@/modules/audit/domain/enums/audit-action.enum';
 
 @Injectable()
 export class ImplAuditLogRepository

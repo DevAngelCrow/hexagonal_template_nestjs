@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { AuditLogService } from './audit-log.service';
-import { AuditAction } from '../../domain/enums/audit-action.enum';
-import { AuditLogRepository } from '../../domain/repositories/audit-log.repository';
-import { AuditLoggerPort } from '../../domain/ports/audit-logger.port';
+import { AuditAction } from '@/modules/audit/domain/enums/audit-action.enum';
+import { AuditLogRepository } from '@/modules/audit/domain/repositories/audit-log.repository';
+import { AuditLoggerPort } from '@/modules/audit/domain/ports/audit-logger.port';
 
 describe('AuditLogService', () => {
   it('creates an audit log entry and calls repository.create', async () => {

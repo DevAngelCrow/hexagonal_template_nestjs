@@ -1,4 +1,4 @@
-import { DomainEventLike } from '../aggregate-root';
+import { DomainEventLike } from '@/shared/domain/aggregate-root';
 
 /**
  * Port que define el contrato para publicar eventos de dominio.

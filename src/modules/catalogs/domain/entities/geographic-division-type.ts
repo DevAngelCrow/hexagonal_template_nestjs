@@ -1,8 +1,8 @@
-import { GeographicDivisionTypeActive } from '../value-objects/geographic-division-type-value-object/geographic-division-type-active';
-import { GeographicDivisionTypeId } from '../value-objects/geographic-division-type-value-object/geographic-division-type-id';
-import { GeographicDivisionTypeIdCountry } from '../value-objects/geographic-division-type-value-object/geographic-division-type-id-country';
-import { GeographicDivisionTypeLevel } from '../value-objects/geographic-division-type-value-object/geographic-division-type-level';
-import { GeographicDivisionTypeName } from '../value-objects/geographic-division-type-value-object/geographic-division-type-name';
+import { GeographicDivisionTypeActive } from '@/modules/catalogs/domain/value-objects/geographic-division-type-value-object/geographic-division-type-active';
+import { GeographicDivisionTypeId } from '@/modules/catalogs/domain/value-objects/geographic-division-type-value-object/geographic-division-type-id';
+import { GeographicDivisionTypeIdCountry } from '@/modules/catalogs/domain/value-objects/geographic-division-type-value-object/geographic-division-type-id-country';
+import { GeographicDivisionTypeLevel } from '@/modules/catalogs/domain/value-objects/geographic-division-type-value-object/geographic-division-type-level';
+import { GeographicDivisionTypeName } from '@/modules/catalogs/domain/value-objects/geographic-division-type-value-object/geographic-division-type-name';
 
 export class GeographicDivisionType {
   constructor(

@@ -9,7 +9,7 @@ import { PrismaClient } from 'generated/prisma/client';
 import { TransactionClient } from 'generated/prisma/internal/prismaNamespace';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
-import { TransactionContextService } from '../services/transaction-context.service';
+import { TransactionContextService } from '@/shared/infrastructure/services/transaction-context.service';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()

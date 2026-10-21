@@ -2,8 +2,8 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { GeographicDivisionTypeRepository } from '@/modules/catalogs/domain/repositories/geographic-division-type-repository';
 import { GeographicDivisionTypeId } from '@/modules/catalogs/domain/value-objects/geographic-division-type-value-object/geographic-division-type-id';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
-import { GeographicDivisionTypeQueriesRepository } from '../../../repositories/geographic-division-type-read.repository';
-import { GeographicDivisionTypeDto } from '../../../dtos/geographic-division-type.dto';
+import { GeographicDivisionTypeQueriesRepository } from '@/modules/catalogs/application/repositories/geographic-division-type-read.repository';
+import { GeographicDivisionTypeDto } from '@/modules/catalogs/application/dtos/geographic-division-type.dto';
 import { DeleteGeographicDivisionTypeCommand } from './delete-geographic-division-type.command';
 
 @CommandHandler(DeleteGeographicDivisionTypeCommand)

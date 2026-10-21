@@ -14,28 +14,28 @@ import {
 import { ApiBearerAuth, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { Permissions } from '@/shared/infrastructure/decorators/permissions.decorator';
-import { SuccessResponseDto } from '../../../../shared/infrastructure/http/dtos/http-success-response.dto';
-import { HttpPaginatedResponseDto } from '../../../../shared/infrastructure/http/dtos/http-paginated-response.dto';
-import { HttpCursorPaginatedResponseDto } from '../../../../shared/infrastructure/http/dtos/http-cursor-paginated-response.dto';
+import { SuccessResponseDto } from '@/shared/infrastructure/http/dtos/http-success-response.dto';
+import { HttpPaginatedResponseDto } from '@/shared/infrastructure/http/dtos/http-paginated-response.dto';
+import { HttpCursorPaginatedResponseDto } from '@/shared/infrastructure/http/dtos/http-cursor-paginated-response.dto';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import {
   GetGeographicDivisionsCursorQueryDto,
   GetGeographicDivisionsQueryDto,
-} from '../dtos/query/get-geographic-divisions-query.dto';
+} from '@/modules/catalogs/infrastructure/dtos/query/get-geographic-divisions-query.dto';
 
-import { CreateGeographicDivisionDto } from '../dtos/validators/geographic-division/create-geographic-division.dto';
-import { UpdateGeographicDivisionDto } from '../dtos/validators/geographic-division/update-geographic-division.dto';
-import { GeographicDivisionHttpDto } from '../dtos/http/geographic-division-http-dto/geographic-division-http.dto';
-import { CreateGeographicDivisionCommand } from '../../application/geographic-division/commands/create-geographic-division/create-geographic-division.command';
-import { UpdateGeographicDivisionCommand } from '../../application/geographic-division/commands/update-geographic-division/update-geographic-division.command';
-import { DeleteGeographicDivisionCommand } from '../../application/geographic-division/commands/delete-geographic-division/delete-geographic-division.command';
-import { GetGeographicDivisionsQuery } from '../../application/geographic-division/queries/get-geographic-divisions/get-geographic-divisions.query';
-import { GetGeographicDivisionQuery } from '../../application/geographic-division/queries/get-geographic-division/get-geographic-division.query';
-import { GetGeographicDivisionsCursorQuery } from '../../application/geographic-division/queries/get-geographic-divisions-cursor/get-geographic-divisions-cursor.query';
-import { GeographicDivisionDto } from '../../application/dtos/geographic-division.dto';
+import { CreateGeographicDivisionDto } from '@/modules/catalogs/infrastructure/dtos/validators/geographic-division/create-geographic-division.dto';
+import { UpdateGeographicDivisionDto } from '@/modules/catalogs/infrastructure/dtos/validators/geographic-division/update-geographic-division.dto';
+import { GeographicDivisionHttpDto } from '@/modules/catalogs/infrastructure/dtos/http/geographic-division-http-dto/geographic-division-http.dto';
+import { CreateGeographicDivisionCommand } from '@/modules/catalogs/application/geographic-division/commands/create-geographic-division/create-geographic-division.command';
+import { UpdateGeographicDivisionCommand } from '@/modules/catalogs/application/geographic-division/commands/update-geographic-division/update-geographic-division.command';
+import { DeleteGeographicDivisionCommand } from '@/modules/catalogs/application/geographic-division/commands/delete-geographic-division/delete-geographic-division.command';
+import { GetGeographicDivisionsQuery } from '@/modules/catalogs/application/geographic-division/queries/get-geographic-divisions/get-geographic-divisions.query';
+import { GetGeographicDivisionQuery } from '@/modules/catalogs/application/geographic-division/queries/get-geographic-division/get-geographic-division.query';
+import { GetGeographicDivisionsCursorQuery } from '@/modules/catalogs/application/geographic-division/queries/get-geographic-divisions-cursor/get-geographic-divisions-cursor.query';
+import { GeographicDivisionDto } from '@/modules/catalogs/application/dtos/geographic-division.dto';
 
-import { GetGeographicDivisionLineageQuery } from '../../application/geographic-division/queries/get-geographic-division-lineage/get-geographic-division-lineage.query';
+import { GetGeographicDivisionLineageQuery } from '@/modules/catalogs/application/geographic-division/queries/get-geographic-division-lineage/get-geographic-division-lineage.query';
 
 @Controller('geographic-divisions')
 @ApiBearerAuth('JWT-auth')

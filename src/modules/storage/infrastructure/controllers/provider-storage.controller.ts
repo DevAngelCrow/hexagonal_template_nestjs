@@ -11,24 +11,24 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { CreateProviderStorageDto } from '../dtos/validators/provider-storage/create-provider-storage.dto';
-import { SuccessResponseDto } from '../../../../shared/infrastructure/http/dtos/http-success-response.dto';
-import { UpdateProviderStorageDto } from '../dtos/validators/provider-storage/update-provider-storage.dto';
-import { HttpPaginatedResponseDto } from '../../../../shared/infrastructure/http/dtos/http-paginated-response.dto';
-import { ProviderStorageHttpDto } from '../dtos/http/provider-storage-http-dto/provider-storage-http.dto';
+import { CreateProviderStorageDto } from '@/modules/storage/infrastructure/dtos/validators/provider-storage/create-provider-storage.dto';
+import { SuccessResponseDto } from '@/shared/infrastructure/http/dtos/http-success-response.dto';
+import { UpdateProviderStorageDto } from '@/modules/storage/infrastructure/dtos/validators/provider-storage/update-provider-storage.dto';
+import { HttpPaginatedResponseDto } from '@/shared/infrastructure/http/dtos/http-paginated-response.dto';
+import { ProviderStorageHttpDto } from '@/modules/storage/infrastructure/dtos/http/provider-storage-http-dto/provider-storage-http.dto';
 import { Pagination } from '@/shared/domain/value-object/pagination';
-import { GetProviderStoragesQueryDto } from '../dtos/query/get-provider-storages-query.dto';
-import { ProviderStorage } from '../../domain/entities/provider-storage';
+import { GetProviderStoragesQueryDto } from '@/modules/storage/infrastructure/dtos/query/get-provider-storages-query.dto';
+import { ProviderStorage } from '@/modules/storage/domain/entities/provider-storage';
 
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { CreateProviderStorageCommand } from '../../application/provider-storage/commands/create-provider-storage/create-provider-storage.command';
-import { UpdateProviderStorageCommand } from '../../application/provider-storage/commands/update-provider-storage/update-provider-storage.command';
-import { DeleteProviderStorageCommand } from '../../application/provider-storage/commands/delete-provider-storage/delete-provider-storage.command';
-import { GetProviderStoragesQuery } from '../../application/provider-storage/queries/get-provider-storages/get-provider-storages.query';
-import { GetProviderStorageQuery } from '../../application/provider-storage/queries/get-provider-storage/get-provider-storage.query';
-import { GetProviderStorageByCodeQuery } from '../../application/provider-storage/queries/get-provider-storage-by-code/get-provider-storage-by-code.query';
-import { ProviderStorageDto } from '../../application/dtos/provider-storage.dto';
+import { CreateProviderStorageCommand } from '@/modules/storage/application/provider-storage/commands/create-provider-storage/create-provider-storage.command';
+import { UpdateProviderStorageCommand } from '@/modules/storage/application/provider-storage/commands/update-provider-storage/update-provider-storage.command';
+import { DeleteProviderStorageCommand } from '@/modules/storage/application/provider-storage/commands/delete-provider-storage/delete-provider-storage.command';
+import { GetProviderStoragesQuery } from '@/modules/storage/application/provider-storage/queries/get-provider-storages/get-provider-storages.query';
+import { GetProviderStorageQuery } from '@/modules/storage/application/provider-storage/queries/get-provider-storage/get-provider-storage.query';
+import { GetProviderStorageByCodeQuery } from '@/modules/storage/application/provider-storage/queries/get-provider-storage-by-code/get-provider-storage-by-code.query';
+import { ProviderStorageDto } from '@/modules/storage/application/dtos/provider-storage.dto';
 import { Permissions } from '@/shared/infrastructure/decorators/permissions.decorator';
 
 @Controller('provider-storages')

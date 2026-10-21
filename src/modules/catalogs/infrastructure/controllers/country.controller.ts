@@ -11,23 +11,23 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { CreateCountryDto } from '../dtos/validators/country/create-country.dto';
-import { SuccessResponseDto } from '../../../../shared/infrastructure/http/dtos/http-success-response.dto';
-import { UpdateCountryDto } from '../dtos/validators/country/update-country.dto';
-import { HttpPaginatedResponseDto } from '../../../../shared/infrastructure/http/dtos/http-paginated-response.dto';
-import { CountryHttpDto } from '../dtos/http/country-http-dto/country-http.dto';
+import { CreateCountryDto } from '@/modules/catalogs/infrastructure/dtos/validators/country/create-country.dto';
+import { SuccessResponseDto } from '@/shared/infrastructure/http/dtos/http-success-response.dto';
+import { UpdateCountryDto } from '@/modules/catalogs/infrastructure/dtos/validators/country/update-country.dto';
+import { HttpPaginatedResponseDto } from '@/shared/infrastructure/http/dtos/http-paginated-response.dto';
+import { CountryHttpDto } from '@/modules/catalogs/infrastructure/dtos/http/country-http-dto/country-http.dto';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { Pagination } from '@/shared/domain/value-object/pagination';
-import { GetCountriesQueryDto } from '../dtos/query/get-countries-query.dto';
+import { GetCountriesQueryDto } from '@/modules/catalogs/infrastructure/dtos/query/get-countries-query.dto';
 
 import { ApiBearerAuth, ApiParam, ApiQuery } from '@nestjs/swagger';
-import { CreateCountryCommand } from '../../application/country/commands/create-country/create-country.command';
+import { CreateCountryCommand } from '@/modules/catalogs/application/country/commands/create-country/create-country.command';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { UpdateCountryCommand } from '../../application/country/commands/update-country/update-country.command';
-import { GetCountriesQuery } from '../../application/country/queries/get-countries/get-countries.query';
-import { GetCountryQuery } from '../../application/country/queries/get-country/get-country.query';
-import { DeleteCountryCommand } from '../../application/country/commands/delete-country/delete-country.command';
-import { CountryDto } from '../../application/dtos/country.dto';
+import { UpdateCountryCommand } from '@/modules/catalogs/application/country/commands/update-country/update-country.command';
+import { GetCountriesQuery } from '@/modules/catalogs/application/country/queries/get-countries/get-countries.query';
+import { GetCountryQuery } from '@/modules/catalogs/application/country/queries/get-country/get-country.query';
+import { DeleteCountryCommand } from '@/modules/catalogs/application/country/commands/delete-country/delete-country.command';
+import { CountryDto } from '@/modules/catalogs/application/dtos/country.dto';
 import { Permissions } from '@/shared/infrastructure/decorators/permissions.decorator';
 
 @Controller('countries')

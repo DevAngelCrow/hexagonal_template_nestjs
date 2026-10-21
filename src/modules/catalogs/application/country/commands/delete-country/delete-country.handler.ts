@@ -4,10 +4,10 @@ import { DeleteCountryCommand } from './delete-country.command';
 import { CountryId } from '@/modules/catalogs/domain/value-objects/country-value-object/country-id';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { BadRequestException } from '@/shared/domain/exceptions/bad-request.exception';
-import { CountryQueriesRepository } from '../../../repositories/country-read.repository';
-import { CountryDto } from '../../../dtos/country.dto';
+import { CountryQueriesRepository } from '@/modules/catalogs/application/repositories/country-read.repository';
+import { CountryDto } from '@/modules/catalogs/application/dtos/country.dto';
 import { CatalogCachePort } from '@/shared/application/ports/catalog-cache.port';
-import { COUNTRIES_CACHE_KEYS } from '../../queries/get-countries/get-countries.handler';
+import { COUNTRIES_CACHE_KEYS } from '@/modules/catalogs/application/country/queries/get-countries/get-countries.handler';
 
 @CommandHandler(DeleteCountryCommand)
 export class DeleteCountryHandler implements ICommandHandler<DeleteCountryCommand> {

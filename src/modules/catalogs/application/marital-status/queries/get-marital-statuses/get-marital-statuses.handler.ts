@@ -2,8 +2,8 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { GetMaritalStatusesQuery } from './get-marital-statuses.query';
 import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
-import { MaritalStatusQueriesRepository } from '../../../repositories/marital-status-read.repository';
-import { MaritalStatusDto } from '../../../dtos/marital-status.dto';
+import { MaritalStatusQueriesRepository } from '@/modules/catalogs/application/repositories/marital-status-read.repository';
+import { MaritalStatusDto } from '@/modules/catalogs/application/dtos/marital-status.dto';
 
 @QueryHandler(GetMaritalStatusesQuery)
 export class GetMaritalStatusesHandler implements IQueryHandler<GetMaritalStatusesQuery> {

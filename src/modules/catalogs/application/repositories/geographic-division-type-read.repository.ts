@@ -1,6 +1,6 @@
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
-import { GeographicDivisionTypeDto } from '../dtos/geographic-division-type.dto';
+import { GeographicDivisionTypeDto } from '@/modules/catalogs/application/dtos/geographic-division-type.dto';
 
 export abstract class GeographicDivisionTypeQueriesRepository {
   abstract getAll(

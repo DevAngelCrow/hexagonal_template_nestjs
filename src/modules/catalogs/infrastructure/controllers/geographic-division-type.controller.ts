@@ -14,21 +14,21 @@ import {
 import { ApiBearerAuth, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { Permissions } from '@/shared/infrastructure/decorators/permissions.decorator';
-import { SuccessResponseDto } from '../../../../shared/infrastructure/http/dtos/http-success-response.dto';
-import { HttpPaginatedResponseDto } from '../../../../shared/infrastructure/http/dtos/http-paginated-response.dto';
+import { SuccessResponseDto } from '@/shared/infrastructure/http/dtos/http-success-response.dto';
+import { HttpPaginatedResponseDto } from '@/shared/infrastructure/http/dtos/http-paginated-response.dto';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { Pagination } from '@/shared/domain/value-object/pagination';
-import { GetGeographicDivisionTypesQueryDto } from '../dtos/query/get-geographic-division-types-query.dto';
+import { GetGeographicDivisionTypesQueryDto } from '@/modules/catalogs/infrastructure/dtos/query/get-geographic-division-types-query.dto';
 
-import { CreateGeographicDivisionTypeDto } from '../dtos/validators/geographic-division-type/create-geographic-division-type.dto';
-import { UpdateGeographicDivisionTypeDto } from '../dtos/validators/geographic-division-type/update-geographic-division-type.dto';
-import { GeographicDivisionTypeHttpDto } from '../dtos/http/geographic-division-type-http-dto/geographic-division-type-http.dto';
-import { CreateGeographicDivisionTypeCommand } from '../../application/geographic-division-type/commands/create-geographic-division-type/create-geographic-division-type.command';
-import { UpdateGeographicDivisionTypeCommand } from '../../application/geographic-division-type/commands/update-geographic-division-type/update-geographic-division-type.command';
-import { DeleteGeographicDivisionTypeCommand } from '../../application/geographic-division-type/commands/delete-geographic-division-type/delete-geographic-division-type.command';
-import { GetGeographicDivisionTypesQuery } from '../../application/geographic-division-type/queries/get-geographic-division-types/get-geographic-division-types.query';
-import { GetGeographicDivisionTypeQuery } from '../../application/geographic-division-type/queries/get-geographic-division-type/get-geographic-division-type.query';
-import { GeographicDivisionTypeDto } from '../../application/dtos/geographic-division-type.dto';
+import { CreateGeographicDivisionTypeDto } from '@/modules/catalogs/infrastructure/dtos/validators/geographic-division-type/create-geographic-division-type.dto';
+import { UpdateGeographicDivisionTypeDto } from '@/modules/catalogs/infrastructure/dtos/validators/geographic-division-type/update-geographic-division-type.dto';
+import { GeographicDivisionTypeHttpDto } from '@/modules/catalogs/infrastructure/dtos/http/geographic-division-type-http-dto/geographic-division-type-http.dto';
+import { CreateGeographicDivisionTypeCommand } from '@/modules/catalogs/application/geographic-division-type/commands/create-geographic-division-type/create-geographic-division-type.command';
+import { UpdateGeographicDivisionTypeCommand } from '@/modules/catalogs/application/geographic-division-type/commands/update-geographic-division-type/update-geographic-division-type.command';
+import { DeleteGeographicDivisionTypeCommand } from '@/modules/catalogs/application/geographic-division-type/commands/delete-geographic-division-type/delete-geographic-division-type.command';
+import { GetGeographicDivisionTypesQuery } from '@/modules/catalogs/application/geographic-division-type/queries/get-geographic-division-types/get-geographic-division-types.query';
+import { GetGeographicDivisionTypeQuery } from '@/modules/catalogs/application/geographic-division-type/queries/get-geographic-division-type/get-geographic-division-type.query';
+import { GeographicDivisionTypeDto } from '@/modules/catalogs/application/dtos/geographic-division-type.dto';
 
 @Controller('geographic-division-types')
 @ApiBearerAuth('JWT-auth')

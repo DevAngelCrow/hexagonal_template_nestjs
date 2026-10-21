@@ -1,4 +1,4 @@
-import { GlobalStatus } from '../../domain/entities/global-status';
+import { GlobalStatus } from '@/modules/catalogs/domain/entities/global-status';
 
 export class GlobalStatusDto<T = unknown> {
   constructor(

@@ -2,8 +2,8 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { GetCategoriesStatusQuery } from './get-categories-status.query';
 import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
-import { CategoryStatusQueriesRepository } from '../../../repositories/category-status-read.repository';
-import { CategoryStatusDto } from '../../../dtos/category-status.dto';
+import { CategoryStatusQueriesRepository } from '@/modules/catalogs/application/repositories/category-status-read.repository';
+import { CategoryStatusDto } from '@/modules/catalogs/application/dtos/category-status.dto';
 
 @QueryHandler(GetCategoriesStatusQuery)
 export class GetCategoriesStatusHandler implements IQueryHandler<GetCategoriesStatusQuery> {

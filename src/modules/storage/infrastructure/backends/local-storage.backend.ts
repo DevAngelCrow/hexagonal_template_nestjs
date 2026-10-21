@@ -4,7 +4,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
 import { Express } from 'express';
 import { StorageBackend } from './storage-backend';
-import { MIME_TO_EXTENSION } from '../config/multer-file-filter.config';
+import { MIME_TO_EXTENSION } from '@/modules/storage/infrastructure/config/multer-file-filter.config';
 
 @Injectable()
 export class LocalStorageBackend extends StorageBackend {

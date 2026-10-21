@@ -1,5 +1,5 @@
-import { AuditAction } from '../../domain/enums/audit-action.enum';
-import { AuditLogDto } from '../../application/dtos/audit-log.dto';
+import { AuditAction } from '@/modules/audit/domain/enums/audit-action.enum';
+import { AuditLogDto } from '@/modules/audit/application/dtos/audit-log.dto';
 
 export class AuditLogHttpDto {
   constructor(

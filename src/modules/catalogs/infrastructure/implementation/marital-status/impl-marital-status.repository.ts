@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { MaritalStatusRepository } from '../../../domain/repositories/marital-status-repository';
-import { MaritalStatus } from '../../../domain/entities/marital-status';
-import { MaritalStatusId } from '../../../domain/value-objects/marital-status-value-object/marital-status-id';
+import { MaritalStatusRepository } from '@/modules/catalogs/domain/repositories/marital-status-repository';
+import { MaritalStatus } from '@/modules/catalogs/domain/entities/marital-status';
+import { MaritalStatusId } from '@/modules/catalogs/domain/value-objects/marital-status-value-object/marital-status-id';
 import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
@@ -13,7 +13,7 @@ import { TotalItems } from '@/shared/domain/value-object/total-items';
 import { TotalPages } from '@/shared/domain/value-object/total-page';
 import { MaritalStatusQueriesRepository } from '@/modules/catalogs/application/repositories/marital-status-read.repository';
 import { MaritalStatusDto } from '@/modules/catalogs/application/dtos/marital-status.dto';
-import { MaritalStatusHttpDto } from '../../dtos/http/marital-status-http-dto/marital-status-http.dto';
+import { MaritalStatusHttpDto } from '@/modules/catalogs/infrastructure/dtos/http/marital-status-http-dto/marital-status-http.dto';
 
 @Injectable()
 export class ImplMaritalStatusRepository

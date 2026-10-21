@@ -12,22 +12,22 @@ import {
   Query,
 } from '@nestjs/common';
 
-import { SuccessResponseDto } from '../../../../shared/infrastructure/http/dtos/http-success-response.dto';
-import { HttpPaginatedResponseDto } from '../../../../shared/infrastructure/http/dtos/http-paginated-response.dto';
+import { SuccessResponseDto } from '@/shared/infrastructure/http/dtos/http-success-response.dto';
+import { HttpPaginatedResponseDto } from '@/shared/infrastructure/http/dtos/http-paginated-response.dto';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { Pagination } from '@/shared/domain/value-object/pagination';
-import { GetMaritalStatusesQueryDto } from '../dtos/query/get-marital-statuses-query.dto';
+import { GetMaritalStatusesQueryDto } from '@/modules/catalogs/infrastructure/dtos/query/get-marital-statuses-query.dto';
 
-import { MaritalStatusHttpDto } from '../dtos/http/marital-status-http-dto/marital-status-http.dto';
-import { CreateMaritalStatusDto } from '../dtos/validators/marital-status/create-marital-status.dto';
-import { UpdateMaritalStatusDto } from '../dtos/validators/marital-status/update-marital-status.dto';
+import { MaritalStatusHttpDto } from '@/modules/catalogs/infrastructure/dtos/http/marital-status-http-dto/marital-status-http.dto';
+import { CreateMaritalStatusDto } from '@/modules/catalogs/infrastructure/dtos/validators/marital-status/create-marital-status.dto';
+import { UpdateMaritalStatusDto } from '@/modules/catalogs/infrastructure/dtos/validators/marital-status/update-marital-status.dto';
 import { ApiBearerAuth, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { CreateMaritalStatusCommand } from '../../application/marital-status/commands/create-marital-status/create-marital-status.command';
-import { UpdateMaritalStatusCommand } from '../../application/marital-status/commands/update-marital-status/update-marital-status.command';
-import { DeleteMaritalStatusCommand } from '../../application/marital-status/commands/delete-marital-status/delete-marital-status.command';
-import { GetMaritalStatusesQuery } from '../../application/marital-status/queries/get-marital-statuses/get-marital-statuses.query';
-import { GetMaritalStatusQuery } from '../../application/marital-status/queries/get-marital-status/get-marital-status.query';
+import { CreateMaritalStatusCommand } from '@/modules/catalogs/application/marital-status/commands/create-marital-status/create-marital-status.command';
+import { UpdateMaritalStatusCommand } from '@/modules/catalogs/application/marital-status/commands/update-marital-status/update-marital-status.command';
+import { DeleteMaritalStatusCommand } from '@/modules/catalogs/application/marital-status/commands/delete-marital-status/delete-marital-status.command';
+import { GetMaritalStatusesQuery } from '@/modules/catalogs/application/marital-status/queries/get-marital-statuses/get-marital-statuses.query';
+import { GetMaritalStatusQuery } from '@/modules/catalogs/application/marital-status/queries/get-marital-status/get-marital-status.query';
 import { Permissions } from '@/shared/infrastructure/decorators/permissions.decorator';
 @Controller('marital-statuses')
 @ApiBearerAuth('JWT-auth')

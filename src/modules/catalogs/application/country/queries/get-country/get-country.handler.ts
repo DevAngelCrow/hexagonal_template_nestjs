@@ -2,8 +2,8 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { GetCountryQuery } from './get-country.query';
 import { CountryId } from '@/modules/catalogs/domain/value-objects/country-value-object/country-id';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
-import { CountryQueriesRepository } from '../../../repositories/country-read.repository';
-import { CountryDto } from '../../../dtos/country.dto';
+import { CountryQueriesRepository } from '@/modules/catalogs/application/repositories/country-read.repository';
+import { CountryDto } from '@/modules/catalogs/application/dtos/country.dto';
 
 @QueryHandler(GetCountryQuery)
 export class GetCountryHandler implements IQueryHandler<GetCountryQuery> {

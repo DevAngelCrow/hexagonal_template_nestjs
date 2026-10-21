@@ -12,22 +12,22 @@ import {
   Query,
 } from '@nestjs/common';
 
-import { SuccessResponseDto } from '../../../../shared/infrastructure/http/dtos/http-success-response.dto';
-import { HttpPaginatedResponseDto } from '../../../../shared/infrastructure/http/dtos/http-paginated-response.dto';
+import { SuccessResponseDto } from '@/shared/infrastructure/http/dtos/http-success-response.dto';
+import { HttpPaginatedResponseDto } from '@/shared/infrastructure/http/dtos/http-paginated-response.dto';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { Pagination } from '@/shared/domain/value-object/pagination';
-import { GetGlobalStatusesQueryDto } from '../dtos/query/get-global-statuses-query.dto';
+import { GetGlobalStatusesQueryDto } from '@/modules/catalogs/infrastructure/dtos/query/get-global-statuses-query.dto';
 
-import { GlobalStatusHttpDto } from '../dtos/http/global-status-http-dto/global-status-http.dto';
-import { CreateGlobalStatusDto } from '../dtos/validators/global-status/create-global-status.dto';
-import { UpdateGlobalStatusDto } from '../dtos/validators/global-status/update-global-status.dto';
+import { GlobalStatusHttpDto } from '@/modules/catalogs/infrastructure/dtos/http/global-status-http-dto/global-status-http.dto';
+import { CreateGlobalStatusDto } from '@/modules/catalogs/infrastructure/dtos/validators/global-status/create-global-status.dto';
+import { UpdateGlobalStatusDto } from '@/modules/catalogs/infrastructure/dtos/validators/global-status/update-global-status.dto';
 import { ApiBearerAuth, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { CreateGlobalStatusCommand } from '../../application/global-status/commands/create-global-status/create-global-status.command';
-import { UpdateGlobalStatusCommand } from '../../application/global-status/commands/update-global-status/update-global-status.command';
-import { DeleteGlobalStatusCommand } from '../../application/global-status/commands/delete-global-status/delete-global-status.command';
-import { GetGlobalStatusesQuery } from '../../application/global-status/queries/get-global-statuses/get-global-statuses.query';
-import { GetGlobalStatusQuery } from '../../application/global-status/queries/get-global-status/get-global-status.query';
+import { CreateGlobalStatusCommand } from '@/modules/catalogs/application/global-status/commands/create-global-status/create-global-status.command';
+import { UpdateGlobalStatusCommand } from '@/modules/catalogs/application/global-status/commands/update-global-status/update-global-status.command';
+import { DeleteGlobalStatusCommand } from '@/modules/catalogs/application/global-status/commands/delete-global-status/delete-global-status.command';
+import { GetGlobalStatusesQuery } from '@/modules/catalogs/application/global-status/queries/get-global-statuses/get-global-statuses.query';
+import { GetGlobalStatusQuery } from '@/modules/catalogs/application/global-status/queries/get-global-status/get-global-status.query';
 import { Permissions } from '@/shared/infrastructure/decorators/permissions.decorator';
 @Controller('global-statuses')
 @ApiBearerAuth('JWT-auth')

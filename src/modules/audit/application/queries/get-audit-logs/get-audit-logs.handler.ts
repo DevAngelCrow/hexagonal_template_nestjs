@@ -1,9 +1,9 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { GetAuditLogsQuery } from './get-audit-logs.query';
 import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
-import { AuditLogReadRepository } from '../../repositories/audit-log-read.repository';
+import { AuditLogReadRepository } from '@/modules/audit/application/repositories/audit-log-read.repository';
 import { Pagination } from '@/shared/domain/value-object/pagination';
-import { AuditLogDto } from '../../dtos/audit-log.dto';
+import { AuditLogDto } from '@/modules/audit/application/dtos/audit-log.dto';
 
 @QueryHandler(GetAuditLogsQuery)
 export class GetAuditLogsHandler implements IQueryHandler<GetAuditLogsQuery> {

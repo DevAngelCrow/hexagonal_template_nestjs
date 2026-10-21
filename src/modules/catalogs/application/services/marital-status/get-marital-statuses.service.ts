@@ -1,7 +1,7 @@
 import { Pagination } from '@/shared/domain/value-object/pagination';
-import { MaritalStatusDto } from '../../dtos/marital-status.dto';
-import { GetMaritalStatusesHandler } from '../../marital-status/queries/get-marital-statuses/get-marital-statuses.handler';
-import { GetMaritalStatusesQuery } from '../../marital-status/queries/get-marital-statuses/get-marital-statuses.query';
+import { MaritalStatusDto } from '@/modules/catalogs/application/dtos/marital-status.dto';
+import { GetMaritalStatusesHandler } from '@/modules/catalogs/application/marital-status/queries/get-marital-statuses/get-marital-statuses.handler';
+import { GetMaritalStatusesQuery } from '@/modules/catalogs/application/marital-status/queries/get-marital-statuses/get-marital-statuses.query';
 
 export class GetMaritalStatusesService {
   constructor(

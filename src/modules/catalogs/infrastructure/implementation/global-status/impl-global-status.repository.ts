@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { GlobalStatsusRepository } from '../../../domain/repositories/global-status-repository';
-import { GlobalStatus } from '../../../domain/entities/global-status';
-import { GlobalStatusId } from '../../../domain/value-objects/goblal-status-value-object/global-status-id';
+import { GlobalStatsusRepository } from '@/modules/catalogs/domain/repositories/global-status-repository';
+import { GlobalStatus } from '@/modules/catalogs/domain/entities/global-status';
+import { GlobalStatusId } from '@/modules/catalogs/domain/value-objects/goblal-status-value-object/global-status-id';
 import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
@@ -18,7 +18,7 @@ import { CategoryStatusDto } from '@/modules/catalogs/application/dtos/category-
 import { GetBooleanStatusCatalogService } from '@/shared/infrastructure/services/get-status-catalog.service';
 import { BooleanStatusData } from '@/shared/infrastructure/interfaces/boolean-status-data.interface';
 import { StatusMapperUtil } from '@/shared/infrastructure/utils/status-mapper.util';
-import { GlobalStatusHttpDto } from '../../dtos/http/global-status-http-dto/global-status-http.dto';
+import { GlobalStatusHttpDto } from '@/modules/catalogs/infrastructure/dtos/http/global-status-http-dto/global-status-http.dto';
 import { TransactionContextService } from '@/shared/infrastructure/services/transaction-context.service';
 
 @Injectable()

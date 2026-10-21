@@ -1,5 +1,5 @@
-import { GeographicDivision } from '../entities/geographic-division';
-import { GeographicDivisionId } from '../value-objects/geographic-division-value-object/geographic-division-id';
+import { GeographicDivision } from '@/modules/catalogs/domain/entities/geographic-division';
+import { GeographicDivisionId } from '@/modules/catalogs/domain/value-objects/geographic-division-value-object/geographic-division-id';
 
 export abstract class GeographicDivisionRepository {
   abstract create(entity: GeographicDivision): Promise<void>;

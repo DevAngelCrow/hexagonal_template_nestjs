@@ -1,4 +1,3 @@
-import { Optional } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { MetricsPort } from '@/shared/application/ports/metrics.port';
 import { StorageFiles } from '@/modules/storage/domain/entities/storage-files';
@@ -25,7 +24,6 @@ export class StorageFilesUploadFlowHandler<
   constructor(
     private readonly storageFilesRepository: StorageFilesRepository,
     private readonly providerStorageReposotiry: ProviderStorageRepository,
-    @Optional()
     private readonly metrics?: MetricsPort,
   ) {}
   async execute(

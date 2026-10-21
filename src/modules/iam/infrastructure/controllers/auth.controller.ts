@@ -164,6 +164,12 @@ export class AuthController {
   }
   @SkipAuth()
   @Throttle({ global: { ttl: 60000, limit: 5 } })
+  @Auditable({
+    action: AuditAction.LOGIN_SUCCESS,
+    failureAction: AuditAction.LOGIN_FAILED,
+    entityType: 'User',
+    entityIdFrom: 'body.user_name',
+  })
   @Post('login')
   @HttpCode(200)
   @ApiOperation({ summary: 'Authenticate and receive JWT tokens' })
@@ -468,6 +474,11 @@ export class AuthController {
   }
   @SkipAuth()
   @Throttle({ global: { ttl: 3_600_000, limit: 10 } })
+  @Auditable({
+    action: AuditAction.PASSWORD_RESET_COMPLETED,
+    entityType: 'User',
+    entityIdFrom: 'body.id',
+  })
   @Put('reset-password')
   @HttpCode(200)
   @ApiOperation({ summary: 'Complete password reset with token' })

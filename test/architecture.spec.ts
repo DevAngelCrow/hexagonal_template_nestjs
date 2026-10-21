@@ -58,7 +58,7 @@ describe('Architecture & Hexagonal Boundaries', () => {
     expect(violations, `Violations in domain layer:\n${violations.join('\n')}`).toEqual([]);
   });
 
-  it('application layer must NOT import from infrastructure or persistence frameworks', () => {
+  it('application layer must NOT import from infrastructure, persistence, or forbidden @nestjs packages', () => {
     const allFiles = getAllTsFiles(srcDir);
     const applicationFiles = allFiles.filter((f) => f.includes(`${path.sep}application${path.sep}`));
 
@@ -66,6 +66,7 @@ describe('Architecture & Hexagonal Boundaries', () => {
       /@prisma\//,
       /generated\/prisma/,
       /infrastructure/,
+      /@nestjs\/(?!cqrs)/,
     ];
 
     const violations: string[] = [];

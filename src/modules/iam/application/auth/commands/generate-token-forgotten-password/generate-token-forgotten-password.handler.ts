@@ -1,4 +1,3 @@
-import { Optional } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { MetricsPort } from '@/shared/application/ports/metrics.port';
 import { GenerateTokenForgottenPasswordCommand } from '@/modules/iam/application/auth/commands/generate-token-forgotten-password/generate-token-forgotten-password.command';
@@ -15,7 +14,6 @@ export class GenerateTokenForgottenPasswordHandler implements ICommandHandler<Ge
     private readonly getUserByEmail: GetUserByEmailService,
     private readonly verificationTokenRepository: VerificationTokenRepository,
     private readonly emailSenderPort: EmailSenderPort,
-    @Optional()
     private readonly metrics?: MetricsPort,
   ) {}
   async execute(command: GenerateTokenForgottenPasswordCommand): Promise<void> {

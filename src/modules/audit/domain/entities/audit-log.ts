@@ -1,4 +1,4 @@
-import { AuditAction } from '../enums/audit-action.enum';
+import { AuditAction } from '@/modules/audit/domain/enums/audit-action.enum';
 
 export class AuditLog {
   constructor(

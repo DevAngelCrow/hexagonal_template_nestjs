@@ -41,22 +41,46 @@ export class AuditableInterceptor implements NestInterceptor {
     const user = request.user;
 
     return next.handle().pipe(
-      tap((result: unknown) => {
-        try {
-          this.auditLog.log({
-            action: options.action,
-            user_id: user?.id ?? null,
-            user_name: user?.user_name ?? null,
-            ip_address: this.extractIp(request),
-            user_agent: this.extractUserAgent(request),
-            entity_type: options.entityType ?? null,
-            entity_id: this.resolveEntityId(options, request, result) ?? null,
-          });
-        } catch {
-          // AuditLogService.log already swallows persistence failures; this
-          // catch protects against synchronous extractor errors so they can't
-          // turn a 200 response into a 500.
-        }
+      tap({
+        next: (result: unknown) => {
+          try {
+            this.auditLog.log({
+              action: options.action,
+              user_id: user?.id ?? null,
+              user_name: user?.user_name ?? null,
+              ip_address: this.extractIp(request),
+              user_agent: this.extractUserAgent(request),
+              entity_type: options.entityType ?? null,
+              entity_id: this.resolveEntityId(options, request, result) ?? null,
+            });
+          } catch {
+            // AuditLogService.log already swallows persistence failures; this
+            // catch protects against synchronous extractor errors so they can't
+            // turn a 200 response into a 500.
+          }
+        },
+        error: () => {
+          if (!options.failureAction) return;
+          try {
+            const bodyUserName =
+              this.isRecord(request.body) &&
+              typeof request.body.user_name === 'string'
+                ? request.body.user_name
+                : null;
+            this.auditLog.log({
+              action: options.failureAction,
+              user_id: user?.id ?? null,
+              user_name: user?.user_name ?? bodyUserName,
+              ip_address: this.extractIp(request),
+              user_agent: this.extractUserAgent(request),
+              entity_type: options.entityType ?? null,
+              entity_id:
+                this.resolveEntityId(options, request, undefined) ?? null,
+            });
+          } catch {
+            // Protect against extractor errors on failure path
+          }
+        },
       }),
     );
   }

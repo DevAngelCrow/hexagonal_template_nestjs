@@ -34,6 +34,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DocsAuthMiddleware } from '@/shared/infrastructure/http/middleware/docs-auth.middleware';
 import { BullBoardAuthMiddleware } from '@/shared/infrastructure/http/middleware/bull-board-auth.middleware';
+import { AuditableInterceptor } from '@/modules/audit/infrastructure/interceptors/auditable.interceptor';
 
 @Module({
   imports: [
@@ -126,6 +127,10 @@ import { BullBoardAuthMiddleware } from '@/shared/infrastructure/http/middleware
     {
       provide: APP_INTERCEPTOR,
       useClass: TransactionInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: AuditableInterceptor,
     },
     {
       provide: APP_GUARD,

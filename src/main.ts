@@ -4,9 +4,9 @@ import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { Logger } from 'nestjs-pino';
 import { ConfigService } from '@nestjs/config';
 import * as express from 'express';
-import { HttpExceptionFilter } from './shared/infrastructure/http/filters/http-exception.filter';
+import { HttpExceptionFilter } from '@/shared/infrastructure/http/filters/http-exception.filter';
 import { ThrottlerExceptionFilter } from '@/shared/infrastructure/http/filters/throttler-exception.filter';
-import { BigIntTransformInterceptor } from './shared/infrastructure/interceptors/bigint-transform.interceptor';
+import { BigIntTransformInterceptor } from '@/shared/infrastructure/interceptors/bigint-transform.interceptor';
 import { setupSecurity } from '@/shared/infrastructure/setup/security.setup';
 import { setupSwagger } from '@/shared/infrastructure/setup/swagger.setup';
 

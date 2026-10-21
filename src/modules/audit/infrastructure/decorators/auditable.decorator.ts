@@ -5,6 +5,8 @@ export const AUDITABLE_KEY = 'audit:auditable';
 
 export type AuditableOptions = {
   action: AuditAction;
+  /** Action to emit if the request fails with an exception (optional). */
+  failureAction?: AuditAction;
   /** Business entity affected ('User', 'Document', etc). Optional. */
   entityType?: string;
   /**

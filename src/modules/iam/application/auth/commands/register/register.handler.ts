@@ -1,4 +1,3 @@
-import { Optional } from '@nestjs/common';
 import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { MetricsPort } from '@/shared/application/ports/metrics.port';
 import { CreateUserService } from '@/modules/iam/application/users/services/create-user.service';
@@ -31,7 +30,6 @@ export class RegisterHandler implements ICommandHandler<RegisterCommand> {
     private readonly userRoleCreateService: CreateUserRoleService,
     private readonly getGlobalStatusByCode: GetGlobalStatusByCodeService,
     private readonly getRoleByCode: GetRoleByCodeService,
-    @Optional()
     private readonly metrics?: MetricsPort,
   ) {}
   async execute(command: RegisterCommand): Promise<void> {

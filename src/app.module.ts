@@ -35,6 +35,8 @@ import { AppService } from '@/app.service';
 import { DocsAuthMiddleware } from '@/shared/infrastructure/http/middleware/docs-auth.middleware';
 import { BullBoardAuthMiddleware } from '@/shared/infrastructure/http/middleware/bull-board-auth.middleware';
 import { AuditableInterceptor } from '@/modules/audit/infrastructure/interceptors/auditable.interceptor';
+import { JwtPassportAuthGuard } from '@/modules/iam/infrastructure/guards/jwt-passport-auth.guard';
+import { PermissionsGuard } from '@/modules/iam/infrastructure/guards/permissions.guard';
 
 @Module({
   imports: [
@@ -135,6 +137,14 @@ import { AuditableInterceptor } from '@/modules/audit/infrastructure/interceptor
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: JwtPassportAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: PermissionsGuard,
     },
   ],
 })

@@ -3,6 +3,7 @@ import {
   ExecutionContext,
   Injectable,
   NestInterceptor,
+  Optional,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Observable, tap } from 'rxjs';
@@ -12,6 +13,7 @@ import {
   AUDITABLE_KEY,
   AuditableOptions,
 } from '@/modules/audit/infrastructure/decorators/auditable.decorator';
+import { TransactionContextService } from '@/shared/infrastructure/services/transaction-context.service';
 
 type AuthUserLike = { id?: string; user_name?: string } | undefined;
 
@@ -25,6 +27,8 @@ export class AuditableInterceptor implements NestInterceptor {
   constructor(
     private readonly reflector: Reflector,
     private readonly auditLog: AuditLogService,
+    @Optional()
+    private readonly transactionContext?: TransactionContextService,
   ) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
@@ -44,7 +48,7 @@ export class AuditableInterceptor implements NestInterceptor {
       tap({
         next: (result: unknown) => {
           try {
-            this.auditLog.log({
+            const entry = {
               action: options.action,
               user_id: user?.id ?? null,
               user_name: user?.user_name ?? null,
@@ -52,7 +56,15 @@ export class AuditableInterceptor implements NestInterceptor {
               user_agent: this.extractUserAgent(request),
               entity_type: options.entityType ?? null,
               entity_id: this.resolveEntityId(options, request, result) ?? null,
-            });
+            };
+
+            if (this.transactionContext?.isInTransaction()) {
+              this.transactionContext.addAfterCommitHook(() => {
+                this.auditLog.log(entry);
+              });
+            } else {
+              this.auditLog.log(entry);
+            }
           } catch {
             // AuditLogService.log already swallows persistence failures; this
             // catch protects against synchronous extractor errors so they can't

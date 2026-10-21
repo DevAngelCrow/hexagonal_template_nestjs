@@ -52,6 +52,14 @@ export class ImplAuthPort
     return content;
   }
 
+  private static readonly VIEWS_DIR = path.join(
+    __dirname,
+    '..',
+    '..',
+    '..',
+    'views',
+  );
+
   private getPrismaClient() {
     return this.prisma.client;
   }
@@ -63,10 +71,7 @@ export class ImplAuthPort
     try {
       const verificationUrl = `${this.configService.get<string>('CLIENT_URL')}${this.configService.get<string>('CLIENT_FORGOTTEN_PASSWORD')}?id=${verificationToken.id}&token=${verificationToken.token}`;
       const templatePath = path.join(
-        __dirname,
-        '..',
-        '..',
-        'views',
+        ImplAuthPort.VIEWS_DIR,
         'email-forgot-password.html',
       );
       const rawHtml = await this.getTemplate(templatePath);
@@ -98,10 +103,7 @@ export class ImplAuthPort
 
       // Leer el template HTML
       const templatePath = path.join(
-        __dirname,
-        '..',
-        '..',
-        'views',
+        ImplAuthPort.VIEWS_DIR,
         'verify-email.html',
       );
       const rawHtml = await this.getTemplate(templatePath);

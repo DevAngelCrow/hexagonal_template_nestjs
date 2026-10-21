@@ -65,6 +65,13 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
         return this.transactionContext.getTransaction() ?? this.prisma;
     }
 
+    // Always returns the root PrismaClient instance, ignoring any active
+    // transaction bound to AsyncLocalStorage. Useful for operations that must
+    // run outside of an ongoing transaction (such as audit logs).
+    get rootClient(): PrismaClient {
+        return this.prisma;
+    }
+
     async $transaction<T>(
         ...args: Parameters<PrismaClient['$transaction']>
     ): Promise<T> {

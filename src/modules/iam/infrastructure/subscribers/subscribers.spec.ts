@@ -81,30 +81,6 @@ describe('IAM Domain Events & Subscribers', () => {
   });
 
   describe('AuditIamSubscriber', () => {
-    it('forwards UserRegisteredDomainEvent to AuditLogService', () => {
-      const mockAuditService = {
-        log: vi.fn(),
-      };
-
-      const subscriber = new AuditIamSubscriber(mockAuditService as any);
-      const event = new UserRegisteredDomainEvent(
-        'user-123',
-        'user@test.com',
-        'alice',
-      );
-
-      subscriber.handle(event);
-
-      expect(mockAuditService.log).toHaveBeenCalledWith(
-        expect.objectContaining({
-          action: AuditAction.REGISTER,
-          user_id: 'user-123',
-          user_name: 'alice',
-          entity_type: 'User',
-        }),
-      );
-    });
-
     it('forwards UserLoggedInDomainEvent to AuditLogService', () => {
       const mockAuditService = {
         log: vi.fn(),

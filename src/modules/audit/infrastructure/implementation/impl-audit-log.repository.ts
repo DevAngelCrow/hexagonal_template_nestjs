@@ -22,10 +22,10 @@ export class ImplAuditLogRepository
   constructor(private readonly prisma: PrismaService) {}
 
   async create(auditLog: AuditLog): Promise<void> {
-    // Use `this.prisma` directly (not `this.prisma.client`) so that audit logs
+    // Use `this.prisma.rootClient` (not `this.prisma.client`) so that audit logs
     // are written outside any ongoing business transaction — ensuring they are
-    // persisted even when the parent transaction rolls back.
-    await this.prisma.client.mnt_audit_log.create({
+    // persisted even when the parent transaction rolls back or has already committed.
+    await this.prisma.rootClient.mnt_audit_log.create({
       data: {
         action: auditLog.action,
         user_name: auditLog.user_name,

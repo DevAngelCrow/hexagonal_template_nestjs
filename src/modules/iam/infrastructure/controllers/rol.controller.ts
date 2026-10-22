@@ -27,8 +27,8 @@ import { GetRolesQuery } from '@/modules/iam/application/security/queries/rol/ge
 import { GetRolByIdQuery } from '@/modules/iam/application/security/queries/rol/get-rol-by-id/get-rol-by-id.query';
 import { Permissions } from '@/modules/iam/infrastructure/decorators/permissions.decorator';
 import { MultipleStatusId } from '@/shared/domain/enums/multiple-status';
-import { Auditable } from '@/modules/audit/infrastructure/decorators/auditable.decorator';
-import { AuditAction } from '@/modules/audit/domain/enums/audit-action.enum';
+import { Auditable } from '@/shared/infrastructure/decorators/auditable.decorator';
+import { AuditAction } from '@/shared/domain/enums/audit-action.enum';
 
 @Controller('security/role')
 @ApiBearerAuth('JWT-auth')

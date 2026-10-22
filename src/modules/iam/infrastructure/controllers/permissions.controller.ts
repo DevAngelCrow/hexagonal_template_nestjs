@@ -26,8 +26,8 @@ import { DeletePermissionsCommand } from '@/modules/iam/application/security/com
 import { GetPermissionsQuery } from '@/modules/iam/application/security/queries/permissions/get-permissions/get-permissions.query';
 import { GetPermissionsByIdQuery } from '@/modules/iam/application/security/queries/permissions/get-permissions-by-id/get-permissions-by-id.query';
 import { Permissions } from '@/modules/iam/infrastructure/decorators/permissions.decorator';
-import { Auditable } from '@/modules/audit/infrastructure/decorators/auditable.decorator';
-import { AuditAction } from '@/modules/audit/domain/enums/audit-action.enum';
+import { Auditable } from '@/shared/infrastructure/decorators/auditable.decorator';
+import { AuditAction } from '@/shared/domain/enums/audit-action.enum';
 
 @Controller('security/permissions')
 @ApiBearerAuth('JWT-auth')

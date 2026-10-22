@@ -12,7 +12,7 @@ import { AuditLogService } from '@/modules/audit/application/services/audit-log.
 import {
   AUDITABLE_KEY,
   AuditableOptions,
-} from '@/modules/audit/infrastructure/decorators/auditable.decorator';
+} from '@/shared/infrastructure/decorators/auditable.decorator';
 import { TransactionContextService } from '@/shared/infrastructure/services/transaction-context.service';
 
 type AuthUserLike = { id?: string; user_name?: string } | undefined;

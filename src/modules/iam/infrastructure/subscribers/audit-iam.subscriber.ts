@@ -4,7 +4,7 @@ import { UserLoggedInDomainEvent } from '@/modules/iam/domain/events/user-logged
 import { UserPasswordResetDomainEvent } from '@/modules/iam/domain/events/user-password-reset.domain-event';
 import { RolePermissionsUpdatedDomainEvent } from '@/modules/iam/domain/events/role-permissions-updated.domain-event';
 import { AuditLogService } from '@/modules/audit/application/services/audit-log.service';
-import { AuditAction } from '@/modules/audit/domain/enums/audit-action.enum';
+import { AuditAction } from '@/shared/domain/enums/audit-action.enum';
 
 @Injectable()
 @EventsHandler(

@@ -25,8 +25,8 @@ import { UserDto } from '@/modules/iam/application/users/dtos/user.dto';
 import { Permissions } from '@/shared/infrastructure/decorators/permissions.decorator';
 import { CheckAuthenticatedUserGuard } from '@/modules/iam/infrastructure/guards/check-authenticated-user.guard';
 import { CheckAuthenticatedUser } from '@/modules/iam/infrastructure/decorators/check-authenticated-user.decorator';
-import { Auditable } from '@/modules/audit/infrastructure/decorators/auditable.decorator';
-import { AuditAction } from '@/modules/audit/domain/enums/audit-action.enum';
+import { Auditable } from '@/shared/infrastructure/decorators/auditable.decorator';
+import { AuditAction } from '@/shared/domain/enums/audit-action.enum';
 @Controller('identity/users')
 @ApiBearerAuth('JWT-auth')
 export class UserController {

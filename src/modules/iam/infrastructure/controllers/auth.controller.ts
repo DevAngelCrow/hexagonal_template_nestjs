@@ -71,8 +71,8 @@ import { Throttle } from '@nestjs/throttler';
 import { ConfigService } from '@nestjs/config';
 import { VerifyEmailQueryDto } from '@/modules/iam/infrastructure/dtos/auth/validators/auth/verify-email-query.dto';
 
-import { AuditAction } from '@/modules/audit/domain/enums/audit-action.enum';
-import { Auditable } from '@/modules/audit/infrastructure/decorators/auditable.decorator';
+import { AuditAction } from '@/shared/domain/enums/audit-action.enum';
+import { Auditable } from '@/shared/infrastructure/decorators/auditable.decorator';
 
 @Controller('auth')
 export class AuthController {

@@ -28,7 +28,7 @@ import { GetDocumentTypesQuery } from '@/modules/iam/application/profile/queries
 import { GetDocumentTypeByIdQuery } from '@/modules/iam/application/profile/queries/document-type/get-document-type-by-id/get-document-type-by-id.query';
 
 import { Permissions } from '@/shared/infrastructure/decorators/permissions.decorator';
-@Controller('document-types')
+@Controller('profile/document-types')
 @ApiBearerAuth('JWT-auth')
 export class DocumentTypeController {
   constructor(

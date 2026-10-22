@@ -1,4 +1,4 @@
-import { Controller, Get, SetMetadata } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import {
   HealthCheck,
   HealthCheckService,
@@ -7,8 +7,7 @@ import {
 import { ApiExcludeController } from '@nestjs/swagger';
 import { PrismaHealthIndicator } from './prisma-health.indicator';
 import { RedisHealthIndicator } from './redis-health.indicator';
-
-const SkipAuth = () => SetMetadata('isPublic', true);
+import { SkipAuth } from '@/shared/infrastructure/decorators/public-route.decorator';
 
 @ApiExcludeController()
 @Controller('health')

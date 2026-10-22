@@ -3,7 +3,7 @@ import { Menu } from '@/modules/iam/infrastructure/interfaces/menu.interface';
 import { SuccessResponseDto } from '@/shared/infrastructure/http/dtos/http-success-response.dto';
 import { MenuHttpDto } from '@/modules/iam/infrastructure/dtos/security/http/menu-http-dto/menu-http.dto';
 import { MenuUserResponseDto } from '@/modules/iam/infrastructure/dtos/security/http/menu-http-dto/menu-user-response.dto';
-import { Permissions } from '@/modules/iam/infrastructure/decorators/permissions.decorator';
+import { Permissions } from '@/shared/infrastructure/decorators/permissions.decorator';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { Request } from 'express';
 import { QueryBus } from '@nestjs/cqrs';

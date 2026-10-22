@@ -26,7 +26,7 @@ import { UpdateRouteCommand } from '@/modules/iam/application/security/commands/
 import { DeleteRouteCommand } from '@/modules/iam/application/security/commands/route/delete-route/delete-route.command';
 import { GetRoutesQuery } from '@/modules/iam/application/security/queries/route/get-routes/get-routes.query';
 import { GetRouteByIdQuery } from '@/modules/iam/application/security/queries/route/get-route-by-id/get-route-by-id.query';
-import { Permissions } from '@/modules/iam/infrastructure/decorators/permissions.decorator';
+import { Permissions } from '@/shared/infrastructure/decorators/permissions.decorator';
 
 @Controller('security/routes')
 @ApiBearerAuth('JWT-auth')

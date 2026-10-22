@@ -34,7 +34,7 @@ import { RegisterDto } from '@/modules/iam/application/auth/dtos/register.dto';
 import { Transactional } from '@/shared/infrastructure/decorators/transactional.decorator';
 import { LoginDto } from '@/modules/iam/infrastructure/dtos/auth/validators/auth/login.dto';
 import { AuthLoginHttpDto } from '@/modules/iam/infrastructure/dtos/auth/http/user-http-dto/auth-login-http.dto';
-import { SkipAuth } from '@/modules/iam/infrastructure/decorators/public-route.decorator';
+import { SkipAuth } from '@/shared/infrastructure/decorators/public-route.decorator';
 import {
   ApiBody,
   ApiConsumes,

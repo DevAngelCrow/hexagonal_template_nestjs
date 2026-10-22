@@ -1,3 +1,5 @@
-import { SetMetadata } from '@nestjs/common';
-export const SKIP_AUTH_KEY = 'isPublic';
-export const SkipAuth = () => SetMetadata(SKIP_AUTH_KEY, true);
+export {
+  SKIP_AUTH_KEY,
+  SkipAuth,
+  Public,
+} from '@/shared/infrastructure/decorators/public-route.decorator';

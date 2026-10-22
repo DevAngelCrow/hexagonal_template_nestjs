@@ -3,7 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
 import { Request } from 'express';
-import { SKIP_AUTH_KEY } from '@/modules/iam/infrastructure/decorators/public-route.decorator';
+import { SKIP_AUTH_KEY } from '@/shared/infrastructure/decorators/public-route.decorator';
 
 // Infrastructure endpoints that must remain reachable without auth (scraping,
 // health probes). Network isolation is provided at the reverse proxy / network

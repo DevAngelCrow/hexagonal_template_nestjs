@@ -3,7 +3,7 @@ import { Reflector } from '@nestjs/core';
 import {
   PERMISSIONS_ALL_KEY,
   PERMISSIONS_KEY,
-} from '@/modules/iam/infrastructure/decorators/permissions.decorator';
+} from '@/shared/infrastructure/decorators/permissions.decorator';
 import { ForbiddenException } from '@/shared/application/exceptions/forbidden.exception';
 
 @Injectable()

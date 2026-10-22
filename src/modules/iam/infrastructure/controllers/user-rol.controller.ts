@@ -18,7 +18,7 @@ import { UserRolExtendedDto } from '@/modules/iam/application/security/dtos/user
 import { UserRolRequestDto } from '@/modules/iam/infrastructure/dtos/security/validators/user-rol/user-rol.dto';
 import { UpdateUserRoleByIdCommand } from '@/modules/iam/application/security/commands/user-rol/update-user-role-by-id/update-user-role-by-id.command';
 import { UserRolDto } from '@/modules/iam/application/security/dtos/user-rol.dto';
-import { Permissions } from '@/modules/iam/infrastructure/decorators/permissions.decorator';
+import { Permissions } from '@/shared/infrastructure/decorators/permissions.decorator';
 
 @Controller('security/user-role')
 @ApiBearerAuth('JWT-auth')

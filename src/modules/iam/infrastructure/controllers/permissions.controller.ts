@@ -25,7 +25,7 @@ import { UpdatePermissionsCommand } from '@/modules/iam/application/security/com
 import { DeletePermissionsCommand } from '@/modules/iam/application/security/commands/permissions/delete-permissions/delete-permissions.command';
 import { GetPermissionsQuery } from '@/modules/iam/application/security/queries/permissions/get-permissions/get-permissions.query';
 import { GetPermissionsByIdQuery } from '@/modules/iam/application/security/queries/permissions/get-permissions-by-id/get-permissions-by-id.query';
-import { Permissions } from '@/modules/iam/infrastructure/decorators/permissions.decorator';
+import { Permissions } from '@/shared/infrastructure/decorators/permissions.decorator';
 import { Auditable } from '@/shared/infrastructure/decorators/auditable.decorator';
 import { AuditAction } from '@/shared/domain/enums/audit-action.enum';
 

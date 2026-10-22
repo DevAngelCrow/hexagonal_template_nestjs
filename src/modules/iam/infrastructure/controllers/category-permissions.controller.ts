@@ -26,7 +26,7 @@ import { UpdateCategoryPermissionsCommand } from '@/modules/iam/application/secu
 import { DeleteCategoryPermissionsCommand } from '@/modules/iam/application/security/commands/category-permissions/delete-category-permissions/delete-category-permissions.command';
 import { GetCategoryPermissionsQuery } from '@/modules/iam/application/security/queries/category-permissions/get-category-permissions/get-category-permissions.query';
 import { GetCategoryPermissionsByIdQuery } from '@/modules/iam/application/security/queries/category-permissions/get-category-permissions-by-id/get-category-permissions-by-id.query';
-import { Permissions } from '@/modules/iam/infrastructure/decorators/permissions.decorator';
+import { Permissions } from '@/shared/infrastructure/decorators/permissions.decorator';
 
 @Controller('security/category-permissions')
 @ApiBearerAuth('JWT-auth')

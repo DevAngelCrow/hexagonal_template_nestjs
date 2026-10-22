@@ -29,13 +29,15 @@ async function bootstrap() {
   app.setGlobalPrefix('api', {
     exclude: enableApiDocs
       ? [
-        'docs',
-        'api/docs',
-        'api/docs-json',
-        'metrics',
-        'admin/queues',
-        'admin/queues/{*path}',
-      ]
+          'docs',
+          'api/docs',
+          'api/docs-json',
+          'api/docs/login',
+          'api/docs/logout',
+          'metrics',
+          'admin/queues',
+          'admin/queues/{*path}',
+        ]
       : ['metrics', 'admin/queues', 'admin/queues/{*path}'],
   });
 

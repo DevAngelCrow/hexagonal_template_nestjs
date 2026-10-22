@@ -32,7 +32,6 @@ import { AuditModule } from '@/modules/audit/audit.module';
 import { IamModule } from '@/modules/iam/iam.module';
 import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
-import { DocsAuthMiddleware } from '@/shared/infrastructure/http/middleware/docs-auth.middleware';
 import { BullBoardAuthMiddleware } from '@/shared/infrastructure/http/middleware/bull-board-auth.middleware';
 import { AuditableInterceptor } from '@/modules/audit/infrastructure/interceptors/auditable.interceptor';
 import { JwtPassportAuthGuard } from '@/modules/iam/infrastructure/guards/jwt-passport-auth.guard';
@@ -162,18 +161,6 @@ export class AppModule implements NestModule {
         { path: '*path', method: RequestMethod.PUT },
       );
 
-    const enableApiDocs =
-      this.configService.get<boolean>('ENABLE_API_DOCS') === true;
-
-    if (enableApiDocs) {
-      consumer
-        .apply(DocsAuthMiddleware)
-        .forRoutes(
-          { path: 'docs', method: RequestMethod.ALL },
-          { path: 'api/docs', method: RequestMethod.ALL },
-          { path: 'api/docs-json', method: RequestMethod.ALL },
-        );
-    }
 
     consumer
       .apply(BullBoardAuthMiddleware)

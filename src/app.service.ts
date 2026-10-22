@@ -1,13 +1,8 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Response } from 'express';
-import * as fs from 'fs';
-import * as path from 'path';
 
 @Injectable()
 export class AppService implements OnModuleInit {
-  private docsLoginHtmlCache: string | null = null;
-
   constructor(private readonly configService: ConfigService) {}
 
   onModuleInit(): void {
@@ -16,57 +11,6 @@ export class AppService implements OnModuleInit {
 
   getHello(): string {
     return 'Hello World!';
-  }
-
-  getDocsLoginHtml(): string {
-    if (this.docsLoginHtmlCache) {
-      return this.docsLoginHtmlCache;
-    }
-
-    const themeColors: Record<string, string> = {
-      COLOR_PRIMARY:
-        this.configService.get<string>('EMAIL_COLOR_PRIMARY') ?? '#059669',
-      COLOR_SURFACE:
-        this.configService.get<string>('EMAIL_COLOR_SURFACE') ?? '#e0e7ff',
-      COLOR_CARD:
-        this.configService.get<string>('EMAIL_COLOR_BACKGROUND_CARD') ?? '#eef2ff',
-      COLOR_TEXT:
-        this.configService.get<string>('EMAIL_COLOR_PRIMARY') ?? '#059669',
-      COLOR_TEXT_MUTED:
-        this.configService.get<string>('EMAIL_TEXT_MUTED') ?? '#a5b4fc',
-      COLOR_BORDER:
-        this.configService.get<string>('EMAIL_COLOR_PRIMARY') ?? '#059669',
-    };
-
-    const templatePath = path.join(
-      __dirname,
-      'shared',
-      'infrastructure',
-      'views',
-      'docs-login.html',
-    );
-
-    const template = fs.readFileSync(templatePath, 'utf-8');
-
-    this.docsLoginHtmlCache = Object.entries(themeColors).reduce(
-      (html, [key, val]) =>
-        html.replaceAll(new RegExp(`\\{\\{\\s*${key}\\s*\\}\\}`, 'g'), val),
-      template,
-    );
-
-    return this.docsLoginHtmlCache;
-  }
-
-  clearDocsCookie(res: Response): void {
-    const isDevelopment =
-      this.configService.get<string>('NODE_ENV')?.trim() === 'development';
-
-    res.clearCookie('docs_access', {
-      httpOnly: true,
-      sameSite: 'strict',
-      secure: !isDevelopment,
-      path: '/',
-    });
   }
 
   validateSecurityConfig(): void {

@@ -1,6 +1,6 @@
 import { IntersectionType } from '@nestjs/swagger';
 import { IsOptional, IsString, IsUUID } from 'class-validator';
-import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
+import { PaginationQueryDto } from '@/shared/infrastructure/http/dtos/pagination-query.dto';
 import {
   FilterNameDto,
   StatusBooleanFilterDto,
@@ -8,7 +8,7 @@ import {
 
 
 export class GetGlobalStatusesQueryDto extends IntersectionType(
-  PaginationParamsDto,
+  PaginationQueryDto,
   FilterNameDto,
   StatusBooleanFilterDto,
 ) {

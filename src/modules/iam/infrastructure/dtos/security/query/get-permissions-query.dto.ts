@@ -1,6 +1,6 @@
 import { IntersectionType } from '@nestjs/swagger';
 import { IsOptional, IsUUID } from 'class-validator';
-import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
+import { PaginationQueryDto } from '@/shared/infrastructure/http/dtos/pagination-query.dto';
 import {
   ActiveFilterDto,
   NameFilterDto,
@@ -8,7 +8,7 @@ import {
 
 
 export class GetPermissionsQueryDto extends IntersectionType(
-  PaginationParamsDto,
+  PaginationQueryDto,
   NameFilterDto,
   ActiveFilterDto,
 ) {

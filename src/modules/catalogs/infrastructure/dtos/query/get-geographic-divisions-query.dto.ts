@@ -1,7 +1,7 @@
 import { IntersectionType } from '@nestjs/swagger';
 import { IsOptional, IsUUID } from 'class-validator';
-import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
-import { CursorPaginationParamsDto } from '@/shared/application/dtos/cursor-pagination.dto';
+import { PaginationQueryDto } from '@/shared/infrastructure/http/dtos/pagination-query.dto';
+import { CursorPaginationQueryDto } from '@/shared/infrastructure/http/dtos/cursor-pagination-query.dto';
 import {
   ActiveFilterDto,
   FilterStringDto,
@@ -11,7 +11,7 @@ import {
 
 
 export class GetGeographicDivisionsQueryDto extends IntersectionType(
-  PaginationParamsDto,
+  PaginationQueryDto,
   FilterStringDto,
   ActiveFilterDto,
   IdCountryFilterDto,
@@ -23,7 +23,7 @@ export class GetGeographicDivisionsQueryDto extends IntersectionType(
 }
 
 export class GetGeographicDivisionsCursorQueryDto extends IntersectionType(
-  CursorPaginationParamsDto,
+  CursorPaginationQueryDto,
   FilterStringDto,
   ActiveFilterDto,
   IdCountryFilterDto,

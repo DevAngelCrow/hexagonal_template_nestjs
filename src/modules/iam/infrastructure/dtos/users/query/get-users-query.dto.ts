@@ -1,5 +1,5 @@
 import { IntersectionType } from '@nestjs/swagger';
-import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
+import { PaginationQueryDto } from '@/shared/infrastructure/http/dtos/pagination-query.dto';
 import {
   EmailFilterDto,
   IdStatusFilterDto,
@@ -8,7 +8,7 @@ import {
 
 
 export class GetUsersQueryDto extends IntersectionType(
-  PaginationParamsDto,
+  PaginationQueryDto,
   NameFilterDto,
   EmailFilterDto,
   IdStatusFilterDto,

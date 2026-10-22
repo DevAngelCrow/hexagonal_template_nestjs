@@ -1,9 +1,9 @@
 import { IntersectionType } from '@nestjs/swagger';
-import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
+import { PaginationQueryDto } from '@/shared/infrastructure/http/dtos/pagination-query.dto';
 import { FilterStringDto } from '@/shared/infrastructure/http/dtos/filters';
 
 
 export class GetMaritalStatusesQueryDto extends IntersectionType(
-  PaginationParamsDto,
+  PaginationQueryDto,
   FilterStringDto,
 ) {}

@@ -1,6 +1,6 @@
 import { IntersectionType } from '@nestjs/swagger';
-import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
-import {
+import { PaginationQueryDto } from '@/shared/infrastructure/http/dtos/pagination-query.dto';
+import {    
   ActiveFilterDto,
   IdParentFilterDto,
   NameFilterDto,
@@ -8,7 +8,7 @@ import {
 
 
 export class GetRoutesQueryDto extends IntersectionType(
-  PaginationParamsDto,
+  PaginationQueryDto,
   NameFilterDto,
   ActiveFilterDto,
   IdParentFilterDto,

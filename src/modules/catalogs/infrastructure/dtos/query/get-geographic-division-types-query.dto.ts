@@ -1,5 +1,5 @@
 import { IntersectionType } from '@nestjs/swagger';
-import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
+import { PaginationQueryDto } from '@/shared/infrastructure/http/dtos/pagination-query.dto';
 import {
   ActiveFilterDto,
   FilterStringDto,
@@ -8,7 +8,7 @@ import {
 
 
 export class GetGeographicDivisionTypesQueryDto extends IntersectionType(
-  PaginationParamsDto,
+  PaginationQueryDto,
   FilterStringDto,
   ActiveFilterDto,
   IdCountryFilterDto,

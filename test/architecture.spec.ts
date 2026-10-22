@@ -91,4 +91,38 @@ describe('Architecture & Hexagonal Boundaries', () => {
 
     expect(violations, `Violations in application layer:\n${violations.join('\n')}`).toEqual([]);
   });
+
+  it('shared layer must NOT import from feature modules', () => {
+    const allFiles = getAllTsFiles(srcDir);
+    const sharedFiles = allFiles.filter((f) => f.includes(`${path.sep}shared${path.sep}`));
+
+    const forbiddenPatterns = [
+      /@\/modules\//,
+      /\.\.\/.*modules\//,
+      /src\/modules\//,
+    ];
+
+    const violations: string[] = [];
+
+    for (const file of sharedFiles) {
+      const content = fs.readFileSync(file, 'utf-8');
+      const lines = content.split('\n');
+
+      lines.forEach((line, index) => {
+        const trimmed = line.trim();
+        if (trimmed.startsWith('import ') || trimmed.startsWith('export * from')) {
+          for (const pattern of forbiddenPatterns) {
+            if (pattern.test(trimmed)) {
+              violations.push(
+                `${path.relative(srcDir, file)}:${index + 1} imports forbidden pattern ${pattern.toString()}: "${trimmed}"`,
+              );
+            }
+          }
+        }
+      });
+    }
+
+    expect(violations, `Violations in shared layer:\n${violations.join('\n')}`).toEqual([]);
+  });
 });
+

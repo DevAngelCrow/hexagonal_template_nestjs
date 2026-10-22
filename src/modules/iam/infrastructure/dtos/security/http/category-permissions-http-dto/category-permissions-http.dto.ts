@@ -1,4 +1,4 @@
-import { GlobalStatusDto } from '@/modules/catalogs/application/dtos/global-status.dto';
+import { GlobalStatusDto } from '@/shared/application/dtos/global-status.dto';
 import { CategoryPermissions } from '@/modules/iam/domain/entities/category-permissions.entity';
 
 export class CategoryPermissionsHttpDto {

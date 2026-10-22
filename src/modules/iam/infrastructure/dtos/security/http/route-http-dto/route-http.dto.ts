@@ -1,4 +1,4 @@
-import { GlobalStatusDto } from '@/modules/catalogs/application/dtos/global-status.dto';
+import { GlobalStatusDto } from '@/shared/application/dtos/global-status.dto';
 import { Route } from '@/modules/iam/domain/entities/route.entity';
 
 export class RouteHttpDto<T = unknown> {

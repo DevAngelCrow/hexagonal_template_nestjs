@@ -1,7 +1,7 @@
 import { BooleanStatusData } from '@/shared/infrastructure/interfaces/boolean-status-data.interface';
 import { BooleanStatus } from '@/shared/domain/enums/boolean-status';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';
-import { GlobalStatusDto } from '@/modules/catalogs/application/dtos/global-status.dto';
+import { GlobalStatusDto } from '@/shared/application/dtos/global-status.dto';
 
 export class StatusMapperUtil {
   static getStatusFromBoolean(
@@ -24,8 +24,8 @@ export class StatusMapperUtil {
     }
     return new GlobalStatusDto(
       status.name,
-      status.code,
       status.description,
+      status.code,
       status.active,
       status.state_color,
       status.text_color,

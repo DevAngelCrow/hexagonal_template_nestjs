@@ -15,7 +15,7 @@ import { Pagination } from '@/shared/domain/value-object/pagination';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
 import { UserDto } from '@/modules/iam/application/users/dtos/user.dto';
-import { GlobalStatusDto } from '@/modules/catalogs/application/dtos/global-status.dto';
+import { GlobalStatusDto } from '@/shared/application/dtos/global-status.dto';
 import { mnt_userGetPayload } from 'generated/prisma/models';
 import { EntityList } from '@/shared/domain/value-object/entity-list';
 import { TotalItems } from '@/shared/domain/value-object/total-items';

@@ -1,4 +1,4 @@
-import { GlobalStatusDto } from '@/modules/catalogs/application/dtos/global-status.dto';
+import { GlobalStatusDto } from '@/shared/application/dtos/global-status.dto';
 import { Permissions } from '@/modules/iam/domain/entities/permissions.entity';
 export class PermissionsHttpDto<T = unknown> {
   constructor(

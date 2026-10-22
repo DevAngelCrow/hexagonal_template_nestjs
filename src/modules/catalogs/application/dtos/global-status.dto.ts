@@ -1,17 +1,7 @@
+import { GlobalStatusDto as SharedGlobalStatusDto } from '@/shared/application/dtos/global-status.dto';
 import { GlobalStatus } from '@/modules/catalogs/domain/entities/global-status';
 
-export class GlobalStatusDto<T = unknown> {
-  constructor(
-    public readonly name: string,
-    public readonly description: string,
-    public readonly code: string,
-    public readonly active: boolean,
-    public readonly state_color: string,
-    public readonly text_color: string,
-    public readonly id_category_status: string,
-    public readonly id?: string,
-    public readonly category_status?: T,
-  ) {}
+export class GlobalStatusDto<T = unknown> extends SharedGlobalStatusDto<T> {
   public static fromEntity(globalStatus: GlobalStatus): GlobalStatusDto {
     return new GlobalStatusDto(
       globalStatus.getName().value(),
@@ -24,7 +14,8 @@ export class GlobalStatusDto<T = unknown> {
       globalStatus.getId() ? globalStatus.getId()!.value() : undefined,
     );
   }
-  public static fromDto<T>(dto: GlobalStatusDto<T>): GlobalStatusDto<T> {
+
+  public static override fromDto<T>(dto: SharedGlobalStatusDto<T>): GlobalStatusDto<T> {
     return new GlobalStatusDto(
       dto.name,
       dto.description,

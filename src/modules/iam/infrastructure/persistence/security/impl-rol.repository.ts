@@ -15,7 +15,7 @@ import { Injectable } from '@nestjs/common';
 import { RolReadRepository } from '@/modules/iam/application/repositories/rol-read.repository';
 import { RolDto } from '@/modules/iam/application/security/dtos/rol.dto';
 import { mnt_roleGetPayload } from 'generated/prisma/models';
-import { GlobalStatusDto } from '@/modules/catalogs/application/dtos/global-status.dto';
+import { GlobalStatusDto } from '@/shared/application/dtos/global-status.dto';
 import { PermissionsDto } from '@/modules/iam/application/security/dtos/permissions.dto';
 import { CategoryPermissionsDto } from '@/modules/iam/application/security/dtos/category-permissions.dto';
 import { TransactionContextService } from '@/shared/infrastructure/services/transaction-context.service';

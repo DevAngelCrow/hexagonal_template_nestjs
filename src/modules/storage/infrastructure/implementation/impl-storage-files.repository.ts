@@ -90,7 +90,7 @@ export class ImplStorageFilesRepository
   ): Promise<Pagination<StorageFileListDto> | StorageFileListDto[]> {
     try {
       const prisma = this.getPrismaClient();
-      const where = { ...(id_provider ? { id_provider } : {}) };
+      const where = id_provider ? { id_provider } : {};
       const skip = pagination_params
         ? (pagination_params.getPage().value() - 1) *
           pagination_params.getPerPage().value()

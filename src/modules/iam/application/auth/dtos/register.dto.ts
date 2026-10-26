@@ -12,7 +12,7 @@ export class RegisterDto<T = unknown> {
     //public readonly id_status: string,
     public readonly nationalities: string[] = [],
     public readonly file_img: T | null = null,
-    public readonly id_people: string | undefined = undefined,
+    public readonly id_people: string | undefined,
 
     // User data
     public readonly user_name: string,
@@ -20,7 +20,7 @@ export class RegisterDto<T = unknown> {
     //public readonly id_status_user: number,
     public readonly last_access: Date,
     public readonly is_validated: boolean,
-    public readonly id_user: string | undefined = undefined,
+    public readonly id_user: string | undefined,
 
     // Address data
     public readonly street: string | null,
@@ -31,7 +31,7 @@ export class RegisterDto<T = unknown> {
     public readonly block: string | null,
     public readonly pathway: string | null,
     public readonly current: boolean | null,
-    public readonly id_address: string | undefined = undefined,
+    public readonly id_address: string | undefined,
     public readonly active_address: boolean | null,
 
     // Document data
@@ -39,6 +39,6 @@ export class RegisterDto<T = unknown> {
     public readonly description: string | null,
     public readonly document_number: string | null,
     public readonly active: boolean | null,
-    public readonly id_document: string | undefined = undefined,
+    public readonly id_document: string | undefined,
   ) {}
 }

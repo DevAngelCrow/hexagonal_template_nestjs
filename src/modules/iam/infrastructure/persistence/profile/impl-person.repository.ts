@@ -159,7 +159,9 @@ export class ImplPersonRepository
           last_name: person.getLastName()?.value() ?? null,
           email: person.getEmail().value(),
           phone: person.getPhone()?.value() ?? null,
-          birthdate: new Date(person.getBirthdate()?.value()!) ?? null,
+          birthdate: person.getBirthdate()?.value()
+            ? new Date(person.getBirthdate()!.value())
+            : null,
           id_gender: person.getIdGender()?.value() ?? null,
           id_marital_status: person.getIdMaritalStatus()?.value() ?? null,
           id_status: person.getIdStatus().value(),

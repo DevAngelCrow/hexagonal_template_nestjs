@@ -5,7 +5,6 @@ import { of, throwError } from 'rxjs';
 import { AuditableInterceptor } from './auditable.interceptor';
 import { AuditLogService } from '@/modules/audit/application/services/audit-log.service';
 import { AuditAction } from '@/modules/audit/domain/enums/audit-action.enum';
-import { AUDITABLE_KEY } from '@/modules/audit/infrastructure/decorators/auditable.decorator';
 import { TransactionContextService } from '@/shared/infrastructure/services/transaction-context.service';
 
 describe('AuditableInterceptor', () => {

@@ -61,5 +61,6 @@ export function setupSecurity(
     origin: allowedOrigins,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: 'Content-Type, Authorization',
+    credentials: true
   });
 }

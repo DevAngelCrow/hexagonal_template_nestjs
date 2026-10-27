@@ -5,6 +5,10 @@ import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { JwtPayload } from '@/modules/iam/infrastructure/strategies/jwt.strategy';
 import { UserReadRepository } from '@/modules/iam/application/repositories/user-read.repository';
+import {
+  extractRefreshToken,
+  extractRefreshTokenFromCookie,
+} from '@/modules/iam/infrastructure/config/refresh-token-cookie.config';
 
 export class JwtRefreshStrategy extends PassportStrategy(
   Strategy,
@@ -16,17 +20,19 @@ export class JwtRefreshStrategy extends PassportStrategy(
   ) {
     const jwtRefreshSecret = configService.get<string>('JWT_REFRESH_SECRET')!;
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      // HttpOnly cookie first (browsers), Bearer header as fallback
+      // (Swagger, mobile or server-to-server clients).
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        extractRefreshTokenFromCookie,
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ]),
       ignoreExpiration: false,
       secretOrKey: jwtRefreshSecret,
       passReqToCallback: true,
     });
   }
   async validate(request: Request, payload: JwtPayload) {
-    const refreshToken = request
-      .get('Authorization')
-      ?.replace('Bearer ', '')
-      .trim();
+    const refreshToken = extractRefreshToken(request);
 
     if (!refreshToken) {
       throw new UnauthorizedException(

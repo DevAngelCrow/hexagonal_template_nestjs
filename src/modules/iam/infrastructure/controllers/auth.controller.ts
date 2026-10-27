@@ -70,6 +70,11 @@ import { CheckAuthenticatedUser } from '@/modules/iam/infrastructure/decorators/
 import { Throttle } from '@nestjs/throttler';
 import { ConfigService } from '@nestjs/config';
 import { VerifyEmailQueryDto } from '@/modules/iam/infrastructure/dtos/auth/validators/auth/verify-email-query.dto';
+import {
+  REFRESH_TOKEN_COOKIE_NAME,
+  buildRefreshTokenCookieOptions,
+  extractRefreshToken,
+} from '@/modules/iam/infrastructure/config/refresh-token-cookie.config';
 
 import { AuditAction } from '@/shared/domain/enums/audit-action.enum';
 import { Auditable } from '@/shared/infrastructure/decorators/auditable.decorator';
@@ -94,6 +99,32 @@ export class AuthController {
 
   private getUserAgent(req: Request): string | null {
     return req.headers?.['user-agent'] ?? null;
+  }
+
+  private setRefreshTokenCookie(
+    res: ExpressResponse,
+    refreshToken: string,
+  ): void {
+    const decoded: unknown = this.jwtService.decode(refreshToken);
+    const exp =
+      decoded &&
+      typeof decoded === 'object' &&
+      'exp' in decoded &&
+      typeof decoded.exp === 'number'
+        ? decoded.exp
+        : undefined;
+    res.cookie(
+      REFRESH_TOKEN_COOKIE_NAME,
+      refreshToken,
+      buildRefreshTokenCookieOptions(this.config.get<string>('NODE_ENV'), exp),
+    );
+  }
+
+  private clearRefreshTokenCookie(res: ExpressResponse): void {
+    res.clearCookie(
+      REFRESH_TOKEN_COOKIE_NAME,
+      buildRefreshTokenCookieOptions(this.config.get<string>('NODE_ENV')),
+    );
   }
   @SkipAuth()
   @Throttle({ global: { ttl: 3_600_000, limit: 5 } })
@@ -186,6 +217,7 @@ export class AuthController {
   async login(
     @Body() request: LoginDto,
     @Req() req: Request,
+    @Res({ passthrough: true }) res: ExpressResponse,
   ): Promise<SuccessResponseDto<AuthLoginHttpDto>> {
     const ip = this.getClientIp(req);
     const ua = this.getUserAgent(req);
@@ -199,13 +231,13 @@ export class AuthController {
       LoginCommand,
       { id: string; user_name: string; token: string; refresh_token: string }
     >(loginCommand);
+    this.setRefreshTokenCookie(res, authLogin.refresh_token);
     const authLoginHttpDto: AuthLoginHttpDto = new AuthLoginHttpDto(
       authLogin.user_name,
       authLogin.id,
       authLogin.token,
       'Bearer',
       authLogin.user_name,
-      authLogin.refresh_token,
     );
     return new SuccessResponseDto<AuthLoginHttpDto>(
       authLoginHttpDto,
@@ -241,10 +273,12 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async logout(
     @Req() request: Request<{ headers: { authorization: string } }>,
+    @Res({ passthrough: true }) res: ExpressResponse,
   ): Promise<SuccessResponseDto<null>> {
     const token = request.headers.authorization?.replace('Bearer ', '') || '';
     const logoutCommand = new LogoutCommand(token);
     await this.commandBus.execute(logoutCommand);
+    this.clearRefreshTokenCookie(res);
 
     return new SuccessResponseDto<null>(
       null,
@@ -282,11 +316,18 @@ export class AuthController {
     );
   }
   @Auditable({ action: AuditAction.TOKEN_REFRESH })
+  // The global access-token guard must be skipped: this endpoint is called
+  // precisely when the access token is expired. Authentication is enforced
+  // by JwtRefreshGuard, which validates the refresh token (HttpOnly cookie).
+  @SkipAuth()
   @UseGuards(JwtRefreshGuard)
   @Post('refresh-token')
   @HttpCode(200)
   @ApiBearerAuth('JWT-auth')
-  @ApiOperation({ summary: 'Obtain a new access token using a refresh token' })
+  @ApiOperation({
+    summary:
+      'Obtain a new access token using the refresh token (HttpOnly cookie, or Bearer header as fallback)',
+  })
   @ApiResponse({
     status: 200,
     description: 'Tokens refreshed',
@@ -294,22 +335,24 @@ export class AuthController {
   })
   @ApiResponse({ status: 401, description: 'Invalid or expired refresh token' })
   async refreshToken(
-    @Req() request: Request<{ headers: { authorization: string } }>,
+    @Req() request: Request,
+    @Res({ passthrough: true }) res: ExpressResponse,
   ): Promise<SuccessResponseDto<AuthLoginHttpDto>> {
-    const token = request.headers.authorization?.replace('Bearer ', '') || '';
+    const token = extractRefreshToken(request) ?? '';
     const refreshCommand = new RefreshCommand(token);
     const tokens = await this.commandBus.execute<
       RefreshCommand,
       { id: string; user_name: string; token: string; refresh_token: string }
     >(refreshCommand);
 
+    // Refresh token rotation: every refresh issues a brand-new cookie.
+    this.setRefreshTokenCookie(res, tokens.refresh_token);
     const authLoginHttpDto = new AuthLoginHttpDto(
       tokens.user_name,
       tokens.id,
       tokens.token,
       'Bearer',
       tokens.user_name,
-      tokens.refresh_token,
     );
     return new SuccessResponseDto<AuthLoginHttpDto>(
       authLoginHttpDto,

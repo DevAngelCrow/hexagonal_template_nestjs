@@ -9,6 +9,7 @@ import { ThrottlerExceptionFilter } from '@/shared/infrastructure/http/filters/t
 import { BigIntTransformInterceptor } from '@/shared/infrastructure/interceptors/bigint-transform.interceptor';
 import { setupSecurity } from '@/shared/infrastructure/setup/security.setup';
 import { setupSwagger } from '@/shared/infrastructure/setup/swagger.setup';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -23,7 +24,7 @@ async function bootstrap() {
 
   app.use(express.json({ limit: '50kb' }));
   app.use(express.urlencoded({ limit: '50kb', extended: true }));
-
+  app.use(cookieParser());
   setupSecurity(app, configService);
 
   app.setGlobalPrefix('api', {

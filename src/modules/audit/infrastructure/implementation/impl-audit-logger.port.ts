@@ -14,6 +14,7 @@ export class ImplAuditLoggerPort implements AuditLoggerPort {
   }
 
   log(message: string): void {
+    console.log('hola', message);
     this.logger.log(message);
   }
 }

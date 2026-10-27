@@ -8,7 +8,7 @@ let seedCommand = "";
 
 if (process.env.NODE_ENV === 'production') {
   url = process.env.DATABASE_DIRECT_URL!;
-  seedCommand = 'node dist/prisma/seeds/main.seeder.js';
+  seedCommand = 'npx tsx dist/prisma/seeds/main.seeder.ts';
   /*`${env('DATABASE_URL')}`;*/
 } else {
   url = `${process.env.DB_PROVIDER}://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?schema=public&timezone=UTC`;

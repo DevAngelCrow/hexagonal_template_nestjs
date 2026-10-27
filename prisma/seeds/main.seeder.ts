@@ -16,7 +16,7 @@ import { seedMntUserRol } from './mnt-user-rol.seeder.js';
 import { seedMntRoute } from './mnt-route.seeder.js';
 import { seedMntRoutePermissions } from './mnt-route-permissions.seeder.js';
 import { seedMntAddress } from './mnt-address.seeder.js';
-import { PrismaClient } from 'generated/prisma/client.js';
+import { PrismaClient } from '../../generated/prisma/client.js';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { seedCategoryStatus } from './ctl-category-status.seeder.js';

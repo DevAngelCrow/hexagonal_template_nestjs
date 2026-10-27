@@ -30,11 +30,12 @@
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:migrate:prod": "npx prisma migrate deploy",
     "prisma:seed": "npx prisma db seed",
-    "seed:core": "ts-node -r tsconfig-paths/register prisma/seeds/core.seeder.ts",
+    "prisma:seed:prod": "node dist/prisma/seeds/main.seeder.js",
+    "seed:core": "npx tsx prisma/seeds/core.seeder.ts",
+    "seed:core:prod": "node dist/prisma/seeds/core.seeder.js",
     "prisma:studio": "npx prisma studio",
     "dev:setup": "npm run prisma:migrate && npm run prisma:generate && npm run prisma:seed",
-    "production:setup": "npm run prisma:migrate:prod && npm run prisma:generate",
-    "preseed": "ls dist/src/modules/iam/infrastructure"
+    "production:setup": "npm run prisma:migrate:prod && npm run prisma:generate"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1152.0",

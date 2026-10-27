@@ -1,9 +1,64 @@
 import { randomUUID } from 'crypto';
+import * as fs from 'fs';
+import * as path from 'path';
 import { PrismaClient } from 'generated/prisma/client';
-import { ADMIN1, ADMIN2, ADMIN3, ADMIN4 } from './geographic-arrays';
+
+interface Admin1Item {
+  country: string;
+  a1: string;
+  name: string;
+}
+
+interface Admin2Item {
+  country: string;
+  a1: string;
+  a2: string;
+  name: string;
+}
+
+interface Admin3Item {
+  country: string;
+  a1: string;
+  a2: string;
+  a3: string;
+  name: string;
+}
+
+interface Admin4Item {
+  country: string;
+  a1: string;
+  a2: string;
+  a3: string;
+  a4: string;
+  name: string;
+}
+
+interface GeographicData {
+  ADMIN1: Admin1Item[];
+  ADMIN2: Admin2Item[];
+  ADMIN3: Admin3Item[];
+  ADMIN4: Admin4Item[];
+}
+
+const loadGeographicData = (): GeographicData => {
+  const possiblePaths = [
+    path.join(__dirname, 'geographic-arrays.json'),
+    path.join(process.cwd(), 'prisma', 'seeds', 'geographic-arrays.json'),
+  ];
+
+  for (const filePath of possiblePaths) {
+    if (fs.existsSync(filePath)) {
+      return JSON.parse(fs.readFileSync(filePath, 'utf-8')) as GeographicData;
+    }
+  }
+
+  throw new Error('geographic-arrays.json not found in seeds directory.');
+};
 
 export const seedCtlGeographicDivision = async (tx: PrismaClient) => {
   console.log('Seeding ctl_geographic_division...');
+
+  const { ADMIN1, ADMIN2, ADMIN3, ADMIN4 } = loadGeographicData();
 
   await tx.ctl_geographic_division.deleteMany();
 

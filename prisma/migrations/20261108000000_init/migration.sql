@@ -18,6 +18,7 @@ CREATE TABLE "ctl_country" (
     "abbreviation" VARCHAR(150) NOT NULL,
     "code" VARCHAR(150) NOT NULL,
     "phone_code" VARCHAR(150) NOT NULL,
+    "phone_mask" VARCHAR(50) DEFAULT '9999-9999',
     "active" BOOLEAN NOT NULL DEFAULT true,
     "created_at" TIMESTAMP(0),
     "updated_at" TIMESTAMP(0),
@@ -171,7 +172,6 @@ CREATE TABLE "mnt_role" (
     "created_at" TIMESTAMP(0),
     "updated_at" TIMESTAMP(0),
     "deleted_at" TIMESTAMP(0),
-    "active" BOOLEAN NOT NULL DEFAULT true,
     "code" VARCHAR(15) NOT NULL,
     "id" UUID NOT NULL,
     "id_status" UUID NOT NULL,
@@ -291,7 +291,7 @@ CREATE TABLE "mnt_email_verification_tokens" (
     "created_at" TIMESTAMP(0) DEFAULT CURRENT_TIMESTAMP,
     "id" UUID NOT NULL,
     "id_user" UUID NOT NULL,
-    "is_resset_password" BOOLEAN NOT NULL DEFAULT false,
+    "is_reset_password" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "mnt_email_verification_tokens_pkey" PRIMARY KEY ("id")
 );
@@ -524,7 +524,7 @@ CREATE INDEX "mnt_email_verification_tokens_id_user_idx" ON "mnt_email_verificat
 CREATE INDEX "mnt_email_verification_tokens_token_idx" ON "mnt_email_verification_tokens"("token");
 
 -- CreateIndex
-CREATE INDEX "mnt_email_verification_tokens_id_user_is_resset_password_us_idx" ON "mnt_email_verification_tokens"("id_user", "is_resset_password", "used_at");
+CREATE INDEX "mnt_email_verification_tokens_id_user_is_reset_password_use_idx" ON "mnt_email_verification_tokens"("id_user", "is_reset_password", "used_at");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ctl_category_status_name_idx" ON "ctl_category_status"("name");
@@ -656,6 +656,9 @@ ALTER TABLE "rol_permissions" ADD CONSTRAINT "rol_permissions_id_permission_fore
 ALTER TABLE "rol_permissions" ADD CONSTRAINT "rol_permissions_id_role_foreign" FOREIGN KEY ("id_role") REFERENCES "mnt_role"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
+ALTER TABLE "mnt_email_verification_tokens" ADD CONSTRAINT "mnt_email_verification_tokens_id_user_fk" FOREIGN KEY ("id_user") REFERENCES "mnt_user"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
+
+-- AddForeignKey
 ALTER TABLE "mnt_session_refresh_token" ADD CONSTRAINT "mnt_session_refresh_token_mnt_user_fk" FOREIGN KEY ("id_user") REFERENCES "mnt_user"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
@@ -672,3 +675,4 @@ ALTER TABLE "ctl_geographic_division" ADD CONSTRAINT "ctl_geographic_division_ct
 
 -- AddForeignKey
 ALTER TABLE "ctl_geographic_division_type" ADD CONSTRAINT "ctl_geographic_division_type_ctl_country_fk" FOREIGN KEY ("id_country") REFERENCES "ctl_country"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+

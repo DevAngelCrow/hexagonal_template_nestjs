@@ -113,30 +113,34 @@ export class ImplSecurityAuthorizationPort implements SecurityAuthorizationPort 
       throw new Error(String(error));
     }
   }
+  private toMenuEntity<T>(item: object): Menu<T> {
+    const menuData: MenuCreateData<T> = {
+      id: String(Reflect.get(item, 'id') ?? ''),
+      name: String(Reflect.get(item, 'name') ?? ''),
+      title: String(Reflect.get(item, 'title') ?? ''),
+      description: String(Reflect.get(item, 'description') ?? ''),
+      icon: String(Reflect.get(item, 'icon') ?? ''),
+      uri: String(Reflect.get(item, 'uri') ?? ''),
+      order: Number(Reflect.get(item, 'order') ?? 0),
+      active: Boolean(Reflect.get(item, 'active')),
+      show: Boolean(Reflect.get(item, 'show')),
+      required_auth: Boolean(Reflect.get(item, 'required_auth')),
+      parent: Reflect.get(item, 'parent'),
+      children: Reflect.get(item, 'children'),
+    };
+    return Menu.create<T>(menuData);
+  }
+
   async filterRoutesForUser<T = MenuInterface>(
     id_user: string,
   ): Promise<Menu<T>[]> {
     try {
       const cacheKey = `user:${id_user}:menu`;
-      const cached = await this.cacheManager.get<any[]>(cacheKey);
+      const cached = await this.cacheManager.get<object[]>(cacheKey);
       if (cached) {
-        return (Array.isArray(cached) ? cached : []).map((item) => {
-          const menuData: MenuCreateData<T> = {
-            id: String(Reflect.get(item, 'id') ?? ''),
-            name: String(Reflect.get(item, 'name') ?? ''),
-            title: String(Reflect.get(item, 'title') ?? ''),
-            description: String(Reflect.get(item, 'description') ?? ''),
-            icon: String(Reflect.get(item, 'icon') ?? ''),
-            uri: String(Reflect.get(item, 'uri') ?? ''),
-            order: Number(Reflect.get(item, 'order') ?? 0),
-            active: Boolean(Reflect.get(item, 'active')),
-            show: Boolean(Reflect.get(item, 'show')),
-            required_auth: Boolean(Reflect.get(item, 'required_auth')),
-            parent: Reflect.get(item, 'parent'),
-            children: Reflect.get(item, 'children'),
-          };
-          return Menu.create<T>(menuData);
-        });
+        return (Array.isArray(cached) ? cached : []).map((item) =>
+          this.toMenuEntity<T>(item),
+        );
       }
 
       const prisma = this.getPrismaClient();
@@ -312,23 +316,7 @@ export class ImplSecurityAuthorizationPort implements SecurityAuthorizationPort 
       }));
 
       await this.cacheManager.set(cacheKey, cacheableData, MENU_CACHE_TTL_MS);
-      return cacheableData.map((item) => {
-        const menuData: MenuCreateData<T> = {
-          id: String(Reflect.get(item, 'id') ?? ''),
-          name: String(Reflect.get(item, 'name') ?? ''),
-          title: String(Reflect.get(item, 'title') ?? ''),
-          description: String(Reflect.get(item, 'description') ?? ''),
-          icon: String(Reflect.get(item, 'icon') ?? ''),
-          uri: String(Reflect.get(item, 'uri') ?? ''),
-          order: Number(Reflect.get(item, 'order') ?? 0),
-          active: Boolean(Reflect.get(item, 'active')),
-          show: Boolean(Reflect.get(item, 'show')),
-          required_auth: Boolean(Reflect.get(item, 'required_auth')),
-          parent: Reflect.get(item, 'parent') as T,
-          children: Reflect.get(item, 'children') as T[],
-        };
-        return Menu.create<T>(menuData);
-      });
+      return cacheableData.map((item) => this.toMenuEntity<T>(item));
     } catch (error) {
       console.log('Error en filterRoutesForUser:', error);
       throw new Error(String(error));

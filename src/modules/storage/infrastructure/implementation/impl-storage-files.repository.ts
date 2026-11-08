@@ -2,7 +2,7 @@ import { StorageFiles } from '@/modules/storage/domain/entities/storage-files';
 import { StorageFilesRepository } from '@/modules/storage/domain/repositories/storage-files.repository';
 import { StorageFilesContentFile } from '@/modules/storage/domain/value-objects/storage-files-value-object/storage-files-content-file';
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
+import { PrismaService } from '@/shared/infrastructure/db/prisma.service';
 import { TransactionContextService } from '@/shared/infrastructure/services/transaction-context.service';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';
 import { StorageFilesPath } from '@/modules/storage/domain/value-objects/storage-files-value-object/storage-files-path';
@@ -15,6 +15,15 @@ import { StorageFilesReadRepository } from '@/modules/storage/application/reposi
 import { EntityList } from '@/shared/domain/value-object/entity-list';
 import { TotalItems } from '@/shared/domain/value-object/total-items';
 import { TotalPages } from '@/shared/domain/value-object/total-page';
+
+function isMulterFile(val: unknown): val is Express.Multer.File {
+  return (
+    typeof val === 'object' &&
+    val !== null &&
+    'buffer' in val &&
+    Buffer.isBuffer(Reflect.get(val, 'buffer'))
+  );
+}
 
 @Injectable()
 export class ImplStorageFilesRepository
@@ -29,22 +38,21 @@ export class ImplStorageFilesRepository
   private getPrismaClient() {
     return this.prisma.client;
   }
-  async upload<T>(storage_file_content: StorageFilesContentFile<T>): Promise<{
+  async upload<T>(
+    storage_file_content: StorageFilesContentFile<T>,
+    provider_storage_code?: string,
+    folder?: string,
+  ): Promise<{
     content_file: StorageFilesContentFile<T>;
     path: StorageFilesPath;
   }> {
     try {
-      const val = storage_file_content.value();
-      if (!val || typeof val !== 'object' || !('buffer' in val)) {
+      const val: unknown = storage_file_content.value();
+      if (!isMulterFile(val)) {
         throw new Error('Invalid file content');
       }
-      const file = val as unknown as Express.Multer.File; // wait, no as!
-      // I can just cast inside the assignment or map it properly? No, the rule is no as.
-      // The backend is selected at registry construction time from the
-      // PROVIDER_STORAGE_CODE env var (LOCAL by default). Per-request routing
-      // by file/provider can be added later by passing a code argument here.
-      const backend = this.backends.resolve();
-      const { path } = await backend.upload(file);
+      const backend = this.backends.resolve(provider_storage_code);
+      const { path } = await backend.upload(val, folder);
       return {
         content_file: storage_file_content,
         path: new StorageFilesPath(path),

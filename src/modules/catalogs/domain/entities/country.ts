@@ -5,6 +5,7 @@ import { CountryId } from '@/modules/catalogs/domain/value-objects/country-value
 import { CountryName } from '@/modules/catalogs/domain/value-objects/country-value-object/country-name';
 import { CountryIso2 } from '@/modules/catalogs/domain/value-objects/country-value-object/country-iso2';
 import { CountryPhoneCode } from '@/modules/catalogs/domain/value-objects/country-value-object/country-phone-code';
+import { CountryPhoneMask } from '@/modules/catalogs/domain/value-objects/country-value-object/country-phone-mask';
 
 export class Country {
   constructor(
@@ -15,6 +16,7 @@ export class Country {
     private readonly phone_code: CountryPhoneCode,
     private readonly active: CountryActive,
     private readonly id?: CountryId,
+    private readonly phone_mask?: CountryPhoneMask,
   ) {}
   static create(data: {
     id?: string;
@@ -24,6 +26,7 @@ export class Country {
     active: boolean;
     iso2: string;
     phone_code: string;
+    phone_mask?: string | null;
   }): Country {
     return new Country(
       new CountryName(data.name),
@@ -33,6 +36,7 @@ export class Country {
       new CountryPhoneCode(data.phone_code),
       new CountryActive(data.active),
       data.id ? new CountryId(data.id) : undefined,
+      new CountryPhoneMask(data.phone_mask),
     );
   }
   public getId(): CountryId | undefined {
@@ -55,5 +59,8 @@ export class Country {
   }
   public getPhoneCode(): CountryPhoneCode {
     return this.phone_code;
+  }
+  public getPhoneMask(): CountryPhoneMask | undefined {
+    return this.phone_mask;
   }
 }

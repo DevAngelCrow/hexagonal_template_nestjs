@@ -1,5 +1,5 @@
 import { InvalidValueObjectException } from '@/shared/domain/exceptions/invalid-value-object.exception';
-import { Validator } from 'src/shared/domain/validator/validator-value-object';
+import { Validator } from '@/shared/domain/validator/validator-value-object';
 
 export class CountryAbbreviation {
   private readonly _value: string;

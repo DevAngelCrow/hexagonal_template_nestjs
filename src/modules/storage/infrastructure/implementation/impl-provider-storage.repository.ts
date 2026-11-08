@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ProviderStorage } from '@/modules/storage/domain/entities/provider-storage';
 import { ProviderStorageRepository } from '@/modules/storage/domain/repositories/provider-storage.repository';
 import { ProviderStorageId } from '@/modules/storage/domain/value-objects/provider-storage-value-object/provider-storage-id';
-import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
+import { PrismaService } from '@/shared/infrastructure/db/prisma.service';
 import { ctl_provider_storage, Prisma } from 'generated/prisma/client';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';

@@ -30,6 +30,7 @@ model ctl_country {
   abbreviation                 String                         @db.VarChar(150)
   code                         String                         @db.VarChar(150)
   phone_code                   String                         @db.VarChar(150)
+  phone_mask                   String?                        @default("9999-9999") @db.VarChar(50)
   active                       Boolean                        @default(true)
   created_at                   DateTime?                      @db.Timestamp(0)
   updated_at                   DateTime?                      @db.Timestamp(0)
@@ -197,7 +198,6 @@ model mnt_role {
   created_at      DateTime?         @db.Timestamp(0)
   updated_at      DateTime?         @db.Timestamp(0)
   deleted_at      DateTime?         @db.Timestamp(0)
-  active          Boolean           @default(true)
   code            String            @unique(map: "mnt_role_unique") @db.VarChar(15)
   id              String            @id @default(uuid()) @db.Uuid
   id_status       String            @db.Uuid
@@ -279,10 +279,11 @@ model mnt_user {
   id_status                 String                      @db.Uuid
   login_attempts            Int                         @default(0)
   locked_until              DateTime?                   @db.Timestamp(6)
-  mnt_session_refresh_token mnt_session_refresh_token[]
-  mnt_storage_files         mnt_storage_files[]
-  mnt_password_history      mnt_password_history[]
-  mnt_people                mnt_people                  @relation(fields: [id_people], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mnt_user_id_people_foreign")
+  mnt_session_refresh_token     mnt_session_refresh_token[]
+  mnt_storage_files             mnt_storage_files[]
+  mnt_password_history          mnt_password_history[]
+  mnt_email_verification_tokens mnt_email_verification_tokens[]
+  mnt_people                    mnt_people                      @relation(fields: [id_people], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mnt_user_id_people_foreign")
   ctl_status                ctl_status                  @relation(fields: [id_status], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mnt_user_id_status_foreign")
   mnt_user_rol              mnt_user_rol[]
 
@@ -343,10 +344,8 @@ model mnt_email_verification_tokens {
   created_at        DateTime? @default(now()) @db.Timestamp(0)
   id                String    @id @default(uuid()) @db.Uuid
   id_user           String    @db.Uuid
-  // Prisma field renamed (typo); @map preserves the existing DB column so the
-  // change is zero-downtime. A follow-up migration can ALTER COLUMN to drop
-  // the @map once all environments deploy this.
-  is_reset_password Boolean   @default(false) @map("is_resset_password") @db.Boolean
+  is_reset_password Boolean   @default(false) @db.Boolean
+  mnt_user          mnt_user  @relation(fields: [id_user], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "mnt_email_verification_tokens_id_user_fk")
 
   @@index([id_user])
   @@index([token])
@@ -453,3 +452,45 @@ model ctl_geographic_division_type {
   @@unique([id_country, level], name: "ctl_geographic_division_type_country_level_unique")
   @@index([id_country])
 }
+
+model ctl_currency {
+  id         String    @id @default(uuid()) @db.Uuid
+  code       String    @unique @db.VarChar(10)
+  name       String    @db.VarChar(100)
+  symbol     String    @db.VarChar(10)
+  active     Boolean   @default(true)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  updated_at DateTime? @updatedAt @db.Timestamp(0)
+}
+
+model ctl_payment_method {
+  id          String    @id @default(uuid()) @db.Uuid
+  name        String    @unique @db.VarChar(100)
+  code        String    @unique @db.VarChar(20)
+  description String?   @db.VarChar(255)
+  active      Boolean   @default(true)
+  created_at  DateTime? @default(now()) @db.Timestamp(0)
+  updated_at  DateTime? @updatedAt @db.Timestamp(0)
+  deleted_at  DateTime? @db.Timestamp(0)
+}
+
+model ctl_document_prefix {
+  id            String    @id @default(uuid()) @db.Uuid
+  code          String    @unique @db.VarChar(50)
+  prefix        String    @unique @db.VarChar(10)
+  name          String    @db.VarChar(100)
+  description   String?   @db.VarChar(255)
+  entity_target String    @db.VarChar(50)
+  current_year  Int?
+  current_value Int       @default(0)
+  padding       Int       @default(4)
+  reset_yearly  Boolean   @default(true)
+  separator     String    @default("-") @db.VarChar(5)
+  active        Boolean   @default(true)
+  created_at    DateTime? @default(now()) @db.Timestamp(0)
+  updated_at    DateTime? @updatedAt @db.Timestamp(0)
+  deleted_at    DateTime? @db.Timestamp(0)
+
+  @@index([active])
+}
+

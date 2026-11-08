@@ -37,8 +37,10 @@ export class SendPasswordResetSubscriber
         },
       );
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       this.logger.error(
-        `Error al encolar reset de contraseña para ${event.email}: ${(error as Error).message}`,
+        `Error al encolar reset de contraseña para ${event.email}: ${errorMessage}`,
       );
     }
   }

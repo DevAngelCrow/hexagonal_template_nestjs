@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DocumentType } from '@/modules/iam/domain/entities/document-type.entity';
 import { DocumentTypeRepository } from '@/modules/iam/domain/repositories/document-type.repository';
 import { DocumentTypeId } from '@/modules/iam/domain/value-objects/profile/document-type-value-object/document-type-id';
-import { PrismaService } from 'src/shared/infrastructure/persistence/prisma/prisma.service';
+import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
 import { ctl_document_type, Prisma } from 'generated/prisma/client';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';

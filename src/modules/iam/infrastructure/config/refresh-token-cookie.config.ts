@@ -30,9 +30,7 @@ export function buildRefreshTokenCookieOptions(
 export function extractRefreshTokenFromCookie(req: Request): string | null {
   const cookies: unknown = req.cookies;
   if (cookies && typeof cookies === 'object') {
-    const value = (cookies as Record<string, unknown>)[
-      REFRESH_TOKEN_COOKIE_NAME
-    ];
+    const value: unknown = Reflect.get(cookies, REFRESH_TOKEN_COOKIE_NAME);
     if (typeof value === 'string' && value.length > 0) {
       return value;
     }

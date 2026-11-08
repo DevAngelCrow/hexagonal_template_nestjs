@@ -22,10 +22,10 @@ async function bootstrap() {
   const port = configService.get<number>('PORT') ?? 3000;
   const appUrl = configService.get<string>('APP_URL');
 
+  setupSecurity(app, configService);
   app.use(express.json({ limit: '50kb' }));
   app.use(express.urlencoded({ limit: '50kb', extended: true }));
   app.use(cookieParser());
-  setupSecurity(app, configService);
 
   app.setGlobalPrefix('api', {
     exclude: enableApiDocs

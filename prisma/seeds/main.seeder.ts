@@ -1,4 +1,7 @@
 import { seedCtlStatus } from './ctl-status.seeder.js';
+import { seedCtlCurrency } from './ctl-currency.seeder.js';
+import { seedCtlPaymentMethod } from './ctl-payment-method.seeder.js';
+import { seedCtlDocumentPrefix } from './ctl-document-prefix.seeder.js';
 import { seedCtlCountry } from './ctl-country.seeder.js';
 import { seedCtlGeographicDivisionType } from './ctl-geographic-division-type.seeder.js';
 import { seedCtlGeographicDivision } from './ctl-geographic-division.seeder.js';
@@ -54,6 +57,9 @@ const mainSeeder = async () => {
       'mnt_document',
       'mnt_people',
       'people_country',
+      'ctl_document_prefix',
+      'ctl_payment_method',
+      'ctl_currency',
       'ctl_document_type',
       'ctl_gender',
       'ctl_marital_status',
@@ -78,6 +84,12 @@ const mainSeeder = async () => {
     await seedCategoryStatus(prisma);
     console.log('Seeding statuses...');
     await seedCtlStatus(prisma);
+    console.log('Seeding currencies...');
+    await seedCtlCurrency(prisma);
+    console.log('Seeding payment methods...');
+    await seedCtlPaymentMethod(prisma);
+    console.log('Seeding document prefixes...');
+    await seedCtlDocumentPrefix(prisma);
     console.log('Seeding countries...');
     await seedCtlCountry(prisma);
     console.log('Seeding geographic division types...');

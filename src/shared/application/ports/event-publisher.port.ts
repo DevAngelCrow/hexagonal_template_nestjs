@@ -1,5 +1,5 @@
-import { DomainEvent } from '@/shared/domain/events/domain-event';
+import { DomainEventLike } from '@/shared/domain/aggregate-root';
 
 export abstract class EventPublisherPort {
-  abstract publish(events: DomainEvent | DomainEvent[]): Promise<void>;
+  abstract publish(events: DomainEventLike | DomainEventLike[]): Promise<void>;
 }

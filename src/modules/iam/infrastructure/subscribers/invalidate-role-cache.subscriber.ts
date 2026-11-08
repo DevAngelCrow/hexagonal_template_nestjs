@@ -27,8 +27,10 @@ export class InvalidateRoleCacheSubscriber
       await this.cacheService.invalidate(`role_permissions:${event.roleId}`);
       await this.cacheService.invalidate(`role_permissions:${event.roleName}`);
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       this.logger.warn(
-        `Error al invalidar cache de permisos del rol ${event.roleName}: ${(error as Error).message}`,
+        `Error al invalidar cache de permisos del rol ${event.roleName}: ${errorMessage}`,
       );
     }
   }

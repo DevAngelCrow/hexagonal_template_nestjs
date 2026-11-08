@@ -30,8 +30,18 @@
 
 ## 3. Reglas Inviolables de Arquitectura Hexagonal
 
+### 3.0. Prohibición Absoluta de Conversiones de Tipo (`as`)
+- **Regla estricta en todas las capas (`domain`, `application`, `infrastructure`)**: Queda **estrictamente prohibido** el uso de *Type Assertions* (`valor as Tipo`, `as any`, `as unknown as T`).
+- **Únicos usos válidos de la palabra clave `as`**:
+  1. `as const` (*Const Assertions* para inferir tipos literales inmutables más estrictos).
+  2. `import { A as B }` / `export { A as B }` (alias léxicos de módulos ES6).
+- **Alternativas obligatorias**: Todo estrechamiento o validación de tipos debe realizarse con *Type Guards* (`val is T`), funciones de parseo seguro (`*StateMachine.parseState(raw)`), verificación de instancia (`instanceof Error`) o contratos/genéricos bien tipados. Esta regla es verificada automáticamente por `.oxlintrc.json` (`typescript/consistent-type-assertions: "never"`) y `test/architecture.spec.ts`.
+
 ### 3.1. Capa de Dominio (`src/**/domain/`)
-- **Regla de oro**: Cero dependencias externas o de frameworks (prohibido `@nestjs/*`, `@prisma/*`, o librerías ORM/transporte). Solo TypeScript puro.
+- **Regla de oro**: Cero dependencias externas o de frameworks (prohibido `@nestjs/*`, `@prisma/*`, `xstate`, o librerías ORM/transporte/utilidades de terceros). Solo TypeScript puro.
+- **Máquinas de Estado (`domain/state-machine/`)**:
+  - El dominio define únicamente los estados (`as const`), eventos y la configuración declarativa pura mediante `StateMachineDefinition` y delega la transición en el puerto `StateMachineEnginePort` (`@/shared/domain/ports/state-machine-engine.port`).
+  - La librería `xstate` se importa y ejecuta **exclusivamente** en el adaptador de infraestructura `XStateEngineAdapter` (`@/shared/infrastructure/state-machine/xstate-engine.adapter`).
 - **Agregados (`domain/aggregates/`)**:
   - Extienden obligatoriamente `AggregateRoot` (`@/shared/domain/aggregate-root`).
   - Orquestan la lógica compleja, protegen invariantes y acumulan eventos de dominio mediante `this.record(new DomainEvent(...))`.
@@ -75,6 +85,11 @@
 ### 3.4. Publicación Transaccional After-Commit
 - Los eventos acumulados en la entidad (`entity.pullDomainEvents()`) se publican mediante `TransactionAwareEventPublisher`.
 - Si hay una transacción activa en `AsyncLocalStorage` (`TransactionContextService`), los eventos se retienen y despachan únicamente tras el commit exitoso en BD (`afterCommitHooks`), activando suscriptores de BullMQ, Redis o `AuditLogService`.
+
+### 3.5. Manejo Obligatorio de Transacciones (@Transactional)
+- **Prohibición estricta**: NUNCA invocar `this.prisma.client.$transaction` ni `prisma.$transaction` dentro de las clases de repositorio (`infrastructure/implementation/` o `infrastructure/persistence/`).
+- **Declaración en Controladores**: Las transacciones atómicas se declaran exclusivamente en la capa de controladores mediante el decorador `@Transactional()` (`@/shared/infrastructure/decorators/transactional.decorator`).
+- **Propagación Contextual**: `PrismaService.client` (o `TransactionInterceptor`) obtiene automáticamente el cliente transaccional de `AsyncLocalStorage`. Todas las operaciones de Prisma que usen `this.prisma.client` se ejecutan automáticamente dentro de la misma transacción activa. Invocar `$transaction` en un `TransactionClient` arroja un error en tiempo de ejecución.
 
 ---
 

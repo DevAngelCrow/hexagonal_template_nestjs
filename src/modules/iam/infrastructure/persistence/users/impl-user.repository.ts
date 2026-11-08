@@ -1,4 +1,4 @@
-import { PrismaService } from 'src/shared/infrastructure/persistence/prisma/prisma.service';
+import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
 import { UserRepository } from '@/modules/iam/domain/repositories/user-repository';
 import { User } from '@/modules/iam/domain/aggregates/user.aggregate';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';

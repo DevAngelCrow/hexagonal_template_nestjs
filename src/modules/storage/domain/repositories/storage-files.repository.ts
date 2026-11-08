@@ -5,6 +5,8 @@ import { StorageFilesPath } from '@/modules/storage/domain/value-objects/storage
 export abstract class StorageFilesRepository {
   abstract upload<T>(
     storage_file_content: StorageFilesContentFile<T>,
+    provider_storage_code?: string,
+    folder?: string,
   ): Promise<{
     content_file: StorageFilesContentFile<T>;
     path: StorageFilesPath;

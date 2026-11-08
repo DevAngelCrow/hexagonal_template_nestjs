@@ -38,8 +38,10 @@ export class SendEmailVerificationSubscriber
         },
       );
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       this.logger.error(
-        `Error al encolar email de verificación para ${event.email}: ${(error as Error).message}`,
+        `Error al encolar email de verificación para ${event.email}: ${errorMessage}`,
       );
     }
   }

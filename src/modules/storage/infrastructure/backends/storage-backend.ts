@@ -15,5 +15,10 @@ export abstract class StorageBackend {
   /** Provider code from ctl_provider_storage this backend serves (LOCAL/S3/…). */
   abstract readonly code: string;
 
-  abstract upload(file: Express.Multer.File): Promise<{ path: string }>;
+  abstract upload(
+    file: Express.Multer.File,
+    folder?: string,
+  ): Promise<{ path: string }>;
+
+  abstract delete(pathOrUrl: string): Promise<boolean>;
 }

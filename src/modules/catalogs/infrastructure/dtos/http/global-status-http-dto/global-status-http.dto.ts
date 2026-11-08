@@ -1,5 +1,5 @@
 import { GlobalStatusDto } from '@/modules/catalogs/application/dtos/global-status.dto';
-import { GlobalStatus } from 'src/modules/catalogs/domain/entities/global-status';
+import { GlobalStatus } from '@/modules/catalogs/domain/entities/global-status';
 
 export class GlobalStatusHttpDto<T = unknown> {
   constructor(

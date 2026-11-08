@@ -1,5 +1,5 @@
 import { GeographicDivisionDto } from '@/modules/catalogs/application/dtos/geographic-division.dto';
-import { GeographicDivision } from 'src/modules/catalogs/domain/entities/geographic-division';
+import { GeographicDivision } from '@/modules/catalogs/domain/entities/geographic-division';
 
 export class GeographicDivisionHttpDto<T = unknown> {
   constructor(

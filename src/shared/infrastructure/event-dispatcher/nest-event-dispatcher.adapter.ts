@@ -14,6 +14,6 @@ export class NestEventDispatcherAdapter extends EventDispatcherPort {
   }
 
   async dispatch(events: DomainEventLike[]): Promise<void> {
-    await this.eventPublisher.publish(events as any);
+    await this.eventPublisher.publish(events);
   }
 }

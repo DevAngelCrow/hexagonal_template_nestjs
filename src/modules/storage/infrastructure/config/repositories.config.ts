@@ -6,6 +6,8 @@ import { ProviderStorageQueriesRepository } from '@/modules/storage/application/
 import { ImplProviderStorageQueriesRepository } from '@/modules/storage/infrastructure/implementation/impl-provider-storage-queries.repository';
 import { StorageFileReaderPort } from '@/modules/storage/domain/ports/storage-file-reader.port';
 import { ImplStorageFileReaderPort } from '@/modules/storage/infrastructure/implementation/impl-storage-file-reader.port';
+import { StorageFileDeleterPort } from '@/modules/storage/domain/ports/storage-file-deleter.port';
+import { ImplStorageFileDeleterPort } from '@/modules/storage/infrastructure/implementation/impl-storage-file-deleter.port';
 import { StorageFilesReadRepository } from '@/modules/storage/application/repositories/storage-files-read.repository';
 
 export const repositories = [
@@ -28,5 +30,9 @@ export const repositories = [
   {
     provide: StorageFileReaderPort,
     useClass: ImplStorageFileReaderPort,
+  },
+  {
+    provide: StorageFileDeleterPort,
+    useClass: ImplStorageFileDeleterPort,
   },
 ];

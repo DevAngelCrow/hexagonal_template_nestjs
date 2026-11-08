@@ -3,13 +3,20 @@
   "rules": {
     "typescript/no-explicit-any": "off",
     "typescript/no-floating-promises": "error",
-    "typescript/no-misused-spread": "off"
+    "typescript/no-misused-spread": "off",
+    "typescript/consistent-type-assertions": [
+      "error",
+      {
+        "assertionStyle": "never"
+      }
+    ]
   },
   "overrides": [
     {
       "files": ["**/*.spec.ts", "**/*.e2e-spec.ts"],
       "rules": {
-        "typescript/unbound-method": "off"
+        "typescript/unbound-method": "off",
+        "typescript/consistent-type-assertions": "off"
       }
     }
   ],

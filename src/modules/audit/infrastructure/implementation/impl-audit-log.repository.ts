@@ -15,6 +15,41 @@ import { TotalItems } from '@/shared/domain/value-object/total-items';
 import { TotalPages } from '@/shared/domain/value-object/total-page';
 import { AuditAction } from '@/modules/audit/domain/enums/audit-action.enum';
 
+const AUDIT_ACTION_VALUES: readonly AuditAction[] = Object.values(AuditAction);
+
+function parseAuditAction(raw: string): AuditAction {
+  for (const action of AUDIT_ACTION_VALUES) {
+    if (action === raw) {
+      return action;
+    }
+  }
+  return AuditAction.LOGIN_SUCCESS;
+}
+
+function isPlainRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function toPrismaJsonObject(
+  record: Record<string, unknown>,
+): Prisma.InputJsonObject {
+  const result: Record<string, Prisma.InputJsonValue | null> = {};
+  for (const [key, val] of Object.entries(record)) {
+    if (
+      typeof val === 'string' ||
+      typeof val === 'number' ||
+      typeof val === 'boolean'
+    ) {
+      result[key] = val;
+    } else if (val === null || val === undefined) {
+      result[key] = null;
+    } else {
+      result[key] = JSON.stringify(val);
+    }
+  }
+  return result;
+}
+
 @Injectable()
 export class ImplAuditLogRepository
   implements AuditLogRepository, AuditLogReadRepository
@@ -35,8 +70,8 @@ export class ImplAuditLogRepository
         entity_type: auditLog.entity_type,
         entity_id: auditLog.entity_id,
         metadata:
-          auditLog.metadata && typeof auditLog.metadata === 'object'
-            ? (auditLog.metadata as Prisma.InputJsonValue)
+          auditLog.metadata && isPlainRecord(auditLog.metadata)
+            ? toPrismaJsonObject(auditLog.metadata)
             : Prisma.JsonNull,
       },
     });
@@ -79,16 +114,14 @@ export class ImplAuditLogRepository
       (r) =>
         new AuditLogDto(
           r.id,
-          r.action as AuditAction,
+          parseAuditAction(r.action),
           r.user_id,
           r.user_name,
           r.ip_address,
           r.user_agent,
           r.entity_type,
           r.entity_id,
-          typeof r.metadata === 'object' && r.metadata !== null
-            ? (r.metadata as Record<string, unknown>)
-            : null,
+          isPlainRecord(r.metadata) ? r.metadata : null,
           r.created_at,
         ),
     );

@@ -18,9 +18,9 @@ export class MenuController {
   @Get()
   @HttpCode(200)
   async menu(
-    @Req() request: Request,
+    @Req() request: Request & { user?: { id?: string } },
   ): Promise<SuccessResponseDto<MenuUserResponseDto<Menu>>> {
-    const user = (request as unknown as { user?: { id?: string } }).user;
+    const user = request.user;
     const userId = user?.id ?? '';
     const query = new GetMenuUserQuery(userId);
     const result: MenuUserResult<Menu> = await this.queryBus.execute(query);

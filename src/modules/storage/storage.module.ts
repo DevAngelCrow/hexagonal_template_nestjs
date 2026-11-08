@@ -10,6 +10,7 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { commandHandlerProviders } from './infrastructure/config/commands-handlers.config';
 import { queryHandlerProviders } from './infrastructure/config/queries-handlers.config';
 import { StorageFileReaderPort } from './domain/ports/storage-file-reader.port';
+import { StorageFileDeleterPort } from './domain/ports/storage-file-deleter.port';
 import { LocalStorageBackend } from './infrastructure/backends/local-storage.backend';
 import { S3StorageBackend } from './infrastructure/backends/s3-storage.backend';
 import { StorageBackendRegistry } from './infrastructure/backends/storage-backend.registry';
@@ -34,6 +35,7 @@ import { StorageBackendRegistry } from './infrastructure/backends/storage-backen
     ...commandHandlerProviders,
     ...queryHandlerProviders,
     StorageFileReaderPort,
+    StorageFileDeleterPort,
   ],
 })
 export class StorageModule {}

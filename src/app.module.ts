@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PrismaModule } from '@/shared/infrastructure/db/prisma.module';
+import { StateMachineModule } from '@/shared/infrastructure/state-machine/state-machine.module';
 import { LoggerModule } from 'nestjs-pino';
 import { IdempotencyMiddleware } from '@/shared/infrastructure/http/middleware/idempotency.middleware';
 import { TransactionInterceptor } from '@/shared/infrastructure/interceptors/transaction.interceptor';
@@ -53,6 +54,7 @@ import { PermissionsGuard } from '@/modules/iam/infrastructure/guards/permission
       ],
     }),
     PrismaModule,
+    StateMachineModule,
     EventsModule,
     RedisCacheModule,
     QueuesModule,

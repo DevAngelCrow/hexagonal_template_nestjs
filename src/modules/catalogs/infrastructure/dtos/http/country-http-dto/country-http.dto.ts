@@ -1,5 +1,5 @@
 import { GlobalStatusDto } from '@/modules/catalogs/application/dtos/global-status.dto';
-import { Country } from 'src/modules/catalogs/domain/entities/country';
+import { Country } from '@/modules/catalogs/domain/entities/country';
 
 export class CountryHttpDto {
   constructor(
@@ -11,6 +11,7 @@ export class CountryHttpDto {
     public readonly active: boolean,
     public readonly id?: string,
     public readonly status?: GlobalStatusDto,
+    public readonly phone_mask?: string | null,
   ) {}
   public static fromEntity(country: Country): CountryHttpDto {
     return new CountryHttpDto(
@@ -21,9 +22,11 @@ export class CountryHttpDto {
       country.getPhoneCode().value(),
       country.getActive().value(),
       country.getId() ? country.getId()?.value() : undefined,
+      undefined,
+      country.getPhoneMask()?.value() ?? null,
     );
   }
-  public static fromDto(dto: CountryHttpDto): CountryHttpDto {
+  public static fromDto(dto: CountryHttpDto & { phone_mask?: string | null }): CountryHttpDto {
     return new CountryHttpDto(
       dto.name,
       dto.iso2,
@@ -33,6 +36,7 @@ export class CountryHttpDto {
       dto.active,
       dto.id,
       dto.status,
+      dto.phone_mask ?? null,
     );
   }
 }

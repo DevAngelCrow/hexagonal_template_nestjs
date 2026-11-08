@@ -1,5 +1,5 @@
 import { GlobalStatusDto } from '@/modules/catalogs/application/dtos/global-status.dto';
-import { CategoryStatus } from 'src/modules/catalogs/domain/entities/category-status';
+import { CategoryStatus } from '@/modules/catalogs/domain/entities/category-status';
 
 export class CategoryStatusHttpDto {
   constructor(

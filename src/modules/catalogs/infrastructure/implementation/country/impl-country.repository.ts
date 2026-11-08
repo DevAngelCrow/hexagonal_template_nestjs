@@ -31,6 +31,7 @@ export class ImplCountryRepository
           iso2: country.getIso2().value(),
           code: country.getCode().value(),
           phone_code: country.getPhoneCode().value(),
+          phone_mask: country.getPhoneMask()?.value(),
           abbreviation: country.getAbbreviation().value(),
           active: country.getActive().value(),
         },
@@ -51,7 +52,10 @@ export class ImplCountryRepository
         },
         data: {
           name: country.getName().value(),
+          iso2: country.getIso2().value(),
           code: country.getCode().value(),
+          phone_code: country.getPhoneCode().value(),
+          phone_mask: country.getPhoneMask()?.value(),
           abbreviation: country.getAbbreviation().value(),
           active: country.getActive().value(),
         },
@@ -178,6 +182,7 @@ export class ImplCountryRepository
       iso2: prismaCountry.iso2,
       code: prismaCountry.code,
       phone_code: prismaCountry.phone_code,
+      phone_mask: prismaCountry.phone_mask,
       abbreviation: prismaCountry.abbreviation,
       active: prismaCountry.active,
     });
@@ -201,6 +206,7 @@ export class ImplCountryRepository
       country.active,
       country.id,
       status,
+      country.phone_mask,
     );
   }
 }

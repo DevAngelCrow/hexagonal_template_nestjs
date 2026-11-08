@@ -1,5 +1,5 @@
 import { GlobalStatusDto } from '@/modules/catalogs/application/dtos/global-status.dto';
-import { MaritalStatus } from 'src/modules/catalogs/domain/entities/marital-status';
+import { MaritalStatus } from '@/modules/catalogs/domain/entities/marital-status';
 
 export class MaritalStatusHttpDto {
   constructor(

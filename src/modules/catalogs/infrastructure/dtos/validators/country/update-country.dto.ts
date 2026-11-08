@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsBoolean,
   IsNotEmpty,
@@ -37,4 +37,9 @@ export class UpdateCountryDto {
   @MaxLength(150)
   @ApiProperty({ example: '+34' })
   phone_code!: string;
+  @IsString()
+  @IsOptional()
+  @MaxLength(50)
+  @ApiPropertyOptional({ example: '9999-9999' })
+  phone_mask?: string;
 }

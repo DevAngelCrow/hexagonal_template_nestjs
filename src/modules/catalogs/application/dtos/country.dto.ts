@@ -9,6 +9,7 @@ export class CountryDto {
     public readonly phone_code: string,
     public readonly active: boolean,
     public readonly id?: string,
+    public readonly phone_mask?: string | null,
   ) {}
   public static fromEntity(country: Country): CountryDto {
     return new CountryDto(
@@ -19,6 +20,7 @@ export class CountryDto {
       country.getPhoneCode().value(),
       country.getActive().value(),
       country.getId() ? country.getId()?.value() : undefined,
+      country.getPhoneMask()?.value() ?? null,
     );
   }
 }

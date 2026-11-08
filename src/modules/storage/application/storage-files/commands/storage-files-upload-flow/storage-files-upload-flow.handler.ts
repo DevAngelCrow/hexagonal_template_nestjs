@@ -56,7 +56,11 @@ export class StorageFilesUploadFlowHandler<
     }
     const idProviderStorage = new StorageFilesIdProvider(providerId.value());
     const storageContentFile =
-      await this.storageFilesRepository.upload<T>(storageFileUpload);
+      await this.storageFilesRepository.upload<T>(
+        storageFileUpload,
+        command.provider_storage_code,
+        command.folder,
+      );
     const storageFileDto = new StorageFilesDto<T>(
       storageContentFile.content_file.value().originalname,
       idProviderStorage.value(),

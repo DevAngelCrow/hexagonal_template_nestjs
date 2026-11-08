@@ -47,8 +47,16 @@ export function setupSecurity(
   });
 
   const corsOriginsEnv = configService.get<string>('CORS_ORIGINS');
+  const defaultDevOrigins = [
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://127.0.0.1:5173',
+    'http://127.0.0.1:5174',
+  ];
+
   const allowedOrigins: string[] = [
     clientUrl,
+    ...(isDevelopment ? defaultDevOrigins : []),
     ...(corsOriginsEnv
       ? corsOriginsEnv
           .split(',')
@@ -57,10 +65,42 @@ export function setupSecurity(
       : []),
   ];
 
+  const uniqueOrigins = Array.from(new Set(allowedOrigins));
+
   app.enableCors({
-    origin: allowedOrigins,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: 'Content-Type, Authorization',
-    credentials: true
+    origin: (
+      requestOrigin: string | undefined,
+      callback: (err: Error | null, allow?: boolean) => void,
+    ) => {
+      // Allow requests with no origin (curl, server-to-server, etc.)
+      if (!requestOrigin) return callback(null, true);
+      if (uniqueOrigins.includes(requestOrigin)) return callback(null, true);
+      // In development, permit any localhost/127.0.0.1 port
+      if (
+        isDevelopment &&
+        /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(requestOrigin)
+      ) {
+        return callback(null, true);
+      }
+      callback(new Error(`Origin ${requestOrigin} not allowed by CORS`));
+    },
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'Idempotency-Key',
+      'idempotency-key',
+      'X-Request-ID',
+      'x-request-id',
+      'Accept',
+      'Origin',
+      'X-Requested-With',
+    ],
+    exposedHeaders: [
+      'X-Request-ID',
+      'X-Idempotent-Replayed',
+      'Content-Disposition',
+    ],
+    credentials: true,
   });
 }

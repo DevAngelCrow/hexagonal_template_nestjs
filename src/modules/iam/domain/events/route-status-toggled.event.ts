@@ -1,3 +1,6 @@
 export class RouteStatusToggledEvent {
-  constructor(public readonly newStatus: boolean) {}
+  constructor(
+    public readonly newStatus: boolean,
+    public readonly id?: string,
+  ) {}
 }

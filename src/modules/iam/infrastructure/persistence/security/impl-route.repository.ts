@@ -86,25 +86,49 @@ export class ImplRouteRepository
   async update(route: Route): Promise<void> {
     try {
       const prisma = this.getPrismaClient();
-      const newPermissions: string[] = route.getPermissionsId() ?? [];
+      const requestedPermissions = route.getPermissionsId();
       const routeId = route.getId()?.value();
-      const currentPermissions = await prisma.mnt_route_permissions.findMany({
-        where: { id_route: routeId },
-        select: { id_permission: true },
-      });
-      const currentPermissionIds = currentPermissions.map(
-        (p) => p.id_permission,
-      );
 
-      const toDelete = currentPermissionIds.filter(
-        (id: string) => !newPermissions.includes(id),
-      );
-      const toCreate = newPermissions.filter(
-        (id: string) => !currentPermissionIds.includes(id),
-      );
+      let permissionsData:
+        | Prisma.mnt_route_permissionsUpdateManyWithoutMnt_routeNestedInput
+        | undefined;
+
+      if (requestedPermissions !== undefined) {
+        const currentPermissions = await prisma.mnt_route_permissions.findMany({
+          where: { id_route: routeId },
+          select: { id_permission: true },
+        });
+        const currentPermissionIds = currentPermissions.map(
+          (p) => p.id_permission,
+        );
+
+        const toDelete = currentPermissionIds.filter(
+          (id: string) => !requestedPermissions.includes(id),
+        );
+        const toCreate = requestedPermissions.filter(
+          (id: string) => !currentPermissionIds.includes(id),
+        );
+
+        permissionsData = {
+          deleteMany:
+            toDelete.length > 0
+              ? {
+                  id_route: routeId,
+                  id_permission: {
+                    in: toDelete,
+                  },
+                }
+              : undefined,
+          create: toCreate.map((id_permission: string) => ({
+            id_permission,
+            created_at: new Date(),
+          })),
+        };
+      }
+
       await prisma.mnt_route.update({
         where: {
-          id: route.getId()?.value(),
+          id: routeId,
         },
         data: {
           name: route.getName().value(),
@@ -118,21 +142,9 @@ export class ImplRouteRepository
           title: route.getTitle()?.value(),
           id_parent: route.getIdParent()?.value() ?? null,
           updated_at: new Date(),
-          mnt_route_permissions: {
-            deleteMany:
-              toDelete.length > 0
-                ? {
-                    id_route: routeId,
-                    id_permission: {
-                      in: toDelete,
-                    },
-                  }
-                : undefined,
-            create: toCreate.map((id_permission: string) => ({
-              id_permission,
-              created_at: new Date(),
-            })),
-          },
+          ...(permissionsData
+            ? { mnt_route_permissions: permissionsData }
+            : {}),
         },
       });
     } catch (error) {
@@ -267,10 +279,14 @@ export class ImplRouteRepository
     }
   }
   private mapToDomain(primsaRoute: mnt_route): Route {
+    const fallbackDescription =
+      primsaRoute.description && primsaRoute.description.trim().length >= 2
+        ? primsaRoute.description
+        : primsaRoute.title;
     return Route.create({
       id: primsaRoute.id,
       name: primsaRoute.name,
-      description: primsaRoute.description ?? '',
+      description: fallbackDescription,
       icon: primsaRoute.icon,
       uri: primsaRoute.uri,
       active: primsaRoute.active,

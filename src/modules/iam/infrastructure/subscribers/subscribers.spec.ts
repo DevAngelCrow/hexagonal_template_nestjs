@@ -3,9 +3,13 @@ import { UserRegisteredDomainEvent } from '@/modules/iam/domain/events/user-regi
 import { UserLoggedInDomainEvent } from '@/modules/iam/domain/events/user-logged-in.domain-event';
 import { UserPasswordResetDomainEvent } from '@/modules/iam/domain/events/user-password-reset.domain-event';
 import { RolePermissionsUpdatedDomainEvent } from '@/modules/iam/domain/events/role-permissions-updated.domain-event';
+import { RouteCreatedEvent } from '@/modules/iam/domain/events/route-created.event';
+import { RouteUpdatedEvent } from '@/modules/iam/domain/events/route-updated.event';
+import { RouteStatusToggledEvent } from '@/modules/iam/domain/events/route-status-toggled.event';
 import { SendEmailVerificationSubscriber } from '@/modules/iam/infrastructure/subscribers/send-email-verification.subscriber';
 import { SendPasswordResetSubscriber } from '@/modules/iam/infrastructure/subscribers/send-password-reset.subscriber';
 import { InvalidateRoleCacheSubscriber } from '@/modules/iam/infrastructure/subscribers/invalidate-role-cache.subscriber';
+import { InvalidateMenuCacheSubscriber } from '@/modules/iam/infrastructure/subscribers/invalidate-menu-cache.subscriber';
 import { AuditIamSubscriber } from '@/modules/iam/infrastructure/subscribers/audit-iam.subscriber';
 import { AuditAction } from '@/modules/audit/domain/enums/audit-action.enum';
 
@@ -45,7 +49,10 @@ describe('IAM Domain Events & Subscribers', () => {
       };
 
       const subscriber = new SendPasswordResetSubscriber(mockQueue as any);
-      const event = new UserPasswordResetDomainEvent('user-1', 'reset@example.com');
+      const event = new UserPasswordResetDomainEvent(
+        'user-1',
+        'reset@example.com',
+      );
 
       await subscriber.handle(event);
 
@@ -68,15 +75,20 @@ describe('IAM Domain Events & Subscribers', () => {
       };
 
       const subscriber = new InvalidateRoleCacheSubscriber(mockCache as any);
-      const event = new RolePermissionsUpdatedDomainEvent('role-admin', 'ADMIN', [
-        'perm-1',
-        'perm-2',
-      ]);
+      const event = new RolePermissionsUpdatedDomainEvent(
+        'role-admin',
+        'ADMIN',
+        ['perm-1', 'perm-2'],
+      );
 
       await subscriber.handle(event);
 
-      expect(mockCache.invalidate).toHaveBeenCalledWith('role_permissions:role-admin');
-      expect(mockCache.invalidate).toHaveBeenCalledWith('role_permissions:ADMIN');
+      expect(mockCache.invalidate).toHaveBeenCalledWith(
+        'role_permissions:role-admin',
+      );
+      expect(mockCache.invalidate).toHaveBeenCalledWith(
+        'role_permissions:ADMIN',
+      );
     });
   });
 
@@ -103,6 +115,55 @@ describe('IAM Domain Events & Subscribers', () => {
           ip_address: '192.168.1.1',
         }),
       );
+    });
+  });
+
+  describe('InvalidateMenuCacheSubscriber', () => {
+    it('invalidates all cached menus on RouteCreatedEvent, RouteUpdatedEvent, and RouteStatusToggledEvent', async () => {
+      const mockCachePort = {
+        invalidateUserPermissions: vi.fn(),
+        invalidateUsersPermissions: vi.fn(),
+        getMenuCacheVersion: vi.fn(),
+        invalidateAllMenus: vi.fn().mockResolvedValue(undefined),
+      };
+
+      const subscriber = new InvalidateMenuCacheSubscriber(mockCachePort);
+
+      await subscriber.handle(
+        new RouteCreatedEvent(
+          'route-1',
+          'dashboard',
+          'Tablero principal',
+          'pi pi-home',
+          '/dashboard',
+          true,
+          true,
+          1,
+          true,
+        ),
+      );
+      await subscriber.handle(
+        new RouteUpdatedEvent(
+          'dashboard',
+          'Tablero principal',
+          'pi pi-home',
+          '/dashboard',
+          true,
+          1,
+          true,
+          'route-1',
+        ),
+      );
+      await subscriber.handle(new RouteStatusToggledEvent(false, 'route-1'));
+
+      expect(mockCachePort.invalidateAllMenus).toHaveBeenCalledTimes(3);
+    });
+
+    it('handles missing CachePort gracefully without throwing', async () => {
+      const subscriber = new InvalidateMenuCacheSubscriber(undefined);
+      await expect(
+        subscriber.handle(new RouteStatusToggledEvent(true, 'route-1')),
+      ).resolves.toBeUndefined();
     });
   });
 });

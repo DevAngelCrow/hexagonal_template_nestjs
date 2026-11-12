@@ -8,5 +8,6 @@ export class GetGeographicDivisionsQuery {
     public readonly id_country?: string,
     public readonly id_parent?: string,
     public readonly id_type?: string,
+    public readonly level?: number,
   ) {}
 }

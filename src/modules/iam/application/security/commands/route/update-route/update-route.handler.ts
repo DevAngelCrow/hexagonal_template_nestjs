@@ -11,6 +11,7 @@ import { RoutesUri } from '@/modules/iam/domain/value-objects/security/routes-va
 import { RoutesShow } from '@/modules/iam/domain/value-objects/security/routes-value-object/routes-show';
 import { RoutesOrder } from '@/modules/iam/domain/value-objects/security/routes-value-object/routes-order';
 import { RoutesRquiredAuth } from '@/modules/iam/domain/value-objects/security/routes-value-object/routes-require-auth';
+import { RoutesTitle } from '@/modules/iam/domain/value-objects/security/routes-value-object/routes-title';
 import { EventDispatcherPort } from '@/shared/domain/ports/event-dispatcher.port';
 
 @CommandHandler(UpdateRouteCommand)
@@ -22,7 +23,15 @@ export class UpdateRouteHandler implements ICommandHandler<UpdateRouteCommand> {
 
   async execute(command: UpdateRouteCommand): Promise<void> {
     if (!command.route_dto.id) {
-      throw new BadRequestException('El ID de la ruta es requerido para actualizar');
+      throw new BadRequestException(
+        'El ID de la ruta es requerido para actualizar',
+      );
+    }
+    if (
+      command.route_dto.id_parent &&
+      command.route_dto.id_parent === command.route_dto.id
+    ) {
+      throw new BadRequestException('Una ruta no puede ser su propio padre');
     }
     const routeEntity = await this.repository.findById(
       new RoutesId(command.route_dto.id),
@@ -30,6 +39,11 @@ export class UpdateRouteHandler implements ICommandHandler<UpdateRouteCommand> {
     if (!routeEntity) {
       throw new NotFoundException('Route', command.route_dto.id);
     }
+
+    const resolvedTitle =
+      command.route_dto.title ??
+      routeEntity.getTitle()?.value() ??
+      command.route_dto.name;
 
     routeEntity.update(
       new RoutesName(command.route_dto.name),
@@ -40,6 +54,10 @@ export class UpdateRouteHandler implements ICommandHandler<UpdateRouteCommand> {
       new RoutesOrder(command.route_dto.order),
       new RoutesRquiredAuth(command.route_dto.required_auth),
       command.route_dto.permissions_id,
+      new RoutesTitle(resolvedTitle),
+      command.route_dto.id_parent
+        ? new RoutesId(command.route_dto.id_parent)
+        : undefined,
     );
 
     await this.repository.update(routeEntity);

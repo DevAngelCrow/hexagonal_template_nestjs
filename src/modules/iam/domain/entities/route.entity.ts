@@ -41,7 +41,7 @@ export class Route extends AggregateRoot {
     active: boolean;
     show: boolean;
     required_auth: boolean;
-    id_parent?: string;
+    id_parent?: string | null;
     permissions_id?: string[];
   }): Route {
     return new Route(
@@ -85,6 +85,8 @@ export class Route extends AggregateRoot {
     order: RoutesOrder,
     required_auth: RoutesRquiredAuth,
     permissions_id?: string[],
+    title?: RoutesTitle,
+    id_parent?: RoutesId,
   ) {
     this.name = name;
     this.description = description;
@@ -94,6 +96,10 @@ export class Route extends AggregateRoot {
     this.order = order;
     this.required_auth = required_auth;
     this.permissions_id = permissions_id;
+    if (title) {
+      this.title = title;
+    }
+    this.id_parent = id_parent;
     this.apply(
       new RouteUpdatedEvent(
         this.name.value(),
@@ -103,13 +109,16 @@ export class Route extends AggregateRoot {
         this.show.value(),
         this.order.value(),
         this.required_auth.value(),
+        this.id?.value(),
       ),
     );
   }
 
   public toggleStatus(newStatus: RoutesActive) {
     this.active = newStatus;
-    this.apply(new RouteStatusToggledEvent(this.active.value()));
+    this.apply(
+      new RouteStatusToggledEvent(this.active.value(), this.id?.value()),
+    );
   }
 
   public getId(): RoutesId | undefined {

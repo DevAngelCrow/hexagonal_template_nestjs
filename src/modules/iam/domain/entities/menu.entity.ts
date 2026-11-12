@@ -11,7 +11,23 @@ import { MenuShow } from '@/modules/iam/domain/value-objects/security/menu-value
 import { MenuTitle } from '@/modules/iam/domain/value-objects/security/menu-value-object/menu-title';
 import { MenuUri } from '@/modules/iam/domain/value-objects/security/menu-value-object/menu-uri';
 
-export class Menu<T> {
+export interface MenuNode {
+  id: string;
+  name: string;
+  title: string;
+  description: string;
+  icon: string;
+  uri: string;
+  order: number;
+  active: boolean;
+  show: boolean;
+  required_auth: boolean;
+  id_parent?: string | null;
+  parent: MenuNode | null;
+  children: MenuNode[];
+}
+
+export class Menu<T = MenuNode> {
   constructor(
     private readonly active: MenuActive,
     private readonly children: MenuChildren<T>[],
@@ -19,14 +35,14 @@ export class Menu<T> {
     private readonly icon: MenuIcon,
     private readonly name: MenuName,
     private readonly order: MenuOrder,
-    private readonly parent: MenuParent<T>,
+    private readonly parent: MenuParent<T | null>,
     private readonly required_auth: MenuRequiredAuth,
     private readonly show: MenuShow,
     private readonly title: MenuTitle,
     private readonly uri: MenuUri,
     private readonly id?: MenuId,
   ) {}
-  public static create<T>(data: {
+  public static create<T = MenuNode>(data: {
     id?: string;
     name: string;
     title: string;
@@ -37,7 +53,7 @@ export class Menu<T> {
     active: boolean;
     show: boolean;
     required_auth: boolean;
-    parent: T;
+    parent: T | null;
     children: T[];
   }): Menu<T> {
     const childrens = data.children.map((c) => new MenuChildren<T>(c));
@@ -48,7 +64,7 @@ export class Menu<T> {
       new MenuIcon(data.icon),
       new MenuName(data.name),
       new MenuOrder(data.order),
-      new MenuParent<T>(data.parent),
+      new MenuParent<T | null>(data.parent),
       new MenuRequiredAuth(data.required_auth),
       new MenuShow(data.show),
       new MenuTitle(data.title),
@@ -74,7 +90,7 @@ export class Menu<T> {
   getOrder(): MenuOrder {
     return this.order;
   }
-  getParent(): MenuParent<T> {
+  getParent(): MenuParent<T | null> {
     return this.parent;
   }
   getRequiredAuth(): MenuRequiredAuth {

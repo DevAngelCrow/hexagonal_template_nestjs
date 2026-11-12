@@ -69,7 +69,7 @@ export class GlobalStatusController {
       'GlobalStatus updated successfully',
     );
   }
-  @Permissions('listar-estados-globales')
+  @Permissions('listar-estados-globales', 'listar-catalogos')
   @Get()
   @HttpCode(200)
   @ApiQuery({ name: 'page', required: false, type: Number })

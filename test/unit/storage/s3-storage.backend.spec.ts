@@ -7,6 +7,7 @@ const mockSend = vi.fn();
 const mockS3ClientConstructor = vi.fn();
 const mockPutObjectCommandConstructor = vi.fn();
 const mockDeleteObjectCommandConstructor = vi.fn();
+const mockGetObjectCommandConstructor = vi.fn();
 
 vi.mock('@aws-sdk/client-s3', () => {
   return {
@@ -24,6 +25,11 @@ vi.mock('@aws-sdk/client-s3', () => {
     DeleteObjectCommand: class MockDeleteObjectCommand {
       constructor(input: any) {
         mockDeleteObjectCommandConstructor(input);
+      }
+    },
+    GetObjectCommand: class MockGetObjectCommand {
+      constructor(input: any) {
+        mockGetObjectCommandConstructor(input);
       }
     },
   };
@@ -76,9 +82,9 @@ describe('S3StorageBackend', () => {
       }),
     };
 
-    expect(() => new S3StorageBackend(mockConfigService as ConfigService)).toThrow(
-      'S3StorageBackend requires S3_REGION and S3_BUCKET env vars.',
-    );
+    expect(
+      () => new S3StorageBackend(mockConfigService as ConfigService),
+    ).toThrow('S3StorageBackend requires S3_REGION and S3_BUCKET env vars.');
   });
 
   it('should throw error when S3_REGION is auto but S3_ENDPOINT is missing', () => {
@@ -93,7 +99,9 @@ describe('S3StorageBackend', () => {
       }),
     };
 
-    expect(() => new S3StorageBackend(mockConfigService as ConfigService)).toThrow(
+    expect(
+      () => new S3StorageBackend(mockConfigService as ConfigService),
+    ).toThrow(
       'S3StorageBackend: S3_REGION is set to "auto" but S3_ENDPOINT is missing.',
     );
   });
@@ -122,7 +130,9 @@ describe('S3StorageBackend', () => {
 
     const result = await backend.upload(mockFile, 'inventory_img');
 
-    expect(result.path).toMatch(/^https:\/\/pub-r2\.dev\/inventory_img\/[a-f0-9-]+\.webp$/);
+    expect(result.path).toMatch(
+      /^https:\/\/pub-r2\.dev\/inventory_img\/[a-f0-9-]+\.webp$/,
+    );
     expect(mockPutObjectCommandConstructor).toHaveBeenCalledWith(
       expect.objectContaining({
         Bucket: 'gv-inventory',
@@ -157,7 +167,9 @@ describe('S3StorageBackend', () => {
 
     const result = await backend.upload(mockFile, 'profile_img');
 
-    expect(result.path).toMatch(/^https:\/\/pub-r2\.dev\/profile_img\/[a-f0-9-]+\.png$/);
+    expect(result.path).toMatch(
+      /^https:\/\/pub-r2\.dev\/profile_img\/[a-f0-9-]+\.png$/,
+    );
     expect(mockPutObjectCommandConstructor).toHaveBeenCalledWith(
       expect.objectContaining({
         Bucket: 'gv-inventory',
@@ -193,7 +205,9 @@ describe('S3StorageBackend', () => {
       size: 100,
     } as Express.Multer.File;
 
-    await expect(backend.upload(mockFile, 'inventory_img')).rejects.toThrow('Access Denied');
+    await expect(backend.upload(mockFile, 'inventory_img')).rejects.toThrow(
+      'Access Denied',
+    );
   });
 
   it('should upload file and return public URL when S3_PUBLIC_BASE_URL is configured', async () => {
@@ -223,7 +237,9 @@ describe('S3StorageBackend', () => {
 
     const result = await backend.upload(mockFile);
 
-    expect(result.path).toMatch(/^https:\/\/media\.gvrentals\.com\/catalog\/products\/[a-f0-9-]+\.webp$/);
+    expect(result.path).toMatch(
+      /^https:\/\/media\.gvrentals\.com\/catalog\/products\/[a-f0-9-]+\.webp$/,
+    );
     expect(mockPutObjectCommandConstructor).toHaveBeenCalledWith(
       expect.objectContaining({
         Bucket: 'gv-catalog-r2',
@@ -271,7 +287,9 @@ describe('S3StorageBackend', () => {
       mockConfigService = { get: vi.fn((key: string) => s3Env[key]) };
       const backend = new S3StorageBackend(mockConfigService as ConfigService);
 
-      const result = await backend.delete('https://pub-r2.dev/inventory_img/sample.webp');
+      const result = await backend.delete(
+        'https://pub-r2.dev/inventory_img/sample.webp',
+      );
 
       expect(result).toBe(true);
       expect(mockDeleteObjectCommandConstructor).toHaveBeenCalledWith({
@@ -285,7 +303,9 @@ describe('S3StorageBackend', () => {
       mockConfigService = { get: vi.fn((key: string) => s3Env[key]) };
       const backend = new S3StorageBackend(mockConfigService as ConfigService);
 
-      const result = await backend.delete('s3://gv-inventory/profile_img/user-avatar.png');
+      const result = await backend.delete(
+        's3://gv-inventory/profile_img/user-avatar.png',
+      );
 
       expect(result).toBe(true);
       expect(mockDeleteObjectCommandConstructor).toHaveBeenCalledWith({
@@ -311,7 +331,9 @@ describe('S3StorageBackend', () => {
       mockConfigService = { get: vi.fn((key: string) => s3Env[key]) };
       const backend = new S3StorageBackend(mockConfigService as ConfigService);
 
-      const result = await backend.delete('https://images.unsplash.com/photo-12345');
+      const result = await backend.delete(
+        'https://images.unsplash.com/photo-12345',
+      );
 
       expect(result).toBe(false);
       expect(mockDeleteObjectCommandConstructor).not.toHaveBeenCalled();
@@ -322,9 +344,59 @@ describe('S3StorageBackend', () => {
       mockConfigService = { get: vi.fn((key: string) => s3Env[key]) };
       const backend = new S3StorageBackend(mockConfigService as ConfigService);
 
-      const result = await backend.delete('https://pub-r2.dev/inventory_img/sample.webp');
+      const result = await backend.delete(
+        'https://pub-r2.dev/inventory_img/sample.webp',
+      );
 
       expect(result).toBe(false);
+    });
+  });
+
+  describe('readBuffer', () => {
+    const s3Env: Record<string, string> = {
+      PROVIDER_STORAGE_CODE: 'S3',
+      S3_REGION: 'auto',
+      S3_BUCKET: 'template-bucket',
+      S3_ENDPOINT: 'https://test-account.r2.cloudflarestorage.com',
+      S3_PUBLIC_BASE_URL: 'https://pub-r2.dev',
+    };
+
+    it('reads binary buffer given an s3:// or CDN URL', async () => {
+      const payload = Uint8Array.from([0x25, 0x50, 0x44, 0x46]);
+      mockSend.mockResolvedValueOnce({
+        Body: {
+          transformToByteArray: vi.fn().mockResolvedValueOnce(payload),
+        },
+      });
+      mockConfigService = { get: vi.fn((key: string) => s3Env[key]) };
+      const backend = new S3StorageBackend(mockConfigService as ConfigService);
+
+      const result = await backend.readBuffer(
+        'https://pub-r2.dev/docs/signed.pdf',
+      );
+
+      expect(mockGetObjectCommandConstructor).toHaveBeenCalledWith({
+        Bucket: 'template-bucket',
+        Key: 'docs/signed.pdf',
+      });
+      expect(result).toEqual(Buffer.from(payload));
+    });
+
+    it('returns null on external URL or S3 failure', async () => {
+      mockConfigService = { get: vi.fn((key: string) => s3Env[key]) };
+      const backend = new S3StorageBackend(mockConfigService as ConfigService);
+
+      const externalResult = await backend.readBuffer(
+        'https://other-host.example.com/file.pdf',
+      );
+      expect(externalResult).toBeNull();
+      expect(mockGetObjectCommandConstructor).not.toHaveBeenCalled();
+
+      mockSend.mockRejectedValueOnce(new Error('NoSuchKey'));
+      const errorResult = await backend.readBuffer(
+        's3://template-bucket/docs/missing.pdf',
+      );
+      expect(errorResult).toBeNull();
     });
   });
 });

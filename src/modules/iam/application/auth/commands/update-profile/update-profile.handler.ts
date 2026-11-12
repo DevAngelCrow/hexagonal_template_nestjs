@@ -87,6 +87,7 @@ export class UpdateProfileHandler<
       storageFiles = await this.storageUploaderService.run(
         storageFileDto.value(),
         command.provider_storage_code,
+        'profile_img',
       );
     }
 

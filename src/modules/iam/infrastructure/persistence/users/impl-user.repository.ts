@@ -1,4 +1,4 @@
-import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
+import { PrismaService } from '@/shared/infrastructure/db/prisma.service';
 import { UserRepository } from '@/modules/iam/domain/repositories/user-repository';
 import { User } from '@/modules/iam/domain/aggregates/user.aggregate';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';
@@ -173,15 +173,30 @@ export class ImplUserRepository implements UserRepository, UserReadRepository {
       const userDb = await prisma.mnt_user.findFirst({
         where: {
           user_name: user_name,
+          deleted_at: null,
         },
         include: {
           ctl_status: true,
           mnt_people: true,
           mnt_user_rol: {
+            where: {
+              deleted_at: null,
+              mnt_role: {
+                deleted_at: null,
+                ctl_status: { code: MultipleStatusCode.ACTIVE },
+              },
+            },
             include: {
               mnt_role: {
                 include: {
                   rol_permissions: {
+                    where: {
+                      deleted_at: null,
+                      ctl_permissions: {
+                        active: true,
+                        deleted_at: null,
+                      },
+                    },
                     include: {
                       ctl_permissions: {
                         select: { name: true },
@@ -197,10 +212,13 @@ export class ImplUserRepository implements UserRepository, UserReadRepository {
       if (!userDb) {
         return null;
       }
-      const permissions = userDb.mnt_user_rol
-        .flatMap((userRol) => userRol.mnt_role.rol_permissions)
-        .flatMap((rolPermission) => rolPermission.ctl_permissions)
-        .map((permission) => permission.name);
+      const permissions = [
+        ...new Set(
+          userDb.mnt_user_rol
+            .flatMap((userRol) => userRol.mnt_role.rol_permissions)
+            .map((rolPermission) => rolPermission.ctl_permissions.name),
+        ),
+      ];
 
       const userEntity = new UserAuthDto(
         userDb.id,
@@ -228,15 +246,30 @@ export class ImplUserRepository implements UserRepository, UserReadRepository {
       const userDb = await prisma.mnt_user.findFirst({
         where: {
           id: id,
+          deleted_at: null,
         },
         include: {
           ctl_status: true,
           mnt_people: true,
           mnt_user_rol: {
+            where: {
+              deleted_at: null,
+              mnt_role: {
+                deleted_at: null,
+                ctl_status: { code: MultipleStatusCode.ACTIVE },
+              },
+            },
             include: {
               mnt_role: {
                 include: {
                   rol_permissions: {
+                    where: {
+                      deleted_at: null,
+                      ctl_permissions: {
+                        active: true,
+                        deleted_at: null,
+                      },
+                    },
                     include: {
                       ctl_permissions: {
                         select: { name: true },
@@ -252,10 +285,13 @@ export class ImplUserRepository implements UserRepository, UserReadRepository {
       if (!userDb) {
         return null;
       }
-      const permissions = userDb.mnt_user_rol
-        .flatMap((userRol) => userRol.mnt_role.rol_permissions)
-        .flatMap((rolPermission) => rolPermission.ctl_permissions)
-        .map((permission) => permission.name);
+      const permissions = [
+        ...new Set(
+          userDb.mnt_user_rol
+            .flatMap((userRol) => userRol.mnt_role.rol_permissions)
+            .map((rolPermission) => rolPermission.ctl_permissions.name),
+        ),
+      ];
 
       const userEntity = new UserAuthDto(
         userDb.id,
@@ -390,15 +426,30 @@ export class ImplUserRepository implements UserRepository, UserReadRepository {
       const userDb = await prisma.mnt_user.findFirst({
         where: {
           user_name: user_name,
+          deleted_at: null,
         },
         include: {
           ctl_status: true,
           mnt_people: true,
           mnt_user_rol: {
+            where: {
+              deleted_at: null,
+              mnt_role: {
+                deleted_at: null,
+                ctl_status: { code: MultipleStatusCode.ACTIVE },
+              },
+            },
             include: {
               mnt_role: {
                 include: {
                   rol_permissions: {
+                    where: {
+                      deleted_at: null,
+                      ctl_permissions: {
+                        active: true,
+                        deleted_at: null,
+                      },
+                    },
                     include: {
                       ctl_permissions: {
                         select: { name: true },
@@ -414,10 +465,13 @@ export class ImplUserRepository implements UserRepository, UserReadRepository {
       if (!userDb) {
         return null;
       }
-      const permissions = userDb.mnt_user_rol
-        .flatMap((userRol) => userRol.mnt_role.rol_permissions)
-        .flatMap((rolPermission) => rolPermission.ctl_permissions)
-        .map((permission) => permission.name);
+      const permissions = [
+        ...new Set(
+          userDb.mnt_user_rol
+            .flatMap((userRol) => userRol.mnt_role.rol_permissions)
+            .map((rolPermission) => rolPermission.ctl_permissions.name),
+        ),
+      ];
       const userDto = new UserDto(
         userDb.id_people,
         userDb.user_name,

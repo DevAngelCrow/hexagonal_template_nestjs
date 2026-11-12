@@ -10,7 +10,7 @@ export class StorageFilesPath {
       .required('Storage files path is required')
       .string('Storage files path must be a string')
       .minLength(1, 'Storage files path must be at least 1 character long')
-      .maxLength(150, 'Storage files path must be at most 150 characters long')
+      .maxLength(500, 'Storage files path must be at most 500 characters long')
       .getValue();
   }
   public value(): string {

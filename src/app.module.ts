@@ -27,6 +27,7 @@ import {
 import { RedisCacheModule } from '@/shared/infrastructure/cache/cache.module';
 import { QueuesModule } from '@/shared/infrastructure/queues/queues.module';
 import { HealthModule } from '@/shared/infrastructure/health/health.module';
+import { TurnstileModule } from '@/shared/infrastructure/services/turnstile.module';
 import { CatalogsModule } from '@/modules/catalogs/catalogs.module';
 import { StorageModule } from '@/modules/storage/storage.module';
 import { AuditModule } from '@/modules/audit/audit.module';
@@ -59,6 +60,7 @@ import { PermissionsGuard } from '@/modules/iam/infrastructure/guards/permission
     RedisCacheModule,
     QueuesModule,
     HealthModule,
+    TurnstileModule,
     CatalogsModule,
     StorageModule,
     AuditModule,
@@ -162,7 +164,6 @@ export class AppModule implements NestModule {
         { path: '*path', method: RequestMethod.POST },
         { path: '*path', method: RequestMethod.PUT },
       );
-
 
     consumer
       .apply(BullBoardAuthMiddleware)

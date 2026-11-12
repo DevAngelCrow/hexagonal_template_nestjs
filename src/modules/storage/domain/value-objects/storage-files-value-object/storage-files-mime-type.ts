@@ -1,11 +1,23 @@
 import { InvalidValueObjectException } from '@/shared/domain/exceptions/invalid-value-object.exception';
 import { Validator } from '@/shared/domain/validator/validator-value-object';
 
-export const ALLOWED_STORAGE_MIME_TYPES: ReadonlyArray<string> = [
+export const ALLOWED_IMAGE_MIME_TYPES: ReadonlyArray<string> = [
   'image/jpeg',
   'image/png',
   'image/gif',
   'image/webp',
+];
+
+export const ALLOWED_DOCUMENT_MIME_TYPES: ReadonlyArray<string> = [
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'application/pdf',
+];
+
+export const ALLOWED_STORAGE_MIME_TYPES: ReadonlyArray<string> = [
+  ...ALLOWED_IMAGE_MIME_TYPES,
+  'application/pdf',
 ];
 
 export class StorageFilesMimeType {

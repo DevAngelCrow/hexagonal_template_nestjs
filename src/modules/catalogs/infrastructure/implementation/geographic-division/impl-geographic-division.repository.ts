@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { GeographicDivisionRepository } from '@/modules/catalogs/domain/repositories/geographic-division-repository';
 import { GeographicDivision } from '@/modules/catalogs/domain/entities/geographic-division';
 import { GeographicDivisionId } from '@/modules/catalogs/domain/value-objects/geographic-division-value-object/geographic-division-id';
-import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
+import { PrismaService } from '@/shared/infrastructure/db/prisma.service';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { ctl_geographic_division, Prisma } from 'generated/prisma/client';
@@ -81,14 +81,17 @@ export class ImplGeographicDivisionRepository
     id_country?: string,
     id_parent?: string,
     id_type?: string,
+    level?: number,
   ): Promise<Pagination<GeographicDivisionDto> | GeographicDivisionDto[]> {
     try {
       const where: Prisma.ctl_geographic_divisionWhereInput = {
-        name: { contains: filter, mode: 'insensitive' },
+        name: filter ? { contains: filter, mode: 'insensitive' } : undefined,
         active,
         id_country,
         id_parent,
         id_type,
+        ctl_geographic_division_type:
+          level !== undefined ? { level: Number(level) } : undefined,
       };
 
       const [items, total, catalog_status] = await Promise.all([
@@ -340,6 +343,7 @@ export class ImplGeographicDivisionRepository
       item.ctl_country.phone_code,
       item.ctl_country.active,
       item.ctl_country.id,
+      item.ctl_country.phone_mask,
     );
 
     return new GeographicDivisionHttpDto(

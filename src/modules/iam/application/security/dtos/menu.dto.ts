@@ -1,14 +1,14 @@
-import { Menu } from '@/modules/iam/domain/entities/menu.entity';
+import { Menu, MenuNode } from '@/modules/iam/domain/entities/menu.entity';
 
-export class MenuDto<T> {
+export class MenuDto<T = MenuNode> {
   constructor(
     public readonly active: boolean,
     public readonly children: T[],
-    public readonly decription: string,
+    public readonly description: string,
     public readonly icon: string,
     public readonly name: string,
     public readonly order: number,
-    public readonly parent: T,
+    public readonly parent: T | null,
     public readonly required_auth: boolean,
     public readonly show: boolean,
     public readonly title: string,

@@ -11,9 +11,15 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiParam, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { Permissions } from '@/shared/infrastructure/decorators/permissions.decorator';
+import { Public } from '@/shared/infrastructure/decorators/public-route.decorator';
 import { SuccessResponseDto } from '@/shared/infrastructure/http/dtos/http-success-response.dto';
 import { HttpPaginatedResponseDto } from '@/shared/infrastructure/http/dtos/http-paginated-response.dto';
 import { HttpCursorPaginatedResponseDto } from '@/shared/infrastructure/http/dtos/http-cursor-paginated-response.dto';
@@ -22,6 +28,7 @@ import { Pagination } from '@/shared/domain/value-object/pagination';
 import {
   GetGeographicDivisionsCursorQueryDto,
   GetGeographicDivisionsQueryDto,
+  GetPublicGeographicDivisionsQueryDto,
 } from '@/modules/catalogs/infrastructure/dtos/query/get-geographic-divisions-query.dto';
 
 import { CreateGeographicDivisionDto } from '@/modules/catalogs/infrastructure/dtos/validators/geographic-division/create-geographic-division.dto';
@@ -102,6 +109,7 @@ export class GeographicDivisionController {
   @ApiQuery({ name: 'id_country', required: false, type: String })
   @ApiQuery({ name: 'id_parent', required: false, type: String })
   @ApiQuery({ name: 'id_type', required: false, type: String })
+  @ApiQuery({ name: 'level', required: false, type: Number })
   async getAll(
     @Query() query: GetGeographicDivisionsQueryDto,
   ): Promise<
@@ -114,6 +122,7 @@ export class GeographicDivisionController {
       query.id_country,
       query.id_parent,
       query.id_type,
+      query.level,
     );
     const result = await this.queryBus.execute(appQuery);
 
@@ -136,6 +145,42 @@ export class GeographicDivisionController {
     return new SuccessResponseDto<
       HttpPaginatedResponseDto<GeographicDivisionHttpDto>
     >(response, HttpStatus.OK, 'Geographic divisions retrieved successfully');
+  }
+
+  @Public()
+  @Get('public')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Listar divisiones geográficas para catálogo público',
+  })
+  @ApiQuery({ name: 'id_country', required: false, type: String })
+  @ApiQuery({ name: 'level', required: false, type: Number })
+  async getPublic(
+    @Query() query: GetPublicGeographicDivisionsQueryDto = {},
+  ): Promise<SuccessResponseDto<GeographicDivisionHttpDto[]>> {
+    const appQuery = new GetGeographicDivisionsQuery(
+      undefined,
+      undefined,
+      true,
+      query.id_country,
+      undefined,
+      undefined,
+      query.level,
+    );
+    const result = await this.queryBus.execute(appQuery);
+    const items = Array.isArray(result)
+      ? result
+      : result instanceof Pagination
+        ? result.getEntityList()
+        : [];
+    const itemsHttp = items.map((item: GeographicDivisionDto) =>
+      GeographicDivisionHttpDto.fromDto({ ...item }),
+    );
+    return new SuccessResponseDto<GeographicDivisionHttpDto[]>(
+      itemsHttp,
+      HttpStatus.OK,
+      'Geographic divisions retrieved successfully',
+    );
   }
 
   @Permissions('listar-divisiones-geograficas')

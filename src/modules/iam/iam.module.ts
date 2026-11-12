@@ -44,6 +44,7 @@ import {
   SendEmailVerificationSubscriber,
   SendPasswordResetSubscriber,
   InvalidateRoleCacheSubscriber,
+  InvalidateMenuCacheSubscriber,
   AuditIamSubscriber,
 } from './infrastructure/subscribers';
 
@@ -105,6 +106,7 @@ import {
     SendEmailVerificationSubscriber,
     SendPasswordResetSubscriber,
     InvalidateRoleCacheSubscriber,
+    InvalidateMenuCacheSubscriber,
     AuditIamSubscriber,
   ],
   exports: [

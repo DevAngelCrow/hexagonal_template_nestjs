@@ -10,6 +10,7 @@ export abstract class GeographicDivisionQueriesRepository {
     id_country?: string,
     id_parent?: string,
     id_type?: string,
+    level?: number,
   ): Promise<Pagination<GeographicDivisionDto> | GeographicDivisionDto[]>;
   abstract getOneById(id: string): Promise<GeographicDivisionDto | null>;
   abstract getAllWithCursor(

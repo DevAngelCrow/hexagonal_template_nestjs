@@ -1,9 +1,13 @@
 import { BadRequestException } from '@nestjs/common';
 import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
 import { Request } from 'express';
-import { ALLOWED_STORAGE_MIME_TYPES } from '@/modules/storage/domain/value-objects/storage-files-value-object/storage-files-mime-type';
+import {
+  ALLOWED_DOCUMENT_MIME_TYPES,
+  ALLOWED_IMAGE_MIME_TYPES,
+} from '@/modules/storage/domain/value-objects/storage-files-value-object/storage-files-mime-type';
 
-export const ALLOWED_MIME_TYPES: ReadonlyArray<string> = ALLOWED_STORAGE_MIME_TYPES;
+export const ALLOWED_MIME_TYPES: ReadonlyArray<string> =
+  ALLOWED_IMAGE_MIME_TYPES;
 
 /** Maps MIME type to a safe file extension. */
 export const MIME_TO_EXTENSION: Readonly<Record<string, string>> = {
@@ -11,10 +15,14 @@ export const MIME_TO_EXTENSION: Readonly<Record<string, string>> = {
   'image/png': 'png',
   'image/gif': 'gif',
   'image/webp': 'webp',
+  'application/pdf': 'pdf',
 };
 
 /** 5 MB */
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024;
+
+/** 10 MB for PDFs or high-res document scans */
+const MAX_DOCUMENT_FILE_SIZE_BYTES = 10 * 1024 * 1024;
 
 /**
  * Validates the actual file content via magic bytes (file signature).
@@ -48,6 +56,13 @@ export function validateFileMagicBytes(
         buffer.slice(0, 4).toString('ascii') === 'RIFF' &&
         buffer.slice(8, 12).toString('ascii') === 'WEBP'
       );
+    case 'application/pdf':
+      return (
+        buffer[0] === 0x25 &&
+        buffer[1] === 0x50 &&
+        buffer[2] === 0x44 &&
+        buffer[3] === 0x46
+      );
     default:
       return false;
   }
@@ -66,6 +81,27 @@ export const multerImageOptions: MulterOptions = {
       return callback(
         new BadRequestException(
           `File type '${file.mimetype}' is not allowed. Allowed types: ${ALLOWED_MIME_TYPES.join(', ')}`,
+        ),
+        false,
+      );
+    }
+    callback(null, true);
+  },
+};
+
+export const multerDocumentOptions: MulterOptions = {
+  limits: {
+    fileSize: MAX_DOCUMENT_FILE_SIZE_BYTES,
+  },
+  fileFilter: (
+    _req: Request,
+    file: Express.Multer.File,
+    callback: (error: Error | null, acceptFile: boolean) => void,
+  ) => {
+    if (!ALLOWED_DOCUMENT_MIME_TYPES.includes(file.mimetype)) {
+      return callback(
+        new BadRequestException(
+          `File type '${file.mimetype}' is not allowed. Allowed types: ${ALLOWED_DOCUMENT_MIME_TYPES.join(', ')}`,
         ),
         false,
       );

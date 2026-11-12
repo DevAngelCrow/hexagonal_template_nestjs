@@ -16,6 +16,7 @@ export class RouteDto<T = unknown> {
     public readonly children?: RouteDto<T>[],
     public readonly parent?: RouteDto<T>,
     public readonly permissions_id?: string[],
+    public readonly id_parent?: string | null,
   ) {}
   public static fromEntity(route: Route): RouteDto {
     return new RouteDto(
@@ -30,6 +31,10 @@ export class RouteDto<T = unknown> {
       route.getId() ? route.getId()?.value() : undefined,
       route.getTitle() ? route.getTitle()?.value() : undefined,
       route.getPermissionsId(),
+      undefined,
+      undefined,
+      route.getPermissionsId(),
+      route.getIdParent()?.value() ?? null,
     );
   }
   public static fromDto<T = unknown>(dto: RouteDto<T>): RouteDto<T> {
@@ -47,6 +52,8 @@ export class RouteDto<T = unknown> {
       dto.permissions,
       dto.children,
       dto.parent,
+      dto.permissions_id,
+      dto.id_parent,
     );
   }
 }

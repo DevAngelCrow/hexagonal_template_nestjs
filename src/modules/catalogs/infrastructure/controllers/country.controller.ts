@@ -20,7 +20,12 @@ import { NotFoundException } from '@/shared/domain/exceptions/not-found.exceptio
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { GetCountriesQueryDto } from '@/modules/catalogs/infrastructure/dtos/query/get-countries-query.dto';
 
-import { ApiBearerAuth, ApiParam, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { CreateCountryCommand } from '@/modules/catalogs/application/country/commands/create-country/create-country.command';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { UpdateCountryCommand } from '@/modules/catalogs/application/country/commands/update-country/update-country.command';
@@ -29,6 +34,7 @@ import { GetCountryQuery } from '@/modules/catalogs/application/country/queries/
 import { DeleteCountryCommand } from '@/modules/catalogs/application/country/commands/delete-country/delete-country.command';
 import { CountryDto } from '@/modules/catalogs/application/dtos/country.dto';
 import { Permissions } from '@/shared/infrastructure/decorators/permissions.decorator';
+import { Public } from '@/shared/infrastructure/decorators/public-route.decorator';
 
 @Controller('countries')
 @ApiBearerAuth('JWT-auth')
@@ -106,6 +112,30 @@ export class CountryController {
       'Countries retrieved successfully',
     );
   }
+
+  @Public()
+  @Get('public')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Listar países activos para catálogo público' })
+  async getPublic(): Promise<SuccessResponseDto<CountryHttpDto[]>> {
+    const appQuery = new GetCountriesQuery(undefined, undefined, true);
+    const result = await this.queryBus.execute(appQuery);
+    const items =
+      result instanceof Pagination
+        ? result.getEntityList()
+        : Array.isArray(result)
+          ? result
+          : [];
+    const countriesHttpDto = items.map((c: CountryHttpDto) =>
+      CountryHttpDto.fromDto(c),
+    );
+    return new SuccessResponseDto<CountryHttpDto[]>(
+      countriesHttpDto,
+      HttpStatus.OK,
+      'Countries retrieved successfully',
+    );
+  }
+
   @Permissions('ver-pais')
   @Get(':id')
   @HttpCode(200)

@@ -453,3 +453,23 @@ model ctl_geographic_division_type {
   @@index([id_country])
 }
 
+model ctl_document_prefix {
+  id            String    @id @default(uuid()) @db.Uuid
+  code          String    @unique @db.VarChar(50)
+  prefix        String    @unique @db.VarChar(10)
+  name          String    @db.VarChar(100)
+  description   String?   @db.VarChar(255)
+  entity_target String    @db.VarChar(50)
+  current_year  Int?
+  current_value Int       @default(0)
+  padding       Int       @default(4)
+  reset_yearly  Boolean   @default(true)
+  separator     String    @default("-") @db.VarChar(5)
+  active        Boolean   @default(true)
+  created_at    DateTime? @default(now()) @db.Timestamp(0)
+  updated_at    DateTime? @updatedAt @db.Timestamp(0)
+  deleted_at    DateTime? @db.Timestamp(0)
+
+  @@index([active])
+}
+

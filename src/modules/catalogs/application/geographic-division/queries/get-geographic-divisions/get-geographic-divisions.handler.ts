@@ -25,6 +25,7 @@ export class GetGeographicDivisionsHandler implements IQueryHandler<GetGeographi
         query.id_country,
         query.id_parent,
         query.id_type,
+        query.level,
       );
     }
     return this.repository.getAll(
@@ -34,6 +35,7 @@ export class GetGeographicDivisionsHandler implements IQueryHandler<GetGeographi
       query.id_country,
       query.id_parent,
       query.id_type,
+      query.level,
     );
   }
 }

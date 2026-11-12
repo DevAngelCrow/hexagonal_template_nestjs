@@ -1,6 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
 import { randomUUID } from 'node:crypto';
 import { Express } from 'express';
 import { StorageBackend } from './storage-backend';
@@ -168,6 +173,37 @@ export class S3StorageBackend extends StorageBackend {
         `S3 delete failed for key=${key} [${errName}${status ? ` HTTP ${status}` : ''}]: ${err instanceof Error ? err.message : String(err)}`,
       );
       return false;
+    }
+  }
+
+  async readBuffer(pathOrUrl: string): Promise<Buffer | null> {
+    if (!this.client || !this.bucket) {
+      return null;
+    }
+
+    const key = this.extractKeyFromPath(pathOrUrl);
+    if (!key) {
+      return null;
+    }
+
+    try {
+      const response = await this.client.send(
+        new GetObjectCommand({
+          Bucket: this.bucket,
+          Key: key,
+        }),
+      );
+      if (!response.Body) {
+        return null;
+      }
+      const bytes = await response.Body.transformToByteArray();
+      return Buffer.from(bytes);
+    } catch (err) {
+      const { status, errName } = extractS3ErrorInfo(err);
+      this.logger.error(
+        `S3 read failed for key=${key} [${errName}${status ? ` HTTP ${status}` : ''}]: ${err instanceof Error ? err.message : String(err)}`,
+      );
+      return null;
     }
   }
 

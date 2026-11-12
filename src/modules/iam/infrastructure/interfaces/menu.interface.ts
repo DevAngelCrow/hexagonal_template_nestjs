@@ -4,26 +4,14 @@ export interface Menu {
   icon: string;
   name: string;
   order: number;
+  id_parent?: string | null;
   parent: Menu | null;
   required_auth: boolean;
   show: boolean;
   title: string;
   uri: string;
-  children: Child[];
+  children: Menu[];
   id: string;
 }
 
-export interface Child {
-  active: boolean;
-  description: string;
-  icon: string;
-  name: string;
-  order: number;
-  id_parent: string | null;
-  required_auth: boolean;
-  show: boolean;
-  title: string;
-  uri: string;
-  children: Child[];
-  id: string;
-}
+export type Child = Menu;

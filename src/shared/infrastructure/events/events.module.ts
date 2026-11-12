@@ -6,6 +6,8 @@ import { DateProviderPort } from '@/shared/application/ports/date-provider.port'
 import { DayjsDateAdapter } from '@/shared/infrastructure/services/dayjs-date.adapter';
 import { LoggerPort } from '@/shared/application/ports/logger.port';
 import { PinoLoggerAdapter } from '@/shared/infrastructure/adapters/pino-logger.adapter';
+import { AfterCommitPort } from '@/shared/application/ports/after-commit.port';
+import { TransactionAfterCommitAdapter } from '@/shared/infrastructure/services/transaction-after-commit.adapter';
 
 @Global()
 @Module({
@@ -23,7 +25,17 @@ import { PinoLoggerAdapter } from '@/shared/infrastructure/adapters/pino-logger.
       provide: LoggerPort,
       useClass: PinoLoggerAdapter,
     },
+    {
+      provide: AfterCommitPort,
+      useClass: TransactionAfterCommitAdapter,
+    },
   ],
-  exports: [CqrsModule, EventPublisherPort, DateProviderPort, LoggerPort],
+  exports: [
+    CqrsModule,
+    EventPublisherPort,
+    DateProviderPort,
+    LoggerPort,
+    AfterCommitPort,
+  ],
 })
 export class EventsModule {}

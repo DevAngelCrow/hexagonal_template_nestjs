@@ -7,5 +7,6 @@ export class RouteUpdatedEvent {
     public readonly show: boolean,
     public readonly order: number,
     public readonly required_auth: boolean,
+    public readonly id?: string,
   ) {}
 }

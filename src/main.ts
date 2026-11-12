@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from '@/app.module';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { Logger } from 'nestjs-pino';
@@ -8,20 +9,22 @@ import { HttpExceptionFilter } from '@/shared/infrastructure/http/filters/http-e
 import { ThrottlerExceptionFilter } from '@/shared/infrastructure/http/filters/throttler-exception.filter';
 import { BigIntTransformInterceptor } from '@/shared/infrastructure/interceptors/bigint-transform.interceptor';
 import { setupSecurity } from '@/shared/infrastructure/setup/security.setup';
+import { setupTrustProxy } from '@/shared/infrastructure/setup/trust-proxy.setup';
 import { setupSwagger } from '@/shared/infrastructure/setup/swagger.setup';
 import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bodyParser: false,
     bufferLogs: true,
   });
-  app.useLogger(app.get(Logger))
+  app.useLogger(app.get(Logger));
   const configService = app.get(ConfigService);
   const enableApiDocs = configService.get<boolean>('ENABLE_API_DOCS') === true;
   const port = configService.get<number>('PORT') ?? 3000;
   const appUrl = configService.get<string>('APP_URL');
 
+  setupTrustProxy(app, configService);
   setupSecurity(app, configService);
   app.use(express.json({ limit: '50kb' }));
   app.use(express.urlencoded({ limit: '50kb', extended: true }));

@@ -1,5 +1,7 @@
 import { CreateUpdateRefreshTokenHandler } from '@/modules/iam/application/auth/commands/creat-update-refresh-token/create-update-refresh-token.handler';
 import { GrantDocsAccessHandler } from '@/modules/iam/application/auth/commands/docs-access/grant-docs-access.handler';
+import { RequestEmailChangeHandler } from '@/modules/iam/application/auth/commands/email-change/request-email-change.handler';
+import { ConfirmEmailChangeHandler } from '@/modules/iam/application/auth/commands/email-change/confirm-email-change.handler';
 import { VerifyEmailHandler } from '@/modules/iam/application/auth/commands/email-verification/verify-email.handler';
 import { GenerateTokenForgottenPasswordHandler } from '@/modules/iam/application/auth/commands/generate-token-forgotten-password/generate-token-forgotten-password.handler';
 import { LoginHandler } from '@/modules/iam/application/auth/commands/login/login.handler';
@@ -45,6 +47,8 @@ import { UpdateNameUserHandler } from '@/modules/iam/application/users/commands/
 export const commandHandlerProviders = [
   CreateUpdateRefreshTokenHandler,
   GrantDocsAccessHandler,
+  RequestEmailChangeHandler,
+  ConfirmEmailChangeHandler,
   VerifyEmailHandler,
   GenerateTokenForgottenPasswordHandler,
   LoginHandler,

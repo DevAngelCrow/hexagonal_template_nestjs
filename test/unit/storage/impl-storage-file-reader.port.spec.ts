@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { resolve } from 'node:path';
 import { readFile } from 'node:fs/promises';
 import { ImplStorageFileReaderPort } from '@/modules/storage/infrastructure/implementation/impl-storage-file-reader.port';
 import { S3StorageBackend } from '@/modules/storage/infrastructure/backends/s3-storage.backend';
@@ -44,39 +45,35 @@ describe('ImplStorageFileReaderPort', () => {
     expect(readFile).not.toHaveBeenCalled();
   });
 
-  it('should read local file and return base64 data URI with correct MIME type', async () => {
+  it('should read local file inside storage root and return base64 data URI with correct MIME type', async () => {
     const fakeBuffer = Buffer.from('fake-png-content');
     vi.mocked(readFile).mockResolvedValueOnce(fakeBuffer as any);
 
-    const result = await reader.readFileAsBase64(
-      '/storage/profile_img/avatar.png',
-    );
+    const expectedPath = resolve(process.cwd(), 'storage', 'profile_img/avatar.png');
+    const result = await reader.readFileAsBase64('profile_img/avatar.png');
 
-    expect(readFile).toHaveBeenCalledWith('/storage/profile_img/avatar.png');
+    expect(readFile).toHaveBeenCalledWith(expectedPath);
     expect(result).toBe(
       `data:image/png;base64,${fakeBuffer.toString('base64')}`,
     );
   });
 
-  it('should return null when reading local file fails', async () => {
-    vi.mocked(readFile).mockRejectedValueOnce(
-      new Error('ENOENT: no such file or directory'),
-    );
+  it('should reject path traversal and paths outside storage root without calling readFile', async () => {
+    const result = await reader.readFileAsBase64('../../etc/passwd');
 
-    const result = await reader.readFileAsBase64('/nonexistent/path/image.jpg');
-
-    expect(readFile).toHaveBeenCalledWith('/nonexistent/path/image.jpg');
+    expect(readFile).not.toHaveBeenCalled();
     expect(result).toBeNull();
   });
 
   describe('readFileBuffer', () => {
-    it('reads a local PDF file from disk with application/pdf mimeType', async () => {
+    it('reads a local PDF file from storage root with application/pdf mimeType', async () => {
       const pdfBuffer = Buffer.from('%PDF-1.4\n...');
       vi.mocked(readFile).mockResolvedValueOnce(pdfBuffer as any);
 
-      const result = await reader.readFileBuffer('/storage/docs/document.pdf');
+      const expectedPath = resolve(process.cwd(), 'storage', 'docs/document.pdf');
+      const result = await reader.readFileBuffer('docs/document.pdf');
 
-      expect(readFile).toHaveBeenCalledWith('/storage/docs/document.pdf');
+      expect(readFile).toHaveBeenCalledWith(expectedPath);
       expect(result).toEqual({
         buffer: pdfBuffer,
         mimeType: 'application/pdf',

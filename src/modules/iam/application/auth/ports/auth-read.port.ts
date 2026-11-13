@@ -23,6 +23,10 @@ export abstract class AuthReadPort {
     isRefreshToken: boolean,
   ): Promise<T>;
   abstract findRefreshTokenByIdUser(id_user: string): Promise<string>;
+  abstract consumeRefreshTokenSession(
+    id_user: string,
+    incoming_refresh_token: string,
+  ): Promise<{ sessionId: string } | null>;
   abstract hasVerifiedEmail(user: UserDto): Promise<boolean>;
   abstract generateToken(user: UserAuthDto): Promise<string>;
   abstract generateRefreshToken(user: UserAuthDto): Promise<string>;

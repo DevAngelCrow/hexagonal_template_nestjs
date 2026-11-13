@@ -7,6 +7,7 @@ export abstract class AddressReadRepository {
   abstract getAll(
     pagination_params?: PaginationParams,
     filter?: string,
+    id_people?: string,
   ): Promise<Pagination<Address> | Address[]>;
   abstract getOneById(id: AddressId): Promise<Address | null>;
 }

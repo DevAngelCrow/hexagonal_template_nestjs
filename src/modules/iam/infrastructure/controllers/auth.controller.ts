@@ -7,6 +7,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Optional,
   Param,
   ParseUUIDPipe,
   Post,
@@ -78,6 +79,17 @@ import {
 
 import { AuditAction } from '@/shared/domain/enums/audit-action.enum';
 import { Auditable } from '@/shared/infrastructure/decorators/auditable.decorator';
+import { TurnstileService } from '@/shared/infrastructure/services/turnstile.service';
+import {
+  extractClientIp,
+  extractUserAgent,
+} from '@/shared/infrastructure/http/utils/client-request-info';
+import { extractRequestAuthUser } from '@/shared/infrastructure/http/utils/request-user.util';
+import { LoginThrottleGuard } from '@/modules/iam/infrastructure/guards/login-throttle.guard';
+import { RequestEmailChangeDto } from '@/modules/iam/infrastructure/dtos/auth/validators/auth/request-email-change.dto';
+import { ConfirmEmailChangeQueryDto } from '@/modules/iam/infrastructure/dtos/auth/validators/auth/confirm-email-change-query.dto';
+import { RequestEmailChangeCommand } from '@/modules/iam/application/auth/commands/email-change/request-email-change.command';
+import { ConfirmEmailChangeCommand } from '@/modules/iam/application/auth/commands/email-change/confirm-email-change.command';
 
 @Controller('auth')
 export class AuthController {
@@ -86,19 +98,31 @@ export class AuthController {
     private readonly queryBus: QueryBus,
     private readonly config: ConfigService,
     private readonly jwtService: JwtService,
+    @Optional() private readonly turnstileService?: TurnstileService,
   ) {}
 
   private getClientIp(req: Request): string | null {
-    const rawHeader = req.headers?.['x-forwarded-for'];
-    const forwarded = Array.isArray(rawHeader) ? rawHeader[0] : rawHeader;
-    if (forwarded) {
-      return forwarded.split(',')[0]?.trim() ?? null;
-    }
-    return req.socket?.remoteAddress ?? null;
+    return extractClientIp(req);
   }
 
   private getUserAgent(req: Request): string | null {
-    return req.headers?.['user-agent'] ?? null;
+    return extractUserAgent(req);
+  }
+
+  private async assertTurnstileIfEnabled(
+    token?: string,
+    remoteIp?: string | null,
+  ): Promise<void> {
+    if (!this.turnstileService) {
+      return;
+    }
+    const verified = await this.turnstileService.verifyIfEnabled(
+      token,
+      remoteIp ?? undefined,
+    );
+    if (!verified) {
+      throw new BadRequestException('Turnstile verification failed');
+    }
   }
 
   private setRefreshTokenCookie(
@@ -140,13 +164,18 @@ export class AuthController {
   @ApiResponse({ status: 400, description: 'Validation error' })
   @ApiResponse({ status: 409, description: 'Email already registered' })
   @ApiResponse({ status: 429, description: 'Too many requests' })
-  @UseInterceptors(FileInterceptor('file_img', multerImageOptions))
+  @UseInterceptors(FileInterceptor('file_img', { limits: { files: 0 } }))
   @Transactional()
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: RegisterValidatorDto })
   async create(
     @Body() request: RegisterValidatorDto,
+    @Req() req: Request,
   ): Promise<SuccessResponseDto<null>> {
+    await this.assertTurnstileIfEnabled(
+      request.turnstile_token,
+      this.getClientIp(req),
+    );
     const registerDto = new RegisterDto(
       request.first_name ?? '',
       request.middle_name ?? '',
@@ -194,7 +223,8 @@ export class AuthController {
     );
   }
   @SkipAuth()
-  @Throttle({ global: { ttl: 60000, limit: 5 } })
+  @UseGuards(LoginThrottleGuard)
+  @Throttle({ login: { ttl: 60000, limit: 5 } })
   @Auditable({
     action: AuditAction.LOGIN_SUCCESS,
     failureAction: AuditAction.LOGIN_FAILED,
@@ -220,6 +250,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: ExpressResponse,
   ): Promise<SuccessResponseDto<AuthLoginHttpDto>> {
     const ip = this.getClientIp(req);
+    await this.assertTurnstileIfEnabled(request.turnstile_token, ip);
     const ua = this.getUserAgent(req);
     const loginCommand = new LoginCommand(
       request.user_name,
@@ -504,7 +535,12 @@ export class AuthController {
   @ApiResponse({ status: 429, description: 'Too many requests' })
   async generateTokenForForgottenPassword(
     @Body() request: EmailForgotPasswordDto,
+    @Req() req: Request,
   ): Promise<SuccessResponseDto<null>> {
+    await this.assertTurnstileIfEnabled(
+      request.turnstile_token,
+      this.getClientIp(req),
+    );
     const generateTokenForForgottenPasswordCommand =
       new GenerateTokenForgottenPasswordCommand(request.email);
     await this.commandBus.execute(generateTokenForForgottenPasswordCommand);
@@ -523,6 +559,7 @@ export class AuthController {
     entityIdFrom: 'body.id',
   })
   @Put('reset-password')
+  @Transactional()
   @HttpCode(200)
   @ApiOperation({ summary: 'Complete password reset with token' })
   @ApiResponse({ status: 200, description: 'Password reset successfully' })
@@ -547,6 +584,76 @@ export class AuthController {
       null,
       HttpStatus.OK,
       'Password reset successfully',
+    );
+  }
+
+  @Permissions('editar-mi-perfil')
+  @Throttle({ global: { ttl: 3_600_000, limit: 5 } })
+  @Auditable({
+    action: AuditAction.EMAIL_CHANGE_REQUESTED,
+    entityType: 'User',
+  })
+  @Post('change-email/request')
+  @HttpCode(200)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({
+    summary: 'Request an email address change (sends confirmation email)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Email change confirmation dispatched',
+  })
+  @ApiResponse({ status: 401, description: 'Invalid current password' })
+  @ApiResponse({ status: 409, description: 'Email already in use' })
+  async requestEmailChange(
+    @Body() request: RequestEmailChangeDto,
+    @Req() req: Request,
+  ): Promise<SuccessResponseDto<null>> {
+    const user = extractRequestAuthUser(req);
+    if (!user?.id) {
+      throw new UnauthorizedException('Invalid payload');
+    }
+    await this.commandBus.execute(
+      new RequestEmailChangeCommand(
+        user.id,
+        request.current_password,
+        request.new_email,
+      ),
+    );
+    return new SuccessResponseDto<null>(
+      null,
+      HttpStatus.OK,
+      'Confirmation email sent to the new address',
+    );
+  }
+
+  @SkipAuth()
+  @Throttle({ global: { ttl: 3_600_000, limit: 10 } })
+  @Auditable({
+    action: AuditAction.EMAIL_CHANGE_COMPLETED,
+    entityType: 'User',
+    entityIdFrom: 'query.id',
+  })
+  @Get('change-email/confirm')
+  @Transactional()
+  @HttpCode(200)
+  @ApiOperation({ summary: 'Confirm an email address change via token' })
+  @ApiResponse({
+    status: 200,
+    description: 'Email updated successfully',
+  })
+  @ApiResponse({ status: 400, description: 'Invalid or expired token' })
+  @ApiResponse({ status: 409, description: 'Email already in use' })
+  async confirmEmailChange(
+    @Query() query: ConfirmEmailChangeQueryDto,
+  ): Promise<SuccessResponseDto<null>> {
+    await this.commandBus.execute(
+      new ConfirmEmailChangeCommand(query.id, query.token),
+    );
+    return new SuccessResponseDto<null>(
+      null,
+      HttpStatus.OK,
+      'Email updated successfully',
     );
   }
 

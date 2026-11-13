@@ -7,6 +7,7 @@ import { UnauthorizedException } from '@/shared/application/exceptions/unauthori
 import { CreateOrUpdateRefreshTokenPort } from '@/modules/iam/domain/ports/create-or-update-refresh-token.port';
 import { AuthenticateDto } from '@/modules/iam/application/auth/dtos/authenticate.dto';
 import { UserAuthDto } from '@/modules/iam/application/users/dtos/user-auth.dto';
+import { MultipleStatusId } from '@/shared/domain/enums/multiple-status';
 
 @CommandHandler(RefreshCommand)
 export class RefreshHandler implements ICommandHandler<RefreshCommand> {
@@ -29,19 +30,15 @@ export class RefreshHandler implements ICommandHandler<RefreshCommand> {
     if (!userId || !user) {
       throw new NotFoundException(`User`, decodedToken.id.toString());
     }
-    const storedRefreshTokenHash =
-      await this.authReadPort.findRefreshTokenByIdUser(decodedToken.id);
-    if (!storedRefreshTokenHash) {
-      throw new NotFoundException(
-        `Refresh token for user`,
-        decodedToken.id.toString(),
-      );
+    if (user.id_status === MultipleStatusId.INACTIVE) {
+      throw new UnauthorizedException('User account is inactive');
     }
-    const isMatch = await this.authReadPort.compareToken(
+
+    const consumed = await this.authReadPort.consumeRefreshTokenSession(
+      decodedToken.id,
       command.incoming_refresh_token,
-      storedRefreshTokenHash,
     );
-    if (!isMatch) {
+    if (!consumed) {
       throw new UnauthorizedException(`Refresh token for user`);
     }
 
@@ -55,7 +52,6 @@ export class RefreshHandler implements ICommandHandler<RefreshCommand> {
       user.permissions,
       user.id_session_refresh_token,
     );
-    await this.authReadPort.clearAccessTokenBlacklist(user.id);
     const newToken = await this.authReadPort.generateToken(userAuthDto);
     const newRefreshToken =
       await this.authReadPort.generateRefreshToken(userAuthDto);

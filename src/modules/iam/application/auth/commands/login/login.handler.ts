@@ -11,6 +11,7 @@ import { LoggerPort } from '@/shared/application/ports/logger.port';
 import { MetricsPort } from '@/shared/application/ports/metrics.port';
 import { ErrorCode } from '@/shared/domain/enums/error-code.enum';
 import { AccountLockedException } from '@/shared/domain/exceptions/account-locked.exception';
+import { MultipleStatusId } from '@/shared/domain/enums/multiple-status';
 
 const PERMISSIONS_CACHE_TTL_MS = 3_600_000;
 
@@ -81,6 +82,13 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
         ErrorCode.AUTH_EMAIL_NOT_VERIFIED,
       );
     }
+    if (userExists.user.id_status === MultipleStatusId.INACTIVE) {
+      this.metrics?.incrementLogin('failure');
+      throw new UnauthorizedException(
+        'User account is inactive',
+        ErrorCode.AUTH_INVALID_CREDENTIALS,
+      );
+    }
     const userAuth = new UserAuthDto(
       userId,
       userExists.user.id_people,
@@ -90,7 +98,6 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
       userExists.user.is_validated,
       userExists.permissions,
     );
-    await this.authReadPort.clearAccessTokenBlacklist(userId);
     await this.authReadPort.resetLoginFailures(userId);
     const token = await this.authReadPort.generateToken(userAuth);
     const refreshToken = await this.authReadPort.generateRefreshToken(userAuth);

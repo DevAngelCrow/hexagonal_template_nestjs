@@ -28,6 +28,7 @@ import {
   multerImageOptions,
   validateFileMagicBytes,
 } from '@/modules/storage/infrastructure/config/multer-file-filter.config';
+import { sanitizeStorageFolder } from '@/modules/storage/infrastructure/utils/storage-path.util';
 import { StorageFilesUploadFlowCommand } from '@/modules/storage/application/storage-files/commands/storage-files-upload-flow/storage-files-upload-flow.command';
 import { GetStorageFilesQueryDto } from '@/modules/storage/infrastructure/dtos/query/get-storage-files-query.dto';
 import { GetStorageFilesQuery } from '@/modules/storage/application/storage-files/queries/get-storage-files/get-storage-files.query';
@@ -123,12 +124,19 @@ export class StorageFilesController {
     @Query('provider_code') providerCode?: string,
     @Query('folder') folder?: string,
   ): Promise<SuccessResponseDto<StorageFilesHttpDto>> {
+    if (!content_file) {
+      throw new BadRequestException('File is required');
+    }
     const file: FileType = content_file;
     if (file?.buffer && !validateFileMagicBytes(file.buffer, file.mimetype)) {
       throw new BadRequestException(
         `File content does not match its declared MIME type '${file.mimetype}'`,
       );
     }
+
+    const sanitizedFolder = folder
+      ? sanitizeStorageFolder(folder, 'profile_img')
+      : undefined;
 
     const resolvedProvider =
       providerCode ??
@@ -139,7 +147,7 @@ export class StorageFilesController {
       new StorageFilesUploadFlowCommand<FileType>(
         file,
         resolvedProvider,
-        folder,
+        sanitizedFolder,
       );
 
     const result = await this.command.execute<

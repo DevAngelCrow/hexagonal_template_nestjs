@@ -214,6 +214,10 @@ export class EnvironmentVariables {
   @IsString()
   CLIENT_VERIFY_EMAIL_ROUTE?: string;
 
+  @IsOptional()
+  @IsString()
+  CLIENT_CHANGE_EMAIL_ROUTE?: string;
+
   @IsString()
   @IsNotEmpty()
   REDIS_HOST!: string;
@@ -280,10 +284,20 @@ export class EnvironmentVariables {
   @IsPositive()
   PASSWORD_HISTORY_COUNT?: number;
 
-  // Cloudflare Turnstile (optional in development, required when Turnstile verification is enabled).
+  // Cloudflare Turnstile (disabled by default; enable when frontend submits turnstile_token).
+  @IsOptional()
+  @Transform(toBoolean)
+  @IsBoolean()
+  TURNSTILE_ENABLED?: boolean;
+
   @IsOptional()
   @IsString()
   CLOUDFLARE_TURNSTILE_SECRET_KEY?: string;
+
+  // Bearer token required to scrape /metrics in production.
+  @IsOptional()
+  @IsString()
+  METRICS_TOKEN?: string;
 }
 
 export const validate = (config: Record<string, unknown>) => {

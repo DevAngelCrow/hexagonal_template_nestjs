@@ -109,6 +109,7 @@ import { PermissionsGuard } from '@/modules/iam/infrastructure/guards/permission
               'req.headers.cookie',
               'res.headers["set-cookie"]',
               'req.body.password',
+              'req.body.current_password',
               'req.body.new_password',
               'req.body.old_password',
               'req.body.token',

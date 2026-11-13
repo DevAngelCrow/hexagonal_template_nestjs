@@ -1,9 +1,10 @@
 import { Injectable, Optional } from '@nestjs/common';
-import { extname } from 'node:path';
+import { extname, resolve } from 'node:path';
 import { readFile } from 'node:fs/promises';
 import { StorageFileReaderPort } from '@/modules/storage/domain/ports/storage-file-reader.port';
 import { S3StorageBackend } from '@/modules/storage/infrastructure/backends/s3-storage.backend';
 import { MIME_TO_EXTENSION } from '@/modules/storage/infrastructure/config/multer-file-filter.config';
+import { resolveConfinedStoragePath } from '@/modules/storage/infrastructure/utils/storage-path.util';
 
 const EXTENSION_TO_MIME: Readonly<Record<string, string>> = Object.fromEntries(
   Object.entries(MIME_TO_EXTENSION).map(([mime, ext]) => [ext, mime]),
@@ -11,6 +12,8 @@ const EXTENSION_TO_MIME: Readonly<Record<string, string>> = Object.fromEntries(
 
 @Injectable()
 export class ImplStorageFileReaderPort extends StorageFileReaderPort {
+  private readonly diskPath = resolve(process.cwd(), 'storage');
+
   constructor(
     @Optional() private readonly s3StorageBackend?: S3StorageBackend,
   ) {
@@ -18,6 +21,8 @@ export class ImplStorageFileReaderPort extends StorageFileReaderPort {
   }
 
   async readFileAsBase64(filePath: string): Promise<string | null> {
+    if (!filePath || typeof filePath !== 'string') return null;
+
     if (
       filePath.startsWith('http://') ||
       filePath.startsWith('https://') ||
@@ -26,9 +31,15 @@ export class ImplStorageFileReaderPort extends StorageFileReaderPort {
     ) {
       return filePath;
     }
+
+    const confinedPath = resolveConfinedStoragePath(this.diskPath, filePath);
+    if (!confinedPath) {
+      return null;
+    }
+
     try {
-      const buffer = await readFile(filePath);
-      const ext = extname(filePath).slice(1).toLowerCase();
+      const buffer = await readFile(confinedPath);
+      const ext = extname(confinedPath).slice(1).toLowerCase();
       const mime = EXTENSION_TO_MIME[ext] ?? 'application/octet-stream';
       return `data:${mime};base64,${buffer.toString('base64')}`;
     } catch {
@@ -55,8 +66,13 @@ export class ImplStorageFileReaderPort extends StorageFileReaderPort {
       return { buffer: s3Buffer, mimeType };
     }
 
+    const confinedPath = resolveConfinedStoragePath(this.diskPath, filePath);
+    if (!confinedPath) {
+      return null;
+    }
+
     try {
-      const buffer = await readFile(filePath);
+      const buffer = await readFile(confinedPath);
       return { buffer, mimeType };
     } catch {
       return null;

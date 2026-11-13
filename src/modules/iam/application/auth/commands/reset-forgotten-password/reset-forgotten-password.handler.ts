@@ -23,15 +23,15 @@ export class ResetForgottenPasswordHandler implements ICommandHandler<ResetForgo
     if (!tokenVerified) {
       throw new ApplicationException('404', 'Token no encontrado');
     }
-    await this.verifyTokenRepository.markAsUsed(tokenVerified.id);
-    await this.verifyTokenRepository.deleteByUserId(
-      tokenVerified.user_id,
-      true,
-    );
     await this.resetPasswordUserService.run(
       tokenVerified.user_id.value(),
       command.password,
       command.token,
+    );
+    await this.verifyTokenRepository.markAsUsed(tokenVerified.id);
+    await this.verifyTokenRepository.deleteByUserId(
+      tokenVerified.user_id,
+      true,
     );
     this.metrics?.incrementPasswordReset('completed');
     return { user_id: tokenVerified.user_id.value() };

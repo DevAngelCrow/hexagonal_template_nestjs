@@ -44,10 +44,13 @@ import { SecurityAuthorizationPort } from '@/modules/iam/domain/ports/security-a
 import { ImplSecurityAuthorizationPort } from '@/modules/iam/infrastructure/persistence/security/impl-authorization.port';
 import { CachePort } from '@/modules/iam/domain/ports/cache.port';
 import { ImplCachePort } from '@/modules/iam/infrastructure/persistence/security/impl-cache.port';
+import { EmailChangeTokenPort } from '@/modules/iam/application/auth/ports/email-change-token.port';
+import { ImplEmailChangeTokenPort } from '@/modules/iam/infrastructure/persistence/auth/impl-email-change-token.port';
 
 export const repositories = [
   // Auth
   { provide: EmailSenderPort, useClass: EmailQueueService },
+  { provide: EmailChangeTokenPort, useClass: ImplEmailChangeTokenPort },
   { provide: VerificationTokenRepository, useClass: ImplVerificationTokenRepository },
   { provide: CreateOrUpdateRefreshTokenPort, useClass: ImplAuthPort },
   { provide: AuthReadPort, useClass: ImplAuthPort },

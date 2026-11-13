@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ThrottlerGuard } from '@nestjs/throttler';
+import { extractClientIp } from '@/shared/infrastructure/http/utils/client-request-info';
+
 @Injectable()
 export class LoginThrottleGuard extends ThrottlerGuard {
   protected getTracker(req: Record<string, unknown>): Promise<string> {
@@ -10,17 +12,18 @@ export class LoginThrottleGuard extends ThrottlerGuard {
       isRecord(body) && typeof body.user_name === 'string'
         ? body.user_name.trim().toLowerCase()
         : undefined;
-    const headers = req['headers'];
-    const forwardedFor = isRecord(headers)
-      ? headers['x-forwarded-for']
-      : undefined;
-    const forwardedIp = Array.isArray(forwardedFor)
-      ? forwardedFor[0]
-      : typeof forwardedFor === 'string'
-        ? forwardedFor.split(',')[0]?.trim()
-        : undefined;
+
+    const rawIp = typeof req.ip === 'string' ? req.ip : undefined;
+    const rawHeaders = isRecord(req['headers']) ? req['headers'] : {};
+    const ua = rawHeaders['user-agent'];
     const ip =
-      forwardedIp || (typeof req.ip === 'string' ? req.ip : 'unknown-ip');
+      extractClientIp({
+        ip: rawIp,
+        headers: {
+          'user-agent':
+            typeof ua === 'string' || Array.isArray(ua) ? ua : undefined,
+        },
+      }) ?? 'unknown-ip';
 
     if (!userName) return Promise.resolve(ip);
 

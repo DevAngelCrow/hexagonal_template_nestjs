@@ -10,12 +10,15 @@ export interface JwtPayload {
   user_name: string;
   id: string;
   iat?: number;
+  iatMs?: number;
   exp?: number;
+  purpose?: string;
 }
 const PERMISSIONS_CACHE_TTL_MS = 3_600_000;
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   private readonly logger = new Logger(JwtStrategy.name);
+  private readonly isProduction: boolean;
 
   constructor(
     private readonly userRepository: UserReadRepository,
@@ -28,26 +31,40 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       ignoreExpiration: false,
       secretOrKey: jwtSecret,
     });
+    this.isProduction =
+      configService.get<string>('NODE_ENV')?.trim() === 'production';
   }
   async validate(payload: JwtPayload) {
-    let loggedOutAt: number | undefined;
+    if (payload.purpose) {
+      throw new UnauthorizedException('Token is not valid for API authentication');
+    }
+
+    let revokedAt: number | undefined;
     try {
-      loggedOutAt = await this.cacheManager.get<number>(
+      revokedAt = await this.cacheManager.get<number>(
         `blacklist:user:${payload.id}`,
       );
     } catch (error) {
       this.logger.warn(
         `Unable to read access-token blacklist for user ${payload.id}: ${error instanceof Error ? error.message : String(error)}`,
       );
+      if (this.isProduction) {
+        throw new UnauthorizedException('Unable to verify token revocation status');
+      }
     }
 
-    if (
-      loggedOutAt !== null &&
-      loggedOutAt !== undefined &&
-      payload.iat !== undefined &&
-      loggedOutAt >= payload.iat
-    ) {
-      throw new UnauthorizedException('Token has been invalidated');
+    if (typeof revokedAt === 'number') {
+      if (typeof payload.iatMs === 'number' && revokedAt > 1e12) {
+        if (revokedAt >= payload.iatMs) {
+          throw new UnauthorizedException('Token has been invalidated');
+        }
+      } else if (payload.iat !== undefined) {
+        const revokedAtSec =
+          revokedAt > 1e12 ? Math.floor(revokedAt / 1000) : revokedAt;
+        if (revokedAtSec >= payload.iat) {
+          throw new UnauthorizedException('Token has been invalidated');
+        }
+      }
     }
 
     const cacheKey = `user:${payload.id}:permissions`;

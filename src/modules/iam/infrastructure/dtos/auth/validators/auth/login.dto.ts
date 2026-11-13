@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class LoginDto {
   @IsString()
@@ -12,4 +12,10 @@ export class LoginDto {
   @MaxLength(150)
   @ApiProperty({ example: 'password' })
   password!: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(2048)
+  @ApiProperty({ required: false })
+  turnstile_token?: string;
 }

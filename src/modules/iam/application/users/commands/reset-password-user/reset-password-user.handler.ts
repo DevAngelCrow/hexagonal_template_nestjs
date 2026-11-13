@@ -6,6 +6,9 @@ import { UserPassword } from '@/modules/iam/domain/value-objects/user/user-value
 import { PasswordHasherPort } from '@/modules/iam/domain/ports/password-hasher.port';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { EventDispatcherPort } from '@/shared/domain/ports/event-dispatcher.port';
+import { AuthReadPort } from '@/modules/iam/application/auth/ports/auth-read.port';
+
+const DEFAULT_ACCESS_TOKEN_BLACKLIST_SECONDS = 86_400;
 
 @CommandHandler(ResetPasswordUserCommand)
 export class ResetPasswordUserHandler implements ICommandHandler<ResetPasswordUserCommand> {
@@ -13,6 +16,7 @@ export class ResetPasswordUserHandler implements ICommandHandler<ResetPasswordUs
     private readonly repository: UserRepository,
     private readonly dispatcher: EventDispatcherPort,
     private readonly passwordHasherPort: PasswordHasherPort,
+    private readonly authReadPort?: AuthReadPort,
   ) {}
 
   async execute(command: ResetPasswordUserCommand): Promise<void> {
@@ -36,5 +40,14 @@ export class ResetPasswordUserHandler implements ICommandHandler<ResetPasswordUs
     await this.repository.update(user);
     await this.dispatcher.dispatch(user.getDomainEvents());
     user.clearDomainEvents();
+
+    // Revoke all active sessions & invalidate outstanding access tokens on password change.
+    if (this.authReadPort) {
+      await this.authReadPort.closeSession({ id: id.value() });
+      await this.authReadPort.blacklistAccessToken(
+        id.value(),
+        Math.floor(Date.now() / 1000) + DEFAULT_ACCESS_TOKEN_BLACKLIST_SECONDS,
+      );
+    }
   }
 }

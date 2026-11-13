@@ -18,4 +18,12 @@ export abstract class EmailSenderPort {
       id: string;
     },
   ): Promise<void>;
+  abstract sendEmailChangeConfirmation(
+    email: PersonEmail,
+    user_name: UserName,
+    verificationToken: {
+      token: string;
+      id: string;
+    },
+  ): Promise<void>;
 }

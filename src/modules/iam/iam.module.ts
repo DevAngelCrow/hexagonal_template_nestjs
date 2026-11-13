@@ -72,12 +72,19 @@ import {
     BullModule.registerQueue({
       name: QUEUE_NAMES.SEND_PASSWORD_RESET,
     }),
+    BullModule.registerQueue({
+      name: QUEUE_NAMES.SEND_EMAIL_CHANGE_CONFIRMATION,
+    }),
     BullBoardModule.forFeature({
       name: QUEUE_NAMES.SEND_EMAIL_VERIFICATION,
       adapter: BullMQAdapter,
     }),
     BullBoardModule.forFeature({
       name: QUEUE_NAMES.SEND_PASSWORD_RESET,
+      adapter: BullMQAdapter,
+    }),
+    BullBoardModule.forFeature({
+      name: QUEUE_NAMES.SEND_EMAIL_CHANGE_CONFIRMATION,
       adapter: BullMQAdapter,
     }),
   ],

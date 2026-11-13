@@ -126,6 +126,41 @@ export class ImplAuthPort
       );
     }
   }
+
+  async sendEmailChangeConfirmation(
+    email: PersonEmail,
+    user_name: UserName,
+    verificationToken: { id: string; token: string },
+  ): Promise<void> {
+    try {
+      const clientRoute =
+        this.configService.get<string>('CLIENT_CHANGE_EMAIL_ROUTE') ||
+        '/change-email-confirm';
+      const confirmationUrl = `${this.configService.get<string>('CLIENT_URL')}${clientRoute}?url=${this.configService.get<string>('API_URL')}/auth/change-email/confirm&id=${verificationToken.id}&token=${verificationToken.token}`;
+
+      const templatePath = path.join(
+        ImplAuthPort.VIEWS_DIR,
+        'email-change-confirmation.html',
+      );
+      const rawHtml = await this.getTemplate(templatePath);
+
+      const htmlTemplate = this.compileTemplate(rawHtml, {
+        APP_URL: this.configService.get<string>('APP_URL') || '',
+        USER_NAME: user_name.value(),
+        CONFIRMATION_URL: confirmationUrl,
+      });
+      await this.resend.emails.send({
+        from: this.configService.get<string>('EMAIL_FROM')!,
+        to: email.value(),
+        subject: `Confirma tu cambio de correo electrónico`,
+        html: htmlTemplate,
+      });
+    } catch (error: unknown) {
+      throw new Error(
+        `Error sending email change confirmation: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
   private static readonly MAX_SESSIONS = 5;
 
   async createUpdate(
@@ -281,7 +316,7 @@ export class ImplAuthPort
     if (ttlMs > 0) {
       await this.cacheManager.set(
         `blacklist:user:${userId}`,
-        Math.floor(Date.now() / 1000), // Store as seconds, matching JWT iat precision
+        Date.now(), // Millisecond precision paired with signed `iatMs` claim
         ttlMs,
       );
     }
@@ -340,7 +375,11 @@ export class ImplAuthPort
     try {
       const prisma = this.getPrismaClient();
       const refreshToken = await prisma.mnt_session_refresh_token.findFirst({
-        where: { id_user: id_user },
+        where: {
+          id_user: id_user,
+          revoked_at: null,
+          expired_at: { gt: new Date() },
+        },
         orderBy: { created_at: 'desc' },
       });
       if (!refreshToken) {
@@ -356,6 +395,57 @@ export class ImplAuthPort
       );
     }
   }
+
+  async consumeRefreshTokenSession(
+    id_user: string,
+    incoming_refresh_token: string,
+  ): Promise<{ sessionId: string } | null> {
+    const prisma = this.getPrismaClient();
+    const now = new Date();
+    const hasher = new JwtTokenHasher();
+
+    const activeSessions = await prisma.mnt_session_refresh_token.findMany({
+      where: {
+        id_user,
+        revoked_at: null,
+        expired_at: { gt: now },
+      },
+      orderBy: { created_at: 'desc' },
+      select: { id: true, refresh_token_hashed: true },
+    });
+
+    for (const session of activeSessions) {
+      if (await hasher.compare(incoming_refresh_token, session.refresh_token_hashed)) {
+        await prisma.mnt_session_refresh_token.update({
+          where: { id: session.id },
+          data: { revoked_at: now, last_used_at: now },
+        });
+        return { sessionId: session.id };
+      }
+    }
+
+    // Reuse detection: if an already-revoked token is replayed, revoke all active sessions.
+    const revokedSessions = await prisma.mnt_session_refresh_token.findMany({
+      where: {
+        id_user,
+        revoked_at: { not: null },
+        expired_at: { gt: now },
+      },
+      orderBy: { revoked_at: 'desc' },
+      take: 10,
+      select: { id: true, refresh_token_hashed: true },
+    });
+
+    for (const revoked of revokedSessions) {
+      if (await hasher.compare(incoming_refresh_token, revoked.refresh_token_hashed)) {
+        await this.closeSession({ id: id_user });
+        break;
+      }
+    }
+
+    return null;
+  }
+
   async hasVerifiedEmail(user: UserDto): Promise<boolean> {
     if (user.is_validated) {
       return Promise.resolve(true);
@@ -366,6 +456,7 @@ export class ImplAuthPort
     const payload: JwtPayload = {
       user_name: user.user_name,
       id: user.id || '',
+      iatMs: Date.now(),
     };
     const jwtExpiresIn = this.configService.get<StringValue>('JWT_EXPIRES_IN');
     const jwtSecret = this.configService.get<StringValue>('JWT_SECRET');

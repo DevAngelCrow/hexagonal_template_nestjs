@@ -17,11 +17,24 @@ function isTurnstileOutcome(data: unknown): data is TurnstileOutcome {
 export class TurnstileService {
   private readonly logger = new Logger(TurnstileService.name);
   private readonly secretKey: string | undefined;
+  private readonly enabled: boolean;
 
   constructor(private readonly configService: ConfigService) {
     this.secretKey = this.configService.get<string>(
       'CLOUDFLARE_TURNSTILE_SECRET_KEY',
     );
+    this.enabled = this.configService.get<boolean>('TURNSTILE_ENABLED') === true;
+  }
+
+  isEnabled(): boolean {
+    return this.enabled;
+  }
+
+  async verifyIfEnabled(token?: string, remoteIp?: string): Promise<boolean> {
+    if (!this.enabled) {
+      return true;
+    }
+    return this.verifyToken(token, remoteIp);
   }
 
   async verifyToken(token?: string, remoteIp?: string): Promise<boolean> {

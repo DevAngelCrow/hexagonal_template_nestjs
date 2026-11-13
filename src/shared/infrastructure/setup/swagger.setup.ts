@@ -7,6 +7,8 @@ import { Request, Response, NextFunction } from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
 import { verify as jwtVerify } from 'jsonwebtoken';
+import { extractSafeCookie } from '@/shared/infrastructure/http/utils/cookie-parser.util';
+import { isDocsAccessTokenPayload } from '@/shared/infrastructure/http/middleware/docs-auth.middleware';
 
 export function setupSwagger(
   app: INestApplication,
@@ -130,25 +132,18 @@ export function setupSwagger(
     res: Response,
     next: NextFunction,
   ) => {
-    const cookieHeader = req.headers['cookie'] ?? '';
-    const cookies: Record<string, string> = Object.fromEntries(
-      cookieHeader.split(';').flatMap((pair) => {
-        const idx = pair.indexOf('=');
-        if (idx === -1) return [];
-        const k = pair.slice(0, idx).trim();
-        const v = decodeURIComponent(pair.slice(idx + 1).trim());
-        return [[k, v]];
-      }),
-    );
-
-    const token = cookies['docs_access'];
+    const token = extractSafeCookie(req, 'docs_access');
     if (!token) {
       const redirect = encodeURIComponent(req.originalUrl);
       return res.redirect(`/api/docs/login?redirect=${redirect}`);
     }
 
     try {
-      jwtVerify(token, jwtSecret);
+      const decoded: unknown = jwtVerify(token, jwtSecret);
+      if (!isDocsAccessTokenPayload(decoded)) {
+        const redirect = encodeURIComponent(req.originalUrl);
+        return res.redirect(`/api/docs/login?redirect=${redirect}`);
+      }
       return next();
     } catch {
       const redirect = encodeURIComponent(req.originalUrl);

@@ -18,5 +18,6 @@ export abstract class PersonRepository {
   abstract findByDocumentId(documentId: string): Promise<Person | null>;
   abstract findByAddressId(addressId: string): Promise<Person | null>;
   abstract getOneByEmail(email: PersonEmail): Promise<Person | null>;
+  abstract updateEmail(id: PersonId, email: PersonEmail): Promise<void>;
   abstract delete(id: PersonId): Promise<void>;
 }

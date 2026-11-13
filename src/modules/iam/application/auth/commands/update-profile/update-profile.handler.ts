@@ -99,7 +99,7 @@ export class UpdateProfileHandler<
       command.update_profile_dto?.first_name ?? null,
       command.update_profile_dto?.birthdate ?? null,
       command.update_profile_dto?.id_gender ?? null,
-      command.update_profile_dto?.email ?? user.email,
+      user.email ?? '',
       command.update_profile_dto?.id_marital_status ?? null,
       command.update_profile_dto?.phone ?? null,
       user.id_status,

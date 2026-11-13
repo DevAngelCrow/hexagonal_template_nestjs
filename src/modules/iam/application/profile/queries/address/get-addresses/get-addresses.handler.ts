@@ -15,8 +15,16 @@ export class GetAddressesHandler implements IQueryHandler<GetAddressesQuery> {
       const paginationParams = PaginationParams.create({
         ...query.pagination_params,
       });
-      return await this.repository.getAll(paginationParams, query.filter);
+      return await this.repository.getAll(
+        paginationParams,
+        query.filter,
+        query.id_people,
+      );
     }
-    return await this.repository.getAll(undefined, query.filter);
+    return await this.repository.getAll(
+      undefined,
+      query.filter,
+      query.id_people,
+    );
   }
 }

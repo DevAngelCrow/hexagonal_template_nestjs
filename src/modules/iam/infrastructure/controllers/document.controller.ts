@@ -10,8 +10,12 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
+import { Request } from 'express';
+import { ForbiddenException } from '@/shared/application/exceptions/forbidden.exception';
+import { extractRequestAuthUser } from '@/shared/infrastructure/http/utils/request-user.util';
 import { DocumentDto } from '@/modules/iam/infrastructure/dtos/profile/validators/document/document.dto';
 import { SuccessResponseDto } from '@/shared/infrastructure/http/dtos/http-success-response.dto';
 import { HttpPaginatedResponseDto } from '@/shared/infrastructure/http/dtos/http-paginated-response.dto';
@@ -50,8 +54,16 @@ export class DocumentController {
   @HttpCode(201)
   async create(
     @Body() documentCreateRequest: DocumentDto,
+    @Req() req: Request,
   ): Promise<SuccessResponseDto<null>> {
-    const command = new CreateDocumentCommand(documentCreateRequest);
+    const targetIdPeople = this.assertOrResolvePersonScope(
+      req,
+      documentCreateRequest.id_people,
+    );
+    const command = new CreateDocumentCommand({
+      ...documentCreateRequest,
+      id_people: targetIdPeople,
+    });
     await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
@@ -73,8 +85,17 @@ export class DocumentController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() documentUpdateRequest: DocumentDto,
+    @Req() req: Request,
   ): Promise<SuccessResponseDto<null>> {
-    const command = new UpdateDocumentCommand({ ...documentUpdateRequest, id });
+    const targetIdPeople = this.assertOrResolvePersonScope(
+      req,
+      documentUpdateRequest.id_people,
+    );
+    const command = new UpdateDocumentCommand({
+      ...documentUpdateRequest,
+      id_people: targetIdPeople,
+      id,
+    });
     await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
@@ -87,8 +108,10 @@ export class DocumentController {
   @HttpCode(200)
   async getAll(
     @Query() query: GetDocumentsQueryDto,
+    @Req() req: Request,
   ): Promise<SuccessResponseDto<HttpPaginatedResponseDto<DocumentHttpDto>>> {
-    const appQuery = new GetDocumentsQuery(query, query.filter);
+    const scopedIdPeople = this.resolveReadPersonScope(req);
+    const appQuery = new GetDocumentsQuery(query, query.filter, scopedIdPeople);
     const result = await this.queryBus.execute<
       GetDocumentsQuery,
       Pagination<Document>
@@ -164,5 +187,41 @@ export class DocumentController {
       HttpStatus.OK,
       'Document deleted successfully',
     );
+  }
+
+  private hasBypassPermission(req: Request): boolean {
+    const user = extractRequestAuthUser(req);
+    return BYPASS_DOCUMENT_OWNERSHIP.some((perm) =>
+      user?.permissions.includes(perm),
+    );
+  }
+
+  private assertOrResolvePersonScope(
+    req: Request,
+    requestedIdPeople: string,
+  ): string {
+    if (this.hasBypassPermission(req)) {
+      return requestedIdPeople;
+    }
+    const authIdPeople = extractRequestAuthUser(req)?.id_people;
+    if (!authIdPeople || requestedIdPeople !== authIdPeople) {
+      throw new ForbiddenException(
+        'You are not allowed to manage documents for another person',
+      );
+    }
+    return authIdPeople;
+  }
+
+  private resolveReadPersonScope(req: Request): string | undefined {
+    if (this.hasBypassPermission(req)) {
+      return undefined;
+    }
+    const authIdPeople = extractRequestAuthUser(req)?.id_people;
+    if (!authIdPeople) {
+      throw new ForbiddenException(
+        'Unable to resolve person ownership for documents',
+      );
+    }
+    return authIdPeople;
   }
 }

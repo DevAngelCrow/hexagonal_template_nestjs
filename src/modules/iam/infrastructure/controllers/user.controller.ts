@@ -65,7 +65,7 @@ export class UserController {
   }
   @Permissions('ver-usuario-nombre')
   @UseGuards(CheckAuthenticatedUserGuard)
-  @CheckAuthenticatedUser('user_name')
+  @CheckAuthenticatedUser('user_name', ['ver-perfil-usuario'])
   @Get('user-name/:user_name')
   @HttpCode(200)
   @ApiOperation({ summary: 'Get user by username' })

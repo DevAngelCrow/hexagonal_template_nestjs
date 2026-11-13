@@ -10,8 +10,12 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
+import { Request } from 'express';
+import { ForbiddenException } from '@/shared/application/exceptions/forbidden.exception';
+import { extractRequestAuthUser } from '@/shared/infrastructure/http/utils/request-user.util';
 import { AddressDto } from '@/modules/iam/infrastructure/dtos/profile/validators/address/addres.dto';
 import { SuccessResponseDto } from '@/shared/infrastructure/http/dtos/http-success-response.dto';
 import { HttpPaginatedResponseDto } from '@/shared/infrastructure/http/dtos/http-paginated-response.dto';
@@ -51,8 +55,16 @@ export class AddressController {
   @HttpCode(201)
   async create(
     @Body() addressCreateRequest: AddressDto,
+    @Req() req: Request,
   ): Promise<SuccessResponseDto<null>> {
-    const command = new CreateAddressCommand(addressCreateRequest);
+    const targetIdPeople = this.assertOrResolvePersonScope(
+      req,
+      addressCreateRequest.id_people,
+    );
+    const command = new CreateAddressCommand({
+      ...addressCreateRequest,
+      id_people: targetIdPeople,
+    });
     await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
@@ -74,8 +86,17 @@ export class AddressController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() addressUpdateRequest: AddressDto,
+    @Req() req: Request,
   ): Promise<SuccessResponseDto<null>> {
-    const command = new UpdateAddressCommand({ ...addressUpdateRequest, id });
+    const targetIdPeople = this.assertOrResolvePersonScope(
+      req,
+      addressUpdateRequest.id_people,
+    );
+    const command = new UpdateAddressCommand({
+      ...addressUpdateRequest,
+      id_people: targetIdPeople,
+      id,
+    });
     await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
@@ -88,8 +109,14 @@ export class AddressController {
   @HttpCode(200)
   async getAll(
     @Query() query: GetAddressesQueryDto,
+    @Req() req: Request,
   ): Promise<SuccessResponseDto<HttpPaginatedResponseDto<AddressHttpDto>>> {
-    const queryAddress = new GetAddressesQuery(query, query.filter);
+    const scopedIdPeople = this.resolveReadPersonScope(req);
+    const queryAddress = new GetAddressesQuery(
+      query,
+      query.filter,
+      scopedIdPeople,
+    );
     const result = await this.queryBus.execute<
       GetAddressesQuery,
       Pagination<Address>
@@ -165,5 +192,41 @@ export class AddressController {
       HttpStatus.OK,
       'Address deleted successfully',
     );
+  }
+
+  private hasBypassPermission(req: Request): boolean {
+    const user = extractRequestAuthUser(req);
+    return BYPASS_ADDRESS_OWNERSHIP.some((perm) =>
+      user?.permissions.includes(perm),
+    );
+  }
+
+  private assertOrResolvePersonScope(
+    req: Request,
+    requestedIdPeople: string,
+  ): string {
+    if (this.hasBypassPermission(req)) {
+      return requestedIdPeople;
+    }
+    const authIdPeople = extractRequestAuthUser(req)?.id_people;
+    if (!authIdPeople || requestedIdPeople !== authIdPeople) {
+      throw new ForbiddenException(
+        'You are not allowed to manage addresses for another person',
+      );
+    }
+    return authIdPeople;
+  }
+
+  private resolveReadPersonScope(req: Request): string | undefined {
+    if (this.hasBypassPermission(req)) {
+      return undefined;
+    }
+    const authIdPeople = extractRequestAuthUser(req)?.id_people;
+    if (!authIdPeople) {
+      throw new ForbiddenException(
+        'Unable to resolve person ownership for addresses',
+      );
+    }
+    return authIdPeople;
   }
 }

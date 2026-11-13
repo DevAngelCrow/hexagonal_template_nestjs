@@ -405,6 +405,29 @@ export class ImplPersonRepository
     }
   }
 
+  async updateEmail(id: PersonId, email: PersonEmail): Promise<void> {
+    try {
+      const prisma = this.getPrismaClient();
+      await prisma.mnt_people.update({
+        where: { id: id.value() },
+        data: { email: email.value() },
+      });
+    } catch (error: unknown) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ConflictException(
+          'The requested email address is already associated with another account.',
+        );
+      }
+      if (error instanceof Error) {
+        throw new Error(`Error updating person email: ${error.message}`);
+      }
+      throw new DatabaseException('Error updating person email', 'updateEmail');
+    }
+  }
+
   delete(id: PersonId): Promise<void> {
     console.log(id);
     throw new Error('Method not implemented.');

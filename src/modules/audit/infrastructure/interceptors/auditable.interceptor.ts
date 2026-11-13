@@ -14,6 +14,10 @@ import {
   AuditableOptions,
 } from '@/shared/infrastructure/decorators/auditable.decorator';
 import { TransactionContextService } from '@/shared/infrastructure/services/transaction-context.service';
+import {
+  extractClientIp,
+  extractUserAgent,
+} from '@/shared/infrastructure/http/utils/client-request-info';
 
 type AuthUserLike = { id?: string; user_name?: string } | undefined;
 
@@ -53,7 +57,7 @@ export class AuditableInterceptor implements NestInterceptor {
               user_id: user?.id ?? null,
               user_name: user?.user_name ?? null,
               ip_address: this.extractIp(request),
-              user_agent: this.extractUserAgent(request),
+              user_agent: this.resolveUserAgent(request),
               entity_type: options.entityType ?? null,
               entity_id: this.resolveEntityId(options, request, result) ?? null,
             };
@@ -84,7 +88,7 @@ export class AuditableInterceptor implements NestInterceptor {
               user_id: user?.id ?? null,
               user_name: user?.user_name ?? bodyUserName,
               ip_address: this.extractIp(request),
-              user_agent: this.extractUserAgent(request),
+              user_agent: this.resolveUserAgent(request),
               entity_type: options.entityType ?? null,
               entity_id:
                 this.resolveEntityId(options, request, undefined) ?? null,
@@ -117,6 +121,7 @@ export class AuditableInterceptor implements NestInterceptor {
     const [source, ...rest] = path.split('.');
     let root: unknown;
     if (source === 'params') root = request.params;
+    else if (source === 'query') root = request.query;
     else if (source === 'body') root = request.body;
     else if (source === 'result') root = result;
     else return undefined;
@@ -130,17 +135,10 @@ export class AuditableInterceptor implements NestInterceptor {
   }
 
   private extractIp(req: Request): string | null {
-    const forwarded = req.headers['x-forwarded-for'];
-    if (forwarded) {
-      const first = Array.isArray(forwarded) ? forwarded[0] : forwarded;
-      return first.split(',')[0].trim();
-    }
-    return req.socket?.remoteAddress ?? null;
+    return extractClientIp(req);
   }
 
-  private extractUserAgent(req: Request): string | null {
-    const ua = req.headers['user-agent'];
-    if (!ua) return null;
-    return Array.isArray(ua) ? String(ua[0]) : String(ua);
+  private resolveUserAgent(req: Request): string | null {
+    return extractUserAgent(req);
   }
 }

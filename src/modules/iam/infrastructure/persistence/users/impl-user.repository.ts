@@ -170,10 +170,13 @@ export class ImplUserRepository implements UserRepository, UserReadRepository {
   ): Promise<UserAuthDto | null> {
     try {
       const prisma = this.getPrismaClient();
+      const now = new Date();
       const userDb = await prisma.mnt_user.findFirst({
         where: {
           user_name: user_name,
           deleted_at: null,
+          ctl_status: { code: MultipleStatusCode.ACTIVE },
+          OR: [{ locked_until: null }, { locked_until: { lte: now } }],
         },
         include: {
           ctl_status: true,
@@ -243,10 +246,13 @@ export class ImplUserRepository implements UserRepository, UserReadRepository {
   public async getOneByIdForAuth(id: string): Promise<UserAuthDto | null> {
     try {
       const prisma = this.getPrismaClient();
+      const now = new Date();
       const userDb = await prisma.mnt_user.findFirst({
         where: {
           id: id,
           deleted_at: null,
+          ctl_status: { code: MultipleStatusCode.ACTIVE },
+          OR: [{ locked_until: null }, { locked_until: { lte: now } }],
         },
         include: {
           ctl_status: true,

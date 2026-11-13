@@ -174,4 +174,10 @@ export class RegisterValidatorDto {
   // @Allow()
   // @ApiProperty({ type: 'string', format: 'binary', required: false })
   // file_img?: BinaryType;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(2048)
+  @ApiProperty({ required: false })
+  turnstile_token?: string;
 }

@@ -8,8 +8,10 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { SuccessResponseDto } from '@/shared/infrastructure/http/dtos/http-success-response.dto';
 import { PersonHttpDto } from '@/modules/iam/infrastructure/dtos/profile/http/person-http-dto/person-http.dto';
 import { PersonDto } from '@/modules/iam/infrastructure/dtos/profile/validators/person/person.dto';
@@ -30,6 +32,13 @@ import { GetPersonByIdQuery } from '@/modules/iam/application/profile/queries/pe
 import { GetPeopleQuery } from '@/modules/iam/application/profile/queries/person/get-people/get-people.query';
 import { CheckAuthenticatedUserGuard } from '@/modules/iam/infrastructure/guards/check-authenticated-user.guard';
 import { CheckAuthenticatedUser } from '@/modules/iam/infrastructure/decorators/check-authenticated-user.decorator';
+import {
+  OwnsResource,
+  OwnsResourceGuard,
+} from '@/shared/infrastructure/http/guards/owns-resource.guard';
+import { extractRequestAuthUser } from '@/shared/infrastructure/http/utils/request-user.util';
+
+const BYPASS_PERSON_OWNERSHIP = ['listar-personas'];
 @Controller('profile/people')
 @ApiBearerAuth('JWT-auth')
 export class PersonController {
@@ -64,13 +73,44 @@ export class PersonController {
     );
   }
   @Permissions('editar-persona')
+  @UseGuards(OwnsResourceGuard)
+  @OwnsResource<Person>({
+    paramKey: 'id',
+    query: GetPersonByIdQuery,
+    getOwnerId: (p: Person) => p.getId()?.value(),
+    authField: 'id_people',
+    bypassWithPermissions: BYPASS_PERSON_OWNERSHIP,
+  })
   @Put(':id')
   @HttpCode(200)
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePersonRequest: PersonDto,
+    @Req() req: Request,
   ): Promise<SuccessResponseDto<null>> {
-    const command = new UpdatePersonCommand({ id, ...updatePersonRequest });
+    const authUser = extractRequestAuthUser(req);
+    const hasAdminBypass = BYPASS_PERSON_OWNERSHIP.some((perm) =>
+      authUser?.permissions.includes(perm),
+    );
+
+    let safePayload = { ...updatePersonRequest };
+    if (!hasAdminBypass) {
+      const existing = await this.queryBus.execute<
+        GetPersonByIdQuery,
+        Person | null
+      >(new GetPersonByIdQuery(id));
+      if (!existing) {
+        throw new NotFoundException('Person', id);
+      }
+      // Non-admin self-edits must not alter email (dedicated verification flow) or status.
+      safePayload = {
+        ...updatePersonRequest,
+        email: existing.getEmail().value(),
+        id_status: existing.getIdStatus().value(),
+      };
+    }
+
+    const command = new UpdatePersonCommand({ id, ...safePayload });
     await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
@@ -79,6 +119,14 @@ export class PersonController {
     );
   }
   @Permissions('ver-persona')
+  @UseGuards(OwnsResourceGuard)
+  @OwnsResource<Person>({
+    paramKey: 'id',
+    query: GetPersonByIdQuery,
+    getOwnerId: (p: Person) => p.getId()?.value(),
+    authField: 'id_people',
+    bypassWithPermissions: BYPASS_PERSON_OWNERSHIP,
+  })
   @Get(':id')
   @HttpCode(200)
   async getOneById(
@@ -131,7 +179,7 @@ export class PersonController {
   }
   @Permissions('ver-mi-perfil')
   @UseGuards(CheckAuthenticatedUserGuard)
-  @CheckAuthenticatedUser('id_user')
+  @CheckAuthenticatedUser('id_user', ['ver-perfil-usuario'])
   @Get('detail/:id_user')
   @HttpCode(200)
   async getOneByIdProfile(

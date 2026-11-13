@@ -12,6 +12,8 @@ export class EmailQueueService implements EmailSenderPort {
     private readonly emailVerificationQueue: Queue,
     @InjectQueue(QUEUE_NAMES.SEND_PASSWORD_RESET)
     private readonly passwordResetQueue: Queue,
+    @InjectQueue(QUEUE_NAMES.SEND_EMAIL_CHANGE_CONFIRMATION)
+    private readonly emailChangeQueue: Queue,
   ) {}
   async sendForgottenPasswordEmail(
     email: PersonEmail,
@@ -59,6 +61,30 @@ export class EmailQueueService implements EmailSenderPort {
       );
     } catch (error) {
       console.error('Failed to enqueue email job:', error);
+    }
+  }
+  async sendEmailChangeConfirmation(
+    email: PersonEmail,
+    user_name: UserName,
+    verificationToken: { id: string; token: string },
+  ): Promise<void> {
+    try {
+      await this.emailChangeQueue.add(
+        'send-email-change-confirmation',
+        {
+          email: email.value(),
+          user_name: user_name.value(),
+          verificationToken,
+        },
+        {
+          attempts: 3,
+          backoff: { type: 'exponential', delay: 5000 },
+          removeOnComplete: true,
+          removeOnFail: { count: 100 },
+        },
+      );
+    } catch (error) {
+      console.error('Failed to enqueue email change confirmation job:', error);
     }
   }
 }

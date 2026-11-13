@@ -10,6 +10,7 @@ import { randomUUID } from 'node:crypto';
 import { Express } from 'express';
 import { StorageBackend } from './storage-backend';
 import { MIME_TO_EXTENSION } from '@/modules/storage/infrastructure/config/multer-file-filter.config';
+import { sanitizeStorageFolder } from '@/modules/storage/infrastructure/utils/storage-path.util';
 
 /**
  * S3-compatible backend (AWS S3, MinIO, Cloudflare R2, Backblaze B2, etc).
@@ -116,9 +117,7 @@ export class S3StorageBackend extends StorageBackend {
       );
     }
     const ext = MIME_TO_EXTENSION[file?.mimetype] ?? 'bin';
-    const targetFolder = folder?.trim()
-      ? folder.trim().replace(/^\/+|\/+$/g, '')
-      : '';
+    const targetFolder = sanitizeStorageFolder(folder, '');
     const prefix = [this.keyPrefix, targetFolder].filter(Boolean).join('/');
     const key = `${prefix ? prefix + '/' : ''}${randomUUID()}.${ext}`;
     try {

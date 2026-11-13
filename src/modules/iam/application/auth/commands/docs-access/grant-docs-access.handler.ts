@@ -43,6 +43,7 @@ export class GrantDocsAccessHandler implements ICommandHandler<GrantDocsAccessCo
     const cookieToken = this.authReadPort.signPayload({
       id: payload.id,
       user_name: payload.user_name,
+      purpose: 'docs_access',
     });
     const decoded = await this.authReadPort.decodeToken<{ exp?: number }>(
       cookieToken,

@@ -7,6 +7,7 @@ export abstract class DocumentReadRepository {
   abstract getAll(
     pagination_params?: PaginationParams,
     filter?: string,
+    id_people?: string,
   ): Promise<Pagination<Document> | Document[]>;
   abstract getOneById(id: DocumentId): Promise<Document | null>;
 }

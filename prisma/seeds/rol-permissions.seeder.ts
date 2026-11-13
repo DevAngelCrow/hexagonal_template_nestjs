@@ -76,7 +76,6 @@ export const seedRolPermissions = async (tx: PrismaClient) => {
       // IDOR bypass — usuarios admin pueden gestionar direcciones de cualquier persona
       'gestionar-cualquier-dirección',
       // Perfil - Persona
-      'crear-persona',
       'editar-persona',
       'ver-persona',
       'ver-persona-email',
@@ -282,7 +281,6 @@ export const seedRolPermissions = async (tx: PrismaClient) => {
       // IDOR bypass — usuarios admin pueden gestionar direcciones de cualquier persona
       'gestionar-cualquier-dirección',
       // Perfil - Persona
-      'crear-persona',
       'editar-persona',
       'ver-persona',
       'ver-persona-email',
@@ -320,7 +318,6 @@ export const seedRolPermissions = async (tx: PrismaClient) => {
       'ver-dirección',
       'eliminar-dirección',
       // Perfil - Persona
-      'crear-persona',
       'editar-persona',
       'ver-persona',
       'ver-persona-email',
@@ -338,8 +335,6 @@ export const seedRolPermissions = async (tx: PrismaClient) => {
       'cerrar-sesion',
       'ver-mi-perfil',
       'editar-mi-perfil',
-      // Perfil - Persona
-      'editar-persona',
       // General
       'ver-layout',
       'ver-menu-usuario',
@@ -348,8 +343,13 @@ export const seedRolPermissions = async (tx: PrismaClient) => {
 
   // Asignar permisos a cada rol
   for (const role of roles) {
-    const permissionNames =
-      permissionsByRole[role.name as keyof typeof permissionsByRole];
+    const permissionNamesRaw: unknown = Reflect.get(
+      permissionsByRole,
+      role.name,
+    );
+    const permissionNames = Array.isArray(permissionNamesRaw)
+      ? permissionNamesRaw.filter((p): p is string => typeof p === 'string')
+      : undefined;
 
     if (!permissionNames) {
       console.log(`No hay permisos definidos para el rol: ${role.name}`);

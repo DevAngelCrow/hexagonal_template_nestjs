@@ -22,7 +22,7 @@ A continuación, desglosaremos cada capa con un ejemplo detallado basado en un m
 
 ## 2. Capa de Dominio (`domain`)
 
-La capa de dominio es el núcleo de nuestra aplicación. **No debe tener dependencias de frameworks externos (como NestJS o TypeORM)**. Aquí viven las reglas de negocio.
+La capa de dominio es el núcleo de nuestra aplicación. **No debe tener dependencias de frameworks externos (como NestJS o Prisma)**. Aquí viven las reglas de negocio.
 
 ### Estructura:
 ```text
@@ -123,12 +123,12 @@ export class CategoryStatus {
 
 ### 2.2. Value Objects (`domain/value-objects`)
 Son objetos inmutables que no tienen identidad propia; se definen por sus atributos. En nuestra plantilla, **tienen la responsabilidad exclusiva de autovalidarse**.
-Para crearlos, utilizamos una clase `Validator` provista por el core (`src/shared/domain/validator/validator-value-object`) y, en caso de error, arrojamos excepciones específicas de dominio como `InvalidValueObjectException`.
+Para crearlos, utilizamos la clase `Validator` provista por el núcleo compartido (`@/shared/domain/validators/validator-value-object`, disponible también vía barrel `@/shared/domain/validator/validator-value-object`) y, en caso de error, arrojamos excepciones específicas de dominio como `InvalidValueObjectException`.
 
 **Ejemplo: `domain/value-objects/category-status-description.ts`**
 ```typescript
-import { InvalidValueObjectException } from 'src/shared/domain/exceptions/invalid-value-object.exception';
-import { Validator } from 'src/shared/domain/validator/validator-value-object';
+import { InvalidValueObjectException } from '@/shared/domain/exceptions/invalid-value-object.exception';
+import { Validator } from '@/shared/domain/validators/validator-value-object';
 
 export class CategoryStatusDescription {
   private readonly _value: string;
@@ -450,7 +450,9 @@ Reciben la petición HTTP, validan la entrada a través de pipes, documentan la 
 **Decoradores más utilizados en la plantilla:**
 - `@Controller('path')`: Define el prefijo de la ruta.
 - `@ApiBearerAuth('JWT-auth')`: Habilita la autenticación por token en la documentación de Swagger.
-- `@Permissions('permiso-1', 'permiso-2')`: **(Crucial)** Decorador personalizado de la plantilla (`src/modules/security/infrastructure/decorators/permissions.decorator.ts`) para proteger el endpoint verificando que el usuario logueado tenga los permisos necesarios en su token.
+- `@Permissions('permiso-1', 'permiso-2')`: **(Crucial)** Decorador personalizado de la plantilla (`@/shared/infrastructure/decorators/permissions.decorator`, o su re-exportación `@/modules/iam/infrastructure/decorators/permissions.decorator`) para proteger el endpoint verificando que el usuario logueado tenga los permisos necesarios.
+- `@Transactional()`: *(Recomendado en operaciones multi-escritura)* Declarado desde `@/shared/infrastructure/decorators/transactional.decorator` para envolver la ejecución del controlador dentro de `prisma.$transaction` usando `AsyncLocalStorage` (`TransactionInterceptor`).
+- `@Auditable(...)`: *(Opcional en operaciones críticas)* Declarado desde `@/modules/audit/infrastructure/decorators/auditable.decorator` para registrar acciones en `mnt_audit_log`.
 - `@HttpCode(Status)`: Fuerza un código HTTP de respuesta explícito (ej: 200 OK, 201 Created).
 - `@ApiParam()` / `@ApiQuery()`: Documenta explícitamente los parámetros de ruta o *query strings* para Swagger.
 - Métodos HTTP estándar: `@Get()`, `@Post()`, `@Put()`, `@Patch()`, `@Delete()`.
@@ -461,9 +463,10 @@ import { Controller, Post, Get, Put, Patch, Body, Param, Query, HttpCode, HttpSt
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiBearerAuth, ApiParam, ApiQuery } from '@nestjs/swagger';
 
-import { Permissions } from '@/modules/security/infrastructure/decorators/permissions.decorator';
-import { SuccessResponseDto } from '@/shared/infrastructure/dtos/success-response.dto';
-import { HttpPaginatedResponseDto } from '@/shared/infrastructure/dtos/http-paginated-response.dto';
+import { Permissions } from '@/shared/infrastructure/decorators/permissions.decorator';
+import { Transactional } from '@/shared/infrastructure/decorators/transactional.decorator';
+import { SuccessResponseDto } from '@/shared/infrastructure/http/dtos/http-success-response.dto';
+import { HttpPaginatedResponseDto } from '@/shared/infrastructure/http/dtos/http-paginated-response.dto';
 import { Pagination } from '@/shared/domain/value-object/pagination';
 
 import { CreateProductDto } from '../dtos/create-product.dto';
@@ -647,35 +650,40 @@ export class ProductHttpDto {
 #### 4.3.3. DTOs de Query (Peticiones GET - `query`)
 Utilizados específicamente para las consultas HTTP (endpoints `GET` o análogos) que reciben parámetros por cadena de consulta (query strings) como paginación o filtros dinámicos. 
 
-En lugar de reescribir propiedades comunes en cada módulo, estos DTOs se componen de forma muy limpia y modular utilizando la utilidad `IntersectionType` de `@nestjs/swagger`. Esto permite heredar y combinar DTOs base predefinidos en el módulo compartido (`src/shared/application/dtos/...`).
+En lugar de reescribir propiedades comunes en cada módulo, estos DTOs se componen de forma muy limpia y modular utilizando la utilidad `IntersectionType` de `@nestjs/swagger`. Esto permite heredar y combinar DTOs base predefinidos en infraestructura (`@/shared/infrastructure/http/dtos/pagination-query.dto` y `@/shared/infrastructure/http/dtos/filters`).
 Convención de nombres: **`Get[Entidades]QueryDto`**.
 
 **Ejemplo: `infrastructure/dtos/query/get-products-query.dto.ts`**
 ```typescript
 import { IntersectionType } from '@nestjs/swagger';
-import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
-import { FilterNameDto, StatusBooleanFilterDto } from '@/shared/application/dtos/filters';
+import { PaginationQueryDto } from '@/shared/infrastructure/http/dtos/pagination-query.dto';
+import { FilterNameDto, StatusBooleanFilterDto } from '@/shared/infrastructure/http/dtos/filters';
 
 // Combina paginación, filtro de nombre y filtro de estado booleano
 export class GetProductsQueryDto extends IntersectionType(
-  PaginationParamsDto,
+  PaginationQueryDto,
   FilterNameDto,
   StatusBooleanFilterDto,
 ) {}
 ```
 
 ### 4.4. Implementación de Repositorios - Adaptadores (`infrastructure/implementation`)
-Aquí se conecta la interfaz (Puerto) del dominio o de la aplicación con la tecnología real de persistencia (ej. Prisma). 
-En esta plantilla, el Repositorio de Infraestructura **implementa dos puertos simultáneamente**, logrando un patrón CQRS a nivel de interfaces pero centralizando la lógica de acceso a datos:
+Aquí se conecta el puerto abstracto del dominio o de la aplicación con la tecnología real de persistencia (Prisma 7 sobre `this.prisma.client`).
+En esta plantilla, el Repositorio de Infraestructura **implementa dos puertos simultáneamente**, logrando un patrón CQRS a nivel de contratos pero centralizando la lógica de acceso a datos:
 1. **El Puerto del Dominio** (ej. `CountryRepository`): Se utiliza en los *Commands* (mutaciones). Recibe y devuelve **Entidades de Dominio completas**.
-2. **El Puerto de Aplicación** (ej. `CountryQueriesRepository`): Se utiliza en las *Queries* (consultas). Devuelve **DTOs de lectura** o paginaciones directas, saltándose la costosa hidratación del Dominio.
+2. **El Puerto de Aplicación** (ej. `CountryQueriesRepository` / `*ReadRepository`): Se utiliza en las *Queries* (consultas). Devuelve **DTOs de lectura** o paginaciones directas, saltándose la hidratación del Dominio.
 
-Además, aquí es obligatorio **envolver los errores del ORM** en excepciones personalizadas (`DatabaseException`) para no filtrar detalles técnicos a la capa de aplicación.
+> [!IMPORTANT]
+> - Nunca invoques `$transaction(` dentro de `*repository*` (prohibido por `test/architecture.spec.ts`); usa `this.prisma.client` para que la consulta participe automáticamente en `@Transactional()` vía `AsyncLocalStorage`.
+> - Nunca uses `as <Tipo>` (salvo `as const`) ni `any`: `.oxlintrc.json` prohíbe `consistent-type-assertions` en código productivo.
+
+Además, aquí es obligatorio **envolver errores técnicos del ORM** en excepciones controladas (`DatabaseException`), teniendo cuidado de re-lanzar explícitamente `DomainException` / `NotFoundException` antes de envolver para no convertir errores `404`/`409` en `500`.
 
 **Ejemplo: `infrastructure/implementation/country/impl-country.repository.ts`**
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/shared/infrastructure/persistence/prisma/prisma.service';
+import { ctl_country } from 'generated/prisma/client';
+import { PrismaService } from '@/shared/infrastructure/db/prisma.service';
 
 import { Country } from '../../../domain/entities/country';
 import { CountryRepository } from '../../../domain/repositories/country-repository';
@@ -724,8 +732,8 @@ export class ImplCountryRepository implements CountryRepository, CountryQueriesR
   ): Promise<Pagination<CountryDto> | CountryDto[]> {
     try {
       const where = {
-        name: { contains: filter, mode: 'insensitive' as const },
-        active: active,
+        ...(filter ? { name: { contains: filter, mode: 'insensitive' as const } } : {}),
+        ...(active !== undefined ? { active } : {}),
       };
 
       // Ejecutamos las consultas en paralelo para mayor rendimiento
@@ -740,7 +748,7 @@ export class ImplCountryRepository implements CountryRepository, CountryQueriesR
       ]);
 
       // Mapeamos los modelos de BD directamente a DTOs de lectura (Bypass del Dominio)
-      const countries = countriesDb.map(db => this.mapReadModelToDto(db));
+      const countries = countriesDb.map((db) => this.mapReadModelToDto(db));
 
       // Si no hay paginación, retornamos el arreglo crudo (Hot-Path del Caché)
       if (!pagination_params) {
@@ -749,7 +757,7 @@ export class ImplCountryRepository implements CountryRepository, CountryQueriesR
 
       // Si hay paginación, retornamos el objeto complejo Pagination<>
       return new Pagination<CountryDto>(/* ... inyección de parámetros ... */);
-    } catch (error) {
+    } catch {
       throw new DatabaseException('Error getting countries', 'getAll');
     }
   }
@@ -758,70 +766,72 @@ export class ImplCountryRepository implements CountryRepository, CountryQueriesR
   // MÉTODOS DE MAPEO INTERNOS
   // ========================================================
   
-  private mapReadModelToDto(dbModel: any): CountryDto {
-    // Convierte el modelo de Prisma (ctl_country) a CountryDto de Aplicación
+  private mapReadModelToDto(dbModel: ctl_country): CountryDto {
+    // Convierte el modelo tipado de Prisma (ctl_country) a CountryDto de Aplicación
     return new CountryDto(/* ... */);
   }
 }
 ```
 
-### 4.4. Otros Elementos de Infraestructura
+### 4.5. Otros Elementos de Infraestructura
 
-Dependiendo de la complejidad del módulo, la capa de infraestructura puede extenderse con los directorios mencionados en el árbol superior. Algunos de los más importantes son:
-- **`services/`**: A diferencia de los de aplicación, estos servicios comunican el módulo con el *mundo exterior* (Ej: un `StripePaymentService`, un cliente HTTP para otra API, o un publicador de S3).
-- **`queues/`**: Manejadores de eventos asíncronos en infraestructura, suscribiéndose a colas de mensajería. Si un evento encolado impacta al dominio, este consumidor mapeará el payload y despachará un *Command*.
-- **`guards/`, `interceptors/`, `decorators/`**: Mecanismos puramente ligados a NestJS para interceptar peticiones, modificar respuestas o validar autorización.
+Dependiendo de la complejidad del módulo, la capa de infraestructura puede extenderse con los directorios mencionados al inicio:
+- **`adapters/` / `backends/`**: Clientes externos (S3/R2, Resend, colas BullMQ).
+- **`processors/` y `subscribers/`**: `@Processor` BullMQ (registrados en `WorkerModule`) y `@EventsHandler` de `@nestjs/cqrs` reactivos a eventos publicados post-commit.
+- **`config/`**: Agrupa los archivos `commands-handlers.config.ts`, `queries-handlers.config.ts`, `repositories.config.ts` y `services.config.ts` exportando los arreglos de providers listos para el módulo.
+- **`guards/`, `interceptors/`, `decorators/`**: Mecanismos ligados a NestJS para interceptar peticiones, aplicar IDOR (`@OwnsResource`, `@CheckAuthenticatedUser`) o validar autorización.
 
 ---
 
 ## 5. El Módulo de NestJS (`<nombre-modulo>.module.ts`)
 
-Finalmente, ensamblamos todo en el archivo central del módulo. Aquí es donde "enchufamos" los adaptadores (implementaciones reales) a los puertos (interfaces) mediante la inyección de dependencias de NestJS.
+Finalmente, ensamblamos todo en el archivo central del módulo. Aquí conectamos los adaptadores concretos a las **clases abstractas** de dominio/aplicación mediante la inyección de dependencias de NestJS (sin `Symbol` ni strings) y registramos los arreglos de `infrastructure/config/`.
 
 **Ejemplo: `inventory.module.ts`**
 ```typescript
 import { Module } from '@nestjs/common';
-import { CqrsModule } from '@nestjs/cqrs';
+import { RouterModule } from '@nestjs/core';
 
 // Controladores (Infraestructura)
 import { ProductController } from './infrastructure/controllers/product.controller';
 
-// Puertos y Adaptadores (Dominio / Infraestructura)
-import { PRODUCT_REPOSITORY } from './domain/repositories/product.repository';
+// Puertos abstractos y Adaptadores (Dominio / Aplicación / Infraestructura)
+import { ProductRepository } from './domain/repositories/product.repository';
+import { ProductReadRepository } from './application/repositories/product-read.repository';
 import { ImplProductRepository } from './infrastructure/implementation/impl-product.repository';
 
-// Casos de uso (Aplicación)
-import { CreateProductHandler } from './application/product/commands/create-product/create-product.handler';
-
-// Si usas TypeORM: 
-// import { TypeOrmModule } from '@nestjs/typeorm';
-// import { ProductEntity } from './infrastructure/implementation/entities/product.entity';
-
-// Agrupamos handlers para mantener limpio el módulo
-const CommandHandlers = [CreateProductHandler];
-const QueryHandlers = []; 
+// Handlers agrupados en infrastructure/config/
+import { commandHandlerProviders } from './infrastructure/config/commands-handlers.config';
+import { queryHandlerProviders } from './infrastructure/config/queries-handlers.config';
+import { serviceProviders } from './infrastructure/config/services.config';
 
 @Module({
   imports: [
-    CqrsModule,
-    // TypeOrmModule.forFeature([ProductEntity]) 
+    RouterModule.register([{ path: 'inventory', module: InventoryModule }]),
   ],
   controllers: [ProductController],
   providers: [
-    ...CommandHandlers,
-    ...QueryHandlers,
+    ...commandHandlerProviders,
+    ...queryHandlerProviders,
+    ...serviceProviders,
+    ImplProductRepository,
     {
-      // Aquí hacemos la Inversión de Dependencias (DIP): 
-      // Cuando la capa de aplicación pida el puerto (Token 'PRODUCT_REPOSITORY'), 
-      // NestJS entregará el adaptador (Clase 'ImplProductRepository')
-      provide: PRODUCT_REPOSITORY,
-      useClass: ImplProductRepository,
+      // Inversión de Dependencias (DIP) usando la clase abstracta como token DI:
+      provide: ProductRepository,
+      useExisting: ImplProductRepository,
+    },
+    {
+      provide: ProductReadRepository,
+      useExisting: ImplProductRepository,
     },
   ],
   exports: [],
 })
 export class InventoryModule {}
 ```
+
+> [!TIP]
+> Revisa la sección **4.1 (Configuración de Servicios de Aplicación)** de esta guía para recordar cómo se ensamblan `serviceProviders` usando `registerService(...)`, manteniendo los Application Services libres de `@Injectable()`.
 
 ---
 

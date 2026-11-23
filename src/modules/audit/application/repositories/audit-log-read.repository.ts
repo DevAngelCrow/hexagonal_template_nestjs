@@ -6,6 +6,7 @@ export interface AuditLogFilters {
   action?: string;
   user_id?: string;
   entity_type?: string;
+  request_id?: string;
   from?: Date;
   to?: Date;
 }

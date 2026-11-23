@@ -10,6 +10,7 @@ export class AuditLog {
     public readonly metadata: Record<string, unknown> | null,
     public readonly entity_type: string | null,
     public readonly entity_id: string | null,
+    public readonly request_id: string | null,
     public readonly id?: string,
     public readonly created_at?: Date,
   ) {}
@@ -23,6 +24,7 @@ export class AuditLog {
     metadata?: Record<string, unknown> | null;
     entity_type?: string | null;
     entity_id?: string | null;
+    request_id?: string | null;
   }): AuditLog {
     return new AuditLog(
       data.action,
@@ -34,6 +36,7 @@ export class AuditLog {
       data.metadata ?? null,
       data.entity_type ?? null,
       data.entity_id ?? null,
+      data.request_id ?? null,
     );
   }
 }

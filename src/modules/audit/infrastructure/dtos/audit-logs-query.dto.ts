@@ -16,6 +16,10 @@ export class AuditLogsQueryDto extends PaginationQueryDto {
   entity_type?: string;
 
   @IsOptional()
+  @IsString()
+  request_id?: string;
+
+  @IsOptional()
   @IsDateString()
   from?: string;
 

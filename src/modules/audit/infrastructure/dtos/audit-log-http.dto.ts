@@ -13,6 +13,7 @@ export class AuditLogHttpDto {
     public readonly entity_id: string | null,
     public readonly metadata: Record<string, unknown> | null,
     public readonly created_at: Date,
+    public readonly request_id?: string | null,
   ) {}
 
   public static fromDto(dto: AuditLogDto): AuditLogHttpDto {
@@ -27,6 +28,7 @@ export class AuditLogHttpDto {
       dto.entity_id,
       dto.metadata,
       dto.created_at,
+      dto.request_id ?? null,
     );
   }
 }

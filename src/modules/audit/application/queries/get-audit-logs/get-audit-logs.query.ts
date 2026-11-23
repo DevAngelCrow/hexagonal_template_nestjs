@@ -9,5 +9,6 @@ export class GetAuditLogsQuery {
     public readonly entity_type?: string,
     public readonly from?: string,
     public readonly to?: string,
+    public readonly request_id?: string,
   ) {}
 }

@@ -1,7 +1,6 @@
-import { AuditLogRepository } from '@/modules/audit/domain/repositories/audit-log.repository';
-import { AuditLog } from '@/modules/audit/domain/entities/audit-log';
 import { AuditAction } from '@/modules/audit/domain/enums/audit-action.enum';
 import { AuditLoggerPort } from '@/modules/audit/domain/ports/audit-logger.port';
+import { AuditQueuePort } from '@/modules/audit/domain/ports/audit-queue.port';
 
 export interface AuditLogEntry {
   action: AuditAction;
@@ -14,24 +13,25 @@ export interface AuditLogEntry {
   entity_type?: string | null;
   /** The ID of the business entity affected */
   entity_id?: string | null;
+  /** Correlation request ID */
+  request_id?: string | null;
 }
 
 export class AuditLogService {
   constructor(
-    private readonly auditLogRepository: AuditLogRepository,
+    private readonly auditQueue: AuditQueuePort,
     private readonly logger: AuditLoggerPort,
   ) {}
 
   /**
-   * Fire-and-forget: writes the audit entry without blocking the response.
-   * Any persistence failure is swallowed and logged as a warning so that
+   * Fire-and-forget: enqueues the audit entry without blocking the response.
+   * Any queueing failure is swallowed and logged as a warning so that
    * audit errors never affect the main business flow.
    */
   log(entry: AuditLogEntry): void {
-    const auditLog = AuditLog.create(entry);
-    this.auditLogRepository.create(auditLog).catch((err: Error) => {
+    this.auditQueue.enqueue(entry).catch((err: Error) => {
       this.logger.warn(
-        `Failed to write audit log [${entry.action}]: ${err.message}`,
+        `Failed to enqueue audit log [${entry.action}]: ${err.message}`,
       );
     });
   }

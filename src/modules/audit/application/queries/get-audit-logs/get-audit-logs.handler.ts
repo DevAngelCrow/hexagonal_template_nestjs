@@ -19,6 +19,7 @@ export class GetAuditLogsHandler implements IQueryHandler<GetAuditLogsQuery> {
       action: query.action,
       user_id: query.user_id,
       entity_type: query.entity_type,
+      request_id: query.request_id,
       from: query.from ? new Date(query.from) : undefined,
       to: query.to ? new Date(query.to) : undefined,
     });

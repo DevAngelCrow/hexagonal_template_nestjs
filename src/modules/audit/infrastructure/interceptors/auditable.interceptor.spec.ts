@@ -173,4 +173,65 @@ describe('AuditableInterceptor', () => {
     );
     expect(transactionContext.addAfterCommitHook).not.toHaveBeenCalled();
   });
+
+  it('extracts request_id and sanitizes payload in metadata', async () => {
+    const reflector = {
+      get: vi.fn().mockReturnValue({
+        action: AuditAction.REGISTER,
+        entityType: 'User',
+        includePayload: true,
+        diffFrom: () => ({
+          before: { role: 'user' },
+          after: { role: 'admin', password: 'secretPassword' },
+        }),
+      }),
+    } as unknown as Reflector;
+
+    const auditLogService = {
+      log: vi.fn(),
+    } as unknown as AuditLogService;
+
+    const interceptor = new AuditableInterceptor(
+      reflector,
+      auditLogService,
+    );
+
+    const context = createMockContext({
+      id: 'req-uuid-12345',
+      headers: {},
+      user: { id: 'u1' },
+      body: {
+        username: 'john',
+        password: 'superSecretPassword',
+      },
+      params: { id: '123' },
+    });
+
+    const next: CallHandler = {
+      handle: () => of({ success: true }),
+    };
+
+    await new Promise<void>((resolve) => {
+      interceptor.intercept(context, next).subscribe({
+        next: () => resolve(),
+      });
+    });
+
+    expect(auditLogService.log).toHaveBeenCalledWith(
+      expect.objectContaining({
+        action: AuditAction.REGISTER,
+        request_id: 'req-uuid-12345',
+        metadata: {
+          payload: {
+            username: 'john',
+            password: '[REDACTED]',
+          },
+          diff: {
+            before: { role: 'user' },
+            after: { role: 'admin', password: '[REDACTED]' },
+          },
+        },
+      }),
+    );
+  });
 });

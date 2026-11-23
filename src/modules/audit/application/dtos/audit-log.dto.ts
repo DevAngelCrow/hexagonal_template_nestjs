@@ -12,5 +12,6 @@ export class AuditLogDto {
     public readonly entity_id: string | null,
     public readonly metadata: Record<string, unknown> | null,
     public readonly created_at: Date,
+    public readonly request_id?: string | null,
   ) {}
 }

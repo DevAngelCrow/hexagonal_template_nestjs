@@ -63,6 +63,7 @@ export class ImplAuditLogRepository
     await this.prisma.rootClient.mnt_audit_log.create({
       data: {
         action: auditLog.action,
+        request_id: auditLog.request_id,
         user_name: auditLog.user_name,
         user_id: auditLog.user_id,
         ip_address: auditLog.ip_address,
@@ -85,6 +86,7 @@ export class ImplAuditLogRepository
       ...(filters?.action ? { action: filters.action } : {}),
       ...(filters?.user_id ? { user_id: filters.user_id } : {}),
       ...(filters?.entity_type ? { entity_type: filters.entity_type } : {}),
+      ...(filters?.request_id ? { request_id: filters.request_id } : {}),
       ...(filters?.from || filters?.to
         ? {
             created_at: {
@@ -123,6 +125,7 @@ export class ImplAuditLogRepository
           r.entity_id,
           isPlainRecord(r.metadata) ? r.metadata : null,
           r.created_at,
+          r.request_id,
         ),
     );
 

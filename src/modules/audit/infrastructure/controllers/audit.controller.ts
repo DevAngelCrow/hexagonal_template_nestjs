@@ -35,6 +35,7 @@ export class AuditController {
         params.entity_type,
         params.from,
         params.to,
+        params.request_id,
       ),
     );
 

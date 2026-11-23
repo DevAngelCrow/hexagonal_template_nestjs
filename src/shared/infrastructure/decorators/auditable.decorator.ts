@@ -3,6 +3,12 @@ import { AuditAction } from '@/shared/domain/enums/audit-action.enum';
 
 export const AUDITABLE_KEY = 'audit:auditable';
 
+export type AuditableContext = {
+  params: Record<string, unknown>;
+  body: Record<string, unknown>;
+  result: unknown;
+};
+
 export type AuditableOptions = {
   action: AuditAction;
   /** Action to emit if the request fails with an exception (optional). */
@@ -15,11 +21,15 @@ export type AuditableOptions = {
    */
   entityIdFrom?:
     | string
-    | ((ctx: {
-        params: Record<string, unknown>;
-        body: Record<string, unknown>;
-        result: unknown;
-      }) => string | undefined);
+    | ((ctx: AuditableContext) => string | undefined);
+  /** Whether to capture the sanitized request body in metadata.payload */
+  includePayload?: boolean;
+  /** Whether to capture the sanitized handler result in metadata.result */
+  includeResult?: boolean;
+  /** Function to compute state differences (before/after) */
+  diffFrom?: (ctx: AuditableContext) => { before?: unknown; after?: unknown } | undefined;
+  /** Function to extract custom metadata */
+  metadataFrom?: (ctx: AuditableContext) => Record<string, unknown> | undefined;
 };
 
 /**

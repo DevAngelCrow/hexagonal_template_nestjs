@@ -393,6 +393,7 @@ model mnt_password_history {
 model mnt_audit_log {
   id          String   @id @default(uuid()) @db.Uuid
   action      String   @db.VarChar(100)
+  request_id  String?  @db.VarChar(64)
   user_name   String?  @db.VarChar(255)
   user_id     String?  @db.Uuid
   ip_address  String?  @db.VarChar(45)
@@ -403,6 +404,7 @@ model mnt_audit_log {
   created_at  DateTime @default(now()) @db.Timestamp(0)
 
   @@index([action])
+  @@index([request_id])
   @@index([user_id])
   @@index([created_at])
   @@index([entity_type, entity_id])

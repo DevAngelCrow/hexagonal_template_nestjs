@@ -1,21 +1,8 @@
-import { AuditAction } from '@/modules/audit/domain/enums/audit-action.enum';
+import { AuditLogEntry } from '@/modules/audit/domain/entities/audit-log';
 import { AuditLoggerPort } from '@/modules/audit/domain/ports/audit-logger.port';
 import { AuditQueuePort } from '@/modules/audit/domain/ports/audit-queue.port';
 
-export interface AuditLogEntry {
-  action: AuditAction;
-  user_name?: string | null;
-  user_id?: string | null;
-  ip_address?: string | null;
-  user_agent?: string | null;
-  metadata?: Record<string, unknown> | null;
-  /** The type/name of the business entity affected (e.g. 'User', 'Invoice') */
-  entity_type?: string | null;
-  /** The ID of the business entity affected */
-  entity_id?: string | null;
-  /** Correlation request ID */
-  request_id?: string | null;
-}
+export type { AuditLogEntry };
 
 export class AuditLogService {
   constructor(

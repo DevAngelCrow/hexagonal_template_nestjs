@@ -12,7 +12,6 @@ import { PrismaModule } from '@/shared/infrastructure/db/prisma.module';
 import { AuditableInterceptor } from './infrastructure/interceptors/auditable.interceptor';
 import { AuditController } from './infrastructure/controllers/audit.controller';
 import { GetAuditLogsHandler } from './application/queries/get-audit-logs/get-audit-logs.handler';
-import { AuditLogProcessor } from './infrastructure/processors/audit-log.processor';
 
 @Module({
   imports: [
@@ -31,10 +30,14 @@ import { AuditLogProcessor } from './infrastructure/processors/audit-log.process
   providers: [
     AuditableInterceptor,
     GetAuditLogsHandler,
-    AuditLogProcessor,
     ...repositories,
     ...services,
   ],
-  exports: [AuditLogService, AuditableInterceptor],
+  exports: [
+    AuditLogService,
+    AuditableInterceptor,
+    ...repositories,
+    BullModule,
+  ],
 })
 export class AuditModule {}

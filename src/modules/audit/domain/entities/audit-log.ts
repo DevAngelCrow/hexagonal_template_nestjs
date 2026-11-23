@@ -1,5 +1,20 @@
 import { AuditAction } from '@/modules/audit/domain/enums/audit-action.enum';
 
+export interface AuditLogEntry {
+  action: AuditAction;
+  user_name?: string | null;
+  user_id?: string | null;
+  ip_address?: string | null;
+  user_agent?: string | null;
+  metadata?: Record<string, unknown> | null;
+  /** The type/name of the business entity affected (e.g. 'User', 'Invoice') */
+  entity_type?: string | null;
+  /** The ID of the business entity affected */
+  entity_id?: string | null;
+  /** Correlation request ID */
+  request_id?: string | null;
+}
+
 export class AuditLog {
   constructor(
     public readonly action: AuditAction,
@@ -15,17 +30,7 @@ export class AuditLog {
     public readonly created_at?: Date,
   ) {}
 
-  static create(data: {
-    action: AuditAction;
-    user_name?: string | null;
-    user_id?: string | null;
-    ip_address?: string | null;
-    user_agent?: string | null;
-    metadata?: Record<string, unknown> | null;
-    entity_type?: string | null;
-    entity_id?: string | null;
-    request_id?: string | null;
-  }): AuditLog {
+  static create(data: AuditLogEntry): AuditLog {
     return new AuditLog(
       data.action,
       data.user_name ?? null,

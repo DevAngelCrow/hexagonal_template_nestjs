@@ -2,8 +2,7 @@ import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
 import { QUEUE_NAMES } from '@/shared/infrastructure/queues/queues.constants';
 import { AuditLogRepository } from '@/modules/audit/domain/repositories/audit-log.repository';
-import { AuditLog } from '@/modules/audit/domain/entities/audit-log';
-import { AuditLogEntry } from '@/modules/audit/application/services/audit-log.service';
+import { AuditLog, AuditLogEntry } from '@/modules/audit/domain/entities/audit-log';
 import { AuditLoggerPort } from '@/modules/audit/domain/ports/audit-logger.port';
 
 @Processor(QUEUE_NAMES.AUDIT_LOGS)

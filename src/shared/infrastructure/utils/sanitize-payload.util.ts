@@ -22,28 +22,53 @@ const SENSITIVE_KEYS = new Set([
 
 const REDACTED = '[REDACTED]';
 
-export function sanitizePayload<T>(data: T): T {
+function isPlainRecord(value: unknown): value is Record<string, unknown> {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    !Array.isArray(value) &&
+    !(value instanceof Date)
+  );
+}
+
+export function sanitizeRecord(
+  record: Record<string, unknown>,
+  seen: WeakSet<object> = new WeakSet(),
+): Record<string, unknown> {
+  if (seen.has(record)) {
+    return {};
+  }
+  seen.add(record);
+
+  const result: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(record)) {
+    if (SENSITIVE_KEYS.has(key.toLowerCase())) {
+      result[key] = REDACTED;
+    } else {
+      result[key] = sanitizePayload(value, seen);
+    }
+  }
+  return result;
+}
+
+export function sanitizePayload(
+  data: unknown,
+  seen: WeakSet<object> = new WeakSet(),
+): unknown {
   if (data === null || data === undefined) {
     return data;
   }
 
   if (Array.isArray(data)) {
-    return data.map((item) => sanitizePayload(item)) as unknown as T;
+    if (seen.has(data)) {
+      return [];
+    }
+    seen.add(data);
+    return data.map((item) => sanitizePayload(item, seen));
   }
 
-  if (typeof data === 'object') {
-    const result: Record<string, unknown> = {};
-    for (const [key, value] of Object.entries(data as Record<string, unknown>)) {
-      const lowerKey = key.toLowerCase();
-      if (SENSITIVE_KEYS.has(lowerKey)) {
-        result[key] = REDACTED;
-      } else if (typeof value === 'object' && value !== null) {
-        result[key] = sanitizePayload(value);
-      } else {
-        result[key] = value;
-      }
-    }
-    return result as T;
+  if (isPlainRecord(data)) {
+    return sanitizeRecord(data, seen);
   }
 
   return data;

@@ -22,9 +22,13 @@ import {
   extractClientIp,
   extractUserAgent,
 } from '@/shared/infrastructure/http/utils/client-request-info';
-import { sanitizePayload } from '@/shared/infrastructure/utils/sanitize-payload.util';
+import {
+  sanitizePayload,
+  sanitizeRecord,
+} from '@/shared/infrastructure/utils/sanitize-payload.util';
 
 type AuthUserLike = { id?: string; user_name?: string } | undefined;
+type AuditableRequest = Request & { user?: AuthUserLike; id?: string };
 
 /**
  * Reads {@link Auditable} metadata and emits an entry on successful response.
@@ -48,9 +52,7 @@ export class AuditableInterceptor implements NestInterceptor {
     if (!options) return next.handle();
     if (context.getType() !== 'http') return next.handle();
 
-    const request = context
-      .switchToHttp()
-      .getRequest<Request & { user?: AuthUserLike }>();
+    const request = context.switchToHttp().getRequest<AuditableRequest>();
     const user = request.user;
 
     return next.handle().pipe(
@@ -119,10 +121,9 @@ export class AuditableInterceptor implements NestInterceptor {
     return typeof v === 'object' && v !== null;
   }
 
-  private extractRequestId(req: Request): string | null {
-    const reqWithId = req as Request & { id?: string };
-    if (typeof reqWithId.id === 'string' && reqWithId.id.length > 0) {
-      return reqWithId.id;
+  private extractRequestId(req: AuditableRequest): string | null {
+    if (typeof req.id === 'string' && req.id.length > 0) {
+      return req.id;
     }
     const headerId = req.headers?.['x-request-id'];
     if (typeof headerId === 'string' && headerId.length > 0) {
@@ -136,11 +137,10 @@ export class AuditableInterceptor implements NestInterceptor {
     request: Request,
     result: unknown,
   ): Record<string, unknown> | null {
-    const params = (request.params ?? {}) as Record<string, unknown>;
-    const body = (this.isRecord(request.body) ? request.body : {}) as Record<
-      string,
-      unknown
-    >;
+    const params: Record<string, unknown> = request.params ?? {};
+    const body: Record<string, unknown> = this.isRecord(request.body)
+      ? request.body
+      : {};
     const ctx: AuditableContext = { params, body, result };
 
     const meta: Record<string, unknown> = {};
@@ -148,7 +148,7 @@ export class AuditableInterceptor implements NestInterceptor {
     if (typeof options.metadataFrom === 'function') {
       const custom = options.metadataFrom(ctx);
       if (this.isRecord(custom)) {
-        Object.assign(meta, sanitizePayload(custom));
+        Object.assign(meta, sanitizeRecord(custom));
       }
     }
 
@@ -160,7 +160,7 @@ export class AuditableInterceptor implements NestInterceptor {
     }
 
     if (options.includePayload && this.isRecord(request.body)) {
-      meta.payload = sanitizePayload(request.body);
+      meta.payload = sanitizeRecord(request.body);
     }
 
     if (options.includeResult && result !== undefined) {

@@ -3,7 +3,7 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { QUEUE_NAMES } from '@/shared/infrastructure/queues/queues.constants';
 import { AuditQueuePort } from '@/modules/audit/domain/ports/audit-queue.port';
-import { AuditLogEntry } from '@/modules/audit/application/services/audit-log.service';
+import { AuditLogEntry } from '@/modules/audit/domain/entities/audit-log';
 
 @Injectable()
 export class ImplAuditQueuePort implements AuditQueuePort {

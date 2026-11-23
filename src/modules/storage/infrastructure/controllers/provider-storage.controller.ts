@@ -20,7 +20,7 @@ import { Pagination } from '@/shared/domain/value-object/pagination';
 import { GetProviderStoragesQueryDto } from '@/modules/storage/infrastructure/dtos/query/get-provider-storages-query.dto';
 import { ProviderStorage } from '@/modules/storage/domain/entities/provider-storage';
 
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateProviderStorageCommand } from '@/modules/storage/application/provider-storage/commands/create-provider-storage/create-provider-storage.command';
 import { UpdateProviderStorageCommand } from '@/modules/storage/application/provider-storage/commands/update-provider-storage/update-provider-storage.command';
@@ -31,6 +31,7 @@ import { GetProviderStorageByCodeQuery } from '@/modules/storage/application/pro
 import { ProviderStorageDto } from '@/modules/storage/application/dtos/provider-storage.dto';
 import { Permissions } from '@/shared/infrastructure/decorators/permissions.decorator';
 
+@ApiTags('Almacenamiento - Proveedores')
 @Controller('provider-storages')
 @ApiBearerAuth('JWT-auth')
 export class ProviderStorageController {
@@ -80,7 +81,7 @@ export class ProviderStorageController {
       'ProviderStorage updated successfully',
     );
   }
-  @Permissions('listar-proveedores-almacenamientos')
+  @Permissions('listar-proveedores-almacenamiento')
   @Get()
   @HttpCode(200)
   async getAll(

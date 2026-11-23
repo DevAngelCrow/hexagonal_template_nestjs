@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ImplStorageFileDeleterPort } from '@/modules/storage/infrastructure/implementation/impl-storage-file-deleter.port';
 import { StorageBackendRegistry } from '@/modules/storage/infrastructure/backends/storage-backend.registry';
-import { PrismaService } from '@/shared/infrastructure/db/prisma.service';
+import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
 
 describe('ImplStorageFileDeleterPort', () => {
   let deleter: ImplStorageFileDeleterPort;

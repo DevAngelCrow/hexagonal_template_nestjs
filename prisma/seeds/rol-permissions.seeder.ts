@@ -220,6 +220,12 @@ export const seedRolPermissions = async (tx: PrismaClient) => {
       'ver-documentacion-api',
       // Auditoría
       'listar-audit-logs',
+      // Catálogos - Prefijos de Documentos
+      'crear-prefijo-documento',
+      'editar-prefijo-documento',
+      'eliminar-prefijo-documento',
+      'listar-prefijos-documentos',
+      'ver-prefijo-documento',
     ],
     supervisor: [
       // Seguridad - Rutas

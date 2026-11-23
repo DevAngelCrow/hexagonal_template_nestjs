@@ -71,6 +71,9 @@ export const seedMntRoutePermissions = async (tx: PrismaClient) => {
     Géneros: {
       genders: ['listar-generos'],
     },
+    'Prefijos de Documentos': {
+      'document-prefixes': ['listar-prefijos-documentos'],
+    },
     Usuario: {
       'cerrar-sesion': ['cerrar-sesion'],
       'mi-perfil': ['ver-mi-perfil'],

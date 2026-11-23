@@ -18,6 +18,9 @@ import { ImplGeographicDivisionTypeRepository } from '@/modules/catalogs/infrast
 import { GeographicDivisionRepository } from '@/modules/catalogs/domain/repositories/geographic-division-repository';
 import { GeographicDivisionQueriesRepository } from '@/modules/catalogs/application/repositories/geographic-division-read.repository';
 import { ImplGeographicDivisionRepository } from '@/modules/catalogs/infrastructure/implementation/geographic-division/impl-geographic-division.repository';
+import { DocumentPrefixRepository } from '@/modules/catalogs/domain/repositories/document-prefix-repository';
+import { DocumentPrefixQueriesRepository } from '@/modules/catalogs/application/repositories/document-prefix-read.repository';
+import { ImplDocumentPrefixRepository } from '@/modules/catalogs/infrastructure/implementation/document-prefix/impl-document-prefix.repository';
 
 export const repositories = [
   { provide: CountryRepository, useClass: ImplCountryRepository },
@@ -56,5 +59,13 @@ export const repositories = [
   {
     provide: GeographicDivisionQueriesRepository,
     useClass: ImplGeographicDivisionRepository,
+  },
+  {
+    provide: DocumentPrefixRepository,
+    useClass: ImplDocumentPrefixRepository,
+  },
+  {
+    provide: DocumentPrefixQueriesRepository,
+    useClass: ImplDocumentPrefixRepository,
   },
 ];

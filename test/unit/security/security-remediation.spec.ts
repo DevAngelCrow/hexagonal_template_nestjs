@@ -1,8 +1,11 @@
+import 'reflect-metadata';
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { sign as jwtSign } from 'jsonwebtoken';
 import { Reflector } from '@nestjs/core';
 import { ExecutionContext } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { plainToInstance } from 'class-transformer';
+import { validate } from 'class-validator';
 import { createHash, randomUUID } from 'node:crypto';
 
 import { BullBoardAuthMiddleware } from '@/shared/infrastructure/http/middleware/bull-board-auth.middleware';
@@ -31,6 +34,7 @@ import { ResetPasswordUserHandler } from '@/modules/iam/application/users/comman
 import { ResetPasswordUserCommand } from '@/modules/iam/application/users/commands/reset-password-user/reset-password-user.command';
 import { RefreshHandler } from '@/modules/iam/application/auth/commands/refresh/refresh.handler';
 import { RefreshCommand } from '@/modules/iam/application/auth/commands/refresh/refresh.command';
+import { GetPublicGeographicDivisionsQueryDto } from '@/modules/catalogs/infrastructure/dtos/query/get-geographic-divisions-query.dto';
 import { MultipleStatusId } from '@/shared/domain/enums/multiple-status';
 import { ForbiddenException } from '@/shared/application/exceptions/forbidden.exception';
 import { UnauthorizedException } from '@/shared/application/exceptions/unauthorized.exception';
@@ -191,6 +195,62 @@ describe('Security Remediations Verification', () => {
         nextAllowed,
       );
       expect(nextAllowed).toHaveBeenCalledTimes(1);
+    });
+
+    it('compares millisecond revokedAt against iatMs on /admin/queues without blocking post-logout logins', async () => {
+      const revokedAtMs = Date.now();
+      const revokedToken = jwtSign(
+        { id: 'user-123', iatMs: revokedAtMs - 500 },
+        JWT_SECRET,
+      );
+      const freshToken = jwtSign(
+        { id: 'user-123', iatMs: revokedAtMs + 500 },
+        JWT_SECRET,
+      );
+      const cache = { get: vi.fn().mockResolvedValue(revokedAtMs) };
+      const prismaAdmin = {
+        client: {
+          mnt_user: {
+            findFirst: vi.fn().mockResolvedValue({
+              id: 'user-123',
+              mnt_user_rol: [
+                { mnt_role: { rol_permissions: [{ id: 'rp-1' }] } },
+              ],
+            }),
+          },
+        },
+      };
+      const middleware = new BullBoardAuthMiddleware(
+        makeConfig({ JWT_SECRET, NODE_ENV: 'production' }),
+        prismaAdmin as never,
+        cache as never,
+      );
+
+      const resRevoked = makeMockResponse();
+      const nextRevoked = vi.fn();
+      await middleware.use(
+        {
+          headers: { authorization: `Bearer ${revokedToken}` },
+          cookies: {},
+        } as never,
+        resRevoked as never,
+        nextRevoked,
+      );
+      expect(resRevoked.statusCode).toBe(401);
+      expect(nextRevoked).not.toHaveBeenCalled();
+
+      const resFresh = makeMockResponse();
+      const nextFresh = vi.fn();
+      await middleware.use(
+        {
+          headers: { authorization: `Bearer ${freshToken}` },
+          cookies: {},
+        } as never,
+        resFresh as never,
+        nextFresh,
+      );
+      expect(resFresh.statusCode).toBe(200);
+      expect(nextFresh).toHaveBeenCalledTimes(1);
     });
 
     it('DocsAuthMiddleware requires purpose=docs_access', () => {
@@ -445,6 +505,34 @@ describe('Security Remediations Verification', () => {
           makeMockResponse() as never,
         ),
       ).rejects.toThrow(/Metrics endpoint disabled/);
+    });
+  });
+
+  describe('Public Catalog Query DTO Hardening', () => {
+    it('GetPublicGeographicDivisionsQueryDto validates UUID v4 and level bounds (0..10)', async () => {
+      const invalidDto = plainToInstance(GetPublicGeographicDivisionsQueryDto, {
+        id_country: 'not-a-uuid',
+        level: 99,
+      });
+      const invalidErrors = await validate(invalidDto);
+      expect(invalidErrors.length).toBeGreaterThanOrEqual(2);
+
+      const negativeLevelDto = plainToInstance(
+        GetPublicGeographicDivisionsQueryDto,
+        {
+          id_country: '11111111-1111-4111-8111-111111111111',
+          level: -1,
+        },
+      );
+      const negativeErrors = await validate(negativeLevelDto);
+      expect(negativeErrors.length).toBeGreaterThanOrEqual(1);
+
+      const validDto = plainToInstance(GetPublicGeographicDivisionsQueryDto, {
+        id_country: '11111111-1111-4111-8111-111111111111',
+        level: '2',
+      });
+      const validErrors = await validate(validDto);
+      expect(validErrors).toHaveLength(0);
     });
   });
 

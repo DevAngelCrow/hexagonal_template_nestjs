@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Cache } from 'cache-manager';
 import { ImplSecurityAuthorizationPort } from '@/modules/iam/infrastructure/persistence/security/impl-authorization.port';
-import { PrismaService } from '@/shared/infrastructure/db/prisma.service';
+import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
 import { TransactionContextService } from '@/shared/infrastructure/services/transaction-context.service';
 import { StorageFileReaderPort } from '@/modules/storage/domain/ports/storage-file-reader.port';
 import { CachePort } from '@/modules/iam/domain/ports/cache.port';

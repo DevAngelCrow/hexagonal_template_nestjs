@@ -18,6 +18,7 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { Throttle } from '@nestjs/throttler';
 import { Permissions } from '@/shared/infrastructure/decorators/permissions.decorator';
 import { Public } from '@/shared/infrastructure/decorators/public-route.decorator';
 import { SuccessResponseDto } from '@/shared/infrastructure/http/dtos/http-success-response.dto';
@@ -148,6 +149,7 @@ export class GeographicDivisionController {
   }
 
   @Public()
+  @Throttle({ global: { limit: 60, ttl: 60000 } })
   @Get('public')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({

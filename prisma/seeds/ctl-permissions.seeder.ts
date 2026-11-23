@@ -793,6 +793,56 @@ export const seedCtlPermissions = async (tx: PrismaClient) => {
         created_at: new Date(),
         active: true,
       },
+      // PERMISOS DE PREFIJOS DE DOCUMENTOS
+      {
+        name: 'crear-prefijo-documento',
+        description:
+          'Permite registrar un nuevo prefijo o serie de documento',
+        id_category_permissions:
+          categories.find((c) => c.name === 'Prefijos de Documentos')?.id ??
+          '00000000-0000-4000-8000-000000000020',
+        created_at: new Date(),
+        active: true,
+      },
+      {
+        name: 'editar-prefijo-documento',
+        description:
+          'Permite editar y configurar prefijos y correlativos de documentos',
+        id_category_permissions:
+          categories.find((c) => c.name === 'Prefijos de Documentos')?.id ??
+          '00000000-0000-4000-8000-000000000020',
+        created_at: new Date(),
+        active: true,
+      },
+      {
+        name: 'eliminar-prefijo-documento',
+        description:
+          'Permite activar o desactivar un prefijo de documento',
+        id_category_permissions:
+          categories.find((c) => c.name === 'Prefijos de Documentos')?.id ??
+          '00000000-0000-4000-8000-000000000020',
+        created_at: new Date(),
+        active: true,
+      },
+      {
+        name: 'listar-prefijos-documentos',
+        description:
+          'Permite listar los prefijos y correlativos de documentos',
+        id_category_permissions:
+          categories.find((c) => c.name === 'Prefijos de Documentos')?.id ??
+          '00000000-0000-4000-8000-000000000020',
+        created_at: new Date(),
+        active: true,
+      },
+      {
+        name: 'ver-prefijo-documento',
+        description: 'Permite consultar el detalle de un prefijo de documento',
+        id_category_permissions:
+          categories.find((c) => c.name === 'Prefijos de Documentos')?.id ??
+          '00000000-0000-4000-8000-000000000020',
+        created_at: new Date(),
+        active: true,
+      },
     ],
     skipDuplicates: true,
   });

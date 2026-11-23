@@ -215,6 +215,14 @@ export const seedCtlCategoryPermissions = async (tx: PrismaClient) => {
         active: true,
         created_at: new Date(),
       },
+      {
+        id: "00000000-0000-4000-8000-000000000020",
+        name: 'Prefijos de Documentos',
+        description:
+          'Para el catálogo y configuración de prefijos y series de documentos',
+        active: true,
+        created_at: new Date(),
+      },
     ],
     skipDuplicates: true,
   });

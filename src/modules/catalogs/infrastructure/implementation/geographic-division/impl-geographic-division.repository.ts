@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { GeographicDivisionRepository } from '@/modules/catalogs/domain/repositories/geographic-division-repository';
 import { GeographicDivision } from '@/modules/catalogs/domain/entities/geographic-division';
 import { GeographicDivisionId } from '@/modules/catalogs/domain/value-objects/geographic-division-value-object/geographic-division-id';
-import { PrismaService } from '@/shared/infrastructure/db/prisma.service';
+import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { ctl_geographic_division, Prisma } from 'generated/prisma/client';

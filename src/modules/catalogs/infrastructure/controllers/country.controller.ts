@@ -28,6 +28,7 @@ import {
 } from '@nestjs/swagger';
 import { CreateCountryCommand } from '@/modules/catalogs/application/country/commands/create-country/create-country.command';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { Throttle } from '@nestjs/throttler';
 import { UpdateCountryCommand } from '@/modules/catalogs/application/country/commands/update-country/update-country.command';
 import { GetCountriesQuery } from '@/modules/catalogs/application/country/queries/get-countries/get-countries.query';
 import { GetCountryQuery } from '@/modules/catalogs/application/country/queries/get-country/get-country.query';
@@ -114,6 +115,7 @@ export class CountryController {
   }
 
   @Public()
+  @Throttle({ global: { limit: 60, ttl: 60000 } })
   @Get('public')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Listar países activos para catálogo público' })

@@ -24,9 +24,7 @@
     "types": ["vitest/globals", "node", "multer", "passport", "passport-jwt", "bcrypt"],
     "paths": {
       "@/*": ["./src/*"],
-      "src/*": ["./src/*"],
-      "generated/*": ["./generated/*"],
-      "@/modules/iam/*": ["./src/modules/iam/*"]
+      "generated/*": ["./generated/*"]
     }
   },
   "exclude": [

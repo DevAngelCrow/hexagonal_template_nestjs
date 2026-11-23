@@ -350,6 +350,19 @@ export const seedMntRoute = async (tx: PrismaClient) => {
         required_auth: true,
         title: 'Mi perfil',
       },
+      {
+        id: '00000000-0000-4000-8000-000000000022',
+        name: 'document-prefixes',
+        description: 'Prefijos y Series de Documentos',
+        icon: 'pi pi-hashtag',
+        uri: '/catalogs/document-prefixes',
+        active: true,
+        show: true,
+        order: 8,
+        id_parent: '00000000-0000-4000-8000-000000000008',
+        required_auth: true,
+        title: 'Prefijos y Series',
+      },
     ],
   });
 };

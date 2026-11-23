@@ -11,6 +11,7 @@ import { GenderController } from './infrastructure/controllers/gender.controller
 import { CategoryStatusController } from './infrastructure/controllers/category-status.controller';
 import { GeographicDivisionTypeController } from './infrastructure/controllers/geographic-division-type.controller';
 import { GeographicDivisionController } from './infrastructure/controllers/geographic-division.controller';
+import { DocumentPrefixController } from './infrastructure/controllers/document-prefix.controller';
 import { serviceProviders } from './infrastructure/config/services.config';
 
 @Module({
@@ -26,6 +27,7 @@ import { serviceProviders } from './infrastructure/config/services.config';
     CategoryStatusController,
     GeographicDivisionTypeController,
     GeographicDivisionController,
+    DocumentPrefixController,
   ],
   providers: [
     ...repositories,

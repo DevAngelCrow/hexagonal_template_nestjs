@@ -2,7 +2,7 @@ import { StorageFiles } from '@/modules/storage/domain/entities/storage-files';
 import { StorageFilesRepository } from '@/modules/storage/domain/repositories/storage-files.repository';
 import { StorageFilesContentFile } from '@/modules/storage/domain/value-objects/storage-files-value-object/storage-files-content-file';
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@/shared/infrastructure/db/prisma.service';
+import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
 import { TransactionContextService } from '@/shared/infrastructure/services/transaction-context.service';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';
 import { StorageFilesPath } from '@/modules/storage/domain/value-objects/storage-files-value-object/storage-files-path';

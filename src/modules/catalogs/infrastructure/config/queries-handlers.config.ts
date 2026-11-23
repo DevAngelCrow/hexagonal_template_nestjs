@@ -14,6 +14,8 @@ import { GetGeographicDivisionsHandler } from '@/modules/catalogs/application/ge
 import { GetGeographicDivisionHandler } from '@/modules/catalogs/application/geographic-division/queries/get-geographic-division/get-geographic-division.handler';
 import { GetGeographicDivisionsCursorHandler } from '@/modules/catalogs/application/geographic-division/queries/get-geographic-divisions-cursor/get-geographic-divisions-cursor.handler';
 import { GetGeographicDivisionLineageHandler } from '@/modules/catalogs/application/geographic-division/queries/get-geographic-division-lineage/get-geographic-division-lineage.handler';
+import { GetDocumentPrefixesHandler } from '@/modules/catalogs/application/document-prefix/queries/get-document-prefixes/get-document-prefixes.handler';
+import { GetDocumentPrefixHandler } from '@/modules/catalogs/application/document-prefix/queries/get-document-prefix/get-document-prefix.handler';
 
 export const queryHandlerProviders = [
   GetCountriesHandler,
@@ -32,4 +34,6 @@ export const queryHandlerProviders = [
   GetGeographicDivisionHandler,
   GetGeographicDivisionsCursorHandler,
   GetGeographicDivisionLineageHandler,
+  GetDocumentPrefixesHandler,
+  GetDocumentPrefixHandler,
 ];

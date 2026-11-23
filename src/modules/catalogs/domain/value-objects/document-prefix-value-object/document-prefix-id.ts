@@ -1,0 +1,29 @@
+import { InvalidValueObjectException } from '@/shared/domain/exceptions/invalid-value-object.exception';
+import { Validator } from '@/shared/domain/validator/validator-value-object';
+
+export class DocumentPrefixId {
+  private readonly _value: string;
+
+  constructor(value: string) {
+    this._value = Validator.of(
+      value,
+      (msg) => new InvalidValueObjectException('DocumentPrefixId', msg),
+    )
+      .required('Document prefix id is required')
+      .uuid('Document prefix id must be a valid UUID')
+      .getValue();
+  }
+
+  public value(): string {
+    return this._value;
+  }
+
+  public equals(other: DocumentPrefixId): boolean {
+    return this._value === other._value;
+  }
+
+  public toString(): string {
+    return this._value;
+  }
+}
+

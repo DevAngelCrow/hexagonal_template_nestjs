@@ -595,7 +595,7 @@ export class AuthController {
   })
   @Post('change-email/request')
   @HttpCode(200)
-  @ApiBearerAuth('access-token')
+  @ApiBearerAuth('JWT-auth')
   @ApiOperation({
     summary: 'Request an email address change (sends confirmation email)',
   })

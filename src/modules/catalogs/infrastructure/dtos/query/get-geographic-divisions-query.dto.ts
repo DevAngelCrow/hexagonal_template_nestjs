@@ -1,6 +1,6 @@
 import { IntersectionType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsInt, IsOptional, IsUUID } from 'class-validator';
+import { IsInt, IsOptional, IsUUID, Max, Min } from 'class-validator';
 import { PaginationQueryDto } from '@/shared/infrastructure/http/dtos/pagination-query.dto';
 import { CursorPaginationQueryDto } from '@/shared/infrastructure/http/dtos/cursor-pagination-query.dto';
 import {
@@ -29,12 +29,14 @@ export class GetGeographicDivisionsQueryDto extends IntersectionType(
 
 export class GetPublicGeographicDivisionsQueryDto {
   @IsOptional()
-  @IsUUID()
+  @IsUUID(4)
   id_country?: string;
 
   @IsOptional()
   @Type(() => Number)
   @IsInt()
+  @Min(0)
+  @Max(10)
   level?: number;
 }
 

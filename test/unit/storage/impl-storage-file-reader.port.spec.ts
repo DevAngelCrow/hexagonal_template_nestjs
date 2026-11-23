@@ -80,6 +80,13 @@ describe('ImplStorageFileReaderPort', () => {
       });
     });
 
+    it('rejects path traversal on readFileBuffer without calling readFile', async () => {
+      const result = await reader.readFileBuffer('../../.env');
+
+      expect(readFile).not.toHaveBeenCalled();
+      expect(result).toBeNull();
+    });
+
     it('delegates s3:// and https:// URLs to S3StorageBackend.readBuffer when available', async () => {
       const pdfBuffer = Buffer.from('%PDF-1.7');
       const mockS3Backend = {

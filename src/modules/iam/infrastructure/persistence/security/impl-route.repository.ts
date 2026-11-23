@@ -1,4 +1,4 @@
-import { PrismaService } from '@/shared/infrastructure/db/prisma.service';
+import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
 import { Route } from '@/modules/iam/domain/entities/route.entity';
 import { RouteRepository } from '@/modules/iam/domain/repositories/route-repository';
 import { TransactionContextService } from '@/shared/infrastructure/services/transaction-context.service';

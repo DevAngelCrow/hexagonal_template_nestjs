@@ -14,6 +14,7 @@ const verifiedQueueRequests = new WeakSet<Request>();
 interface VerifiedQueueToken {
   id: string;
   iat?: number;
+  iatMs?: number;
   purpose?: string;
 }
 
@@ -22,10 +23,12 @@ function parseVerifiedToken(decoded: unknown): VerifiedQueueToken | null {
   const id: unknown = Reflect.get(decoded, 'id');
   if (typeof id !== 'string' || id.length === 0) return null;
   const iat: unknown = Reflect.get(decoded, 'iat');
+  const iatMs: unknown = Reflect.get(decoded, 'iatMs');
   const purpose: unknown = Reflect.get(decoded, 'purpose');
   return {
     id,
     iat: typeof iat === 'number' ? iat : undefined,
+    iatMs: typeof iatMs === 'number' ? iatMs : undefined,
     purpose: typeof purpose === 'string' ? purpose : undefined,
   };
 }
@@ -97,19 +100,29 @@ export class BullBoardAuthMiddleware implements NestMiddleware {
     }
 
     try {
-      const loggedOutAt = await this.cacheManager.get<number>(
+      const revokedAt = await this.cacheManager.get<number>(
         `blacklist:user:${parsed.id}`,
       );
-      if (
-        typeof loggedOutAt === 'number' &&
-        parsed.iat !== undefined &&
-        loggedOutAt >= parsed.iat
-      ) {
-        res.status(401).json({
-          statusCode: 401,
-          message: 'Token has been invalidated',
-        });
-        return;
+      if (typeof revokedAt === 'number') {
+        if (typeof parsed.iatMs === 'number' && revokedAt > 1e12) {
+          if (revokedAt >= parsed.iatMs) {
+            res.status(401).json({
+              statusCode: 401,
+              message: 'Token has been invalidated',
+            });
+            return;
+          }
+        } else if (parsed.iat !== undefined) {
+          const revokedAtSec =
+            revokedAt > 1e12 ? Math.floor(revokedAt / 1000) : revokedAt;
+          if (revokedAtSec >= parsed.iat) {
+            res.status(401).json({
+              statusCode: 401,
+              message: 'Token has been invalidated',
+            });
+            return;
+          }
+        }
       }
     } catch (error) {
       this.logger.warn(

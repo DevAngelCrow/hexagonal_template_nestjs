@@ -16,6 +16,9 @@ import { DeleteGeographicDivisionTypeHandler } from '@/modules/catalogs/applicat
 import { CreateGeographicDivisionHandler } from '@/modules/catalogs/application/geographic-division/commands/create-geographic-division/create-geographic-division.handler';
 import { UpdateGeographicDivisionHandler } from '@/modules/catalogs/application/geographic-division/commands/update-geographic-division/update-geographic-division.handler';
 import { DeleteGeographicDivisionHandler } from '@/modules/catalogs/application/geographic-division/commands/delete-geographic-division/delete-geographic-division.handler';
+import { CreateDocumentPrefixHandler } from '@/modules/catalogs/application/document-prefix/commands/create-document-prefix/create-document-prefix.handler';
+import { UpdateDocumentPrefixHandler } from '@/modules/catalogs/application/document-prefix/commands/update-document-prefix/update-document-prefix.handler';
+import { ToggleStatusDocumentPrefixHandler } from '@/modules/catalogs/application/document-prefix/commands/toggle-status-document-prefix/toggle-status-document-prefix.handler';
 
 export const commandHandlerProviders = [
   CreateCountryHandler,
@@ -36,4 +39,7 @@ export const commandHandlerProviders = [
   CreateGeographicDivisionHandler,
   UpdateGeographicDivisionHandler,
   DeleteGeographicDivisionHandler,
+  CreateDocumentPrefixHandler,
+  UpdateDocumentPrefixHandler,
+  ToggleStatusDocumentPrefixHandler,
 ];

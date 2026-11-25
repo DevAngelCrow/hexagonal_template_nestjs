@@ -49,6 +49,16 @@ export class IdempotencyMiddleware implements NestMiddleware {
       return next();
     }
 
+    // Multipart uploads have not been parsed by Multer yet in middleware phase,
+    // so req.body is empty and bodyHash would collide across distinct files.
+    const contentType = req.headers['content-type'];
+    if (
+      typeof contentType === 'string' &&
+      contentType.toLowerCase().startsWith('multipart/form-data')
+    ) {
+      return next();
+    }
+
     const idempotencyKey = req.headers['idempotency-key'];
     if (typeof idempotencyKey !== 'string' || !KEY_REGEX.test(idempotencyKey)) {
       return next();

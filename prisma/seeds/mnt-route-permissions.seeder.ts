@@ -78,6 +78,15 @@ export const seedMntRoutePermissions = async (tx: PrismaClient) => {
       'cerrar-sesion': ['cerrar-sesion'],
       'mi-perfil': ['ver-mi-perfil'],
     },
+    Auditoría: {
+      'audit-logs': ['listar-audit-logs'],
+    },
+    'Proveedor de almacenamiento': {
+      'provider-storages': ['listar-proveedores-almacenamiento'],
+    },
+    'Destino de almacenamiento': {
+      'storage-files': ['listar-archivos-almacenamiento'],
+    },
   };
   for (const [categoryName, routes] of Object.entries(permissionsMap)) {
     const category = await tx.ctl_category_permissions.findFirst({

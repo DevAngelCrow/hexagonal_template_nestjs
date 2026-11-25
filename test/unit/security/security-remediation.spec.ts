@@ -400,6 +400,29 @@ describe('Security Remediations Verification', () => {
       expect(next).toHaveBeenCalledTimes(2);
     });
 
+    it('bypasses multipart/form-data requests so file uploads do not collide on empty body hash', async () => {
+      const cache = { get: vi.fn(), set: vi.fn() };
+      const middleware = new IdempotencyMiddleware(cache as never);
+      const next = vi.fn();
+
+      await middleware.use(
+        {
+          originalUrl: '/api/v1/storage/storage-files',
+          method: 'POST',
+          headers: {
+            'idempotency-key': randomUUID(),
+            'content-type': 'multipart/form-data; boundary=----WebKitFormBoundary123',
+          },
+          body: {},
+        } as never,
+        makeMockResponse() as never,
+        next,
+      );
+      expect(cache.get).not.toHaveBeenCalled();
+      expect(cache.set).not.toHaveBeenCalled();
+      expect(next).toHaveBeenCalledTimes(1);
+    });
+
     it('scopes cache key by actor + route and returns 409 on payload mismatch', async () => {
       const store = new Map<string, unknown>();
       const cache = {

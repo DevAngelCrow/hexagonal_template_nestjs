@@ -10,13 +10,13 @@ import { AuditLogDto } from '@/modules/audit/application/dtos/audit-log.dto';
 import { AuditLogHttpDto } from '@/modules/audit/infrastructure/dtos/audit-log-http.dto';
 import { AuditLogsQueryDto } from '@/modules/audit/infrastructure/dtos/audit-logs-query.dto';
 
-@Controller('audit')
+@Controller('logs')
 @ApiBearerAuth('JWT-auth')
 export class AuditController {
   constructor(private readonly queryBus: QueryBus) {}
 
   @Permissions('listar-audit-logs')
-  @Get('logs')
+  @Get()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'List audit logs with optional filters and pagination',
